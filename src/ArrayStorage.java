@@ -6,7 +6,7 @@ import java.util.Arrays;
  * при добавлении Resume заносится в следующую свободную справа ячейку массива storage
  */
 public class ArrayStorage {
-    Resume[] storage = new Resume[5];
+    Resume[] storage = new Resume[10000];
     // ввел переменную контроля заполнения массива значениями при пустом массиве значение 0,
     // соответствует количеству заполненных ячеек заполненной ячейки массива
     private int countResumes;
@@ -40,7 +40,7 @@ public class ArrayStorage {
             if (storage[i].uuid.equals(uuid)) {
                 if (i == (countResumes - 1)) {
                 } else {
-                    System.arraycopy(storage, (i + 1), storage, i, countResumes - (i + 1));
+                    System.arraycopy(storage, (i + 1), storage, i, (countResumes - 1) - i);
                 }
                 // for (int j = i; j < countResumes - 1; j++) {
                 //     storage[j] = storage[j + 1];
