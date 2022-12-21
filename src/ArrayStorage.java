@@ -7,27 +7,27 @@ import java.util.Arrays;
  */
 public class ArrayStorage {
     Resume[] storage = new Resume[10000];
-    // вел переменную контроля заполнения массива значениями при пустом массиве значение -1,
-    // соответствует значению индекса последней заполненной ячейки массива
-    private int indResume = -1;
+    // ввел переменную контроля заполнения массива значениями при пустом массиве значение 0,
+    // соответствует количеству заполненных ячеек заполненной ячейки массива
+    private int countResumes = 0;
 
     void clear() {
-        for (int i = 0; i <= indResume; i++) {
+        for (int i = 0; i < countResumes; i++) {
             storage[i] = null;
         }
-        indResume = -1;
+        countResumes = 0;
     }
 
     void save(Resume r) {
-        if (indResume == 9999) {
+        if (countResumes == storage.length) {
             return; //защита от обращения сверх длинны массива
         } else {
-            storage[++indResume] = r;
+            storage[countResumes++] = r;
         }
     }
 
     Resume get(String uuid) {
-        for (int i = 0; i <= indResume; i++) {
+        for (int i = 0; i < countResumes; i++) {
             if (storage[i].uuid.equals(uuid)) {
                 return storage[i];
             }
@@ -36,16 +36,16 @@ public class ArrayStorage {
     }
 
     void delete(String uuid) {
-        for (int i = 0; i <= indResume; i++) {
+        for (int i = 0; i < countResumes; i++) {
             if (storage[i].uuid.equals(uuid)) {
-                for (int j = i; j <= indResume; j++) {
-                    if (j == indResume){   //защита от обращения сверх длинны массива
-                        storage[j]=null;
+                for (int j = i; j < countResumes; j++) {
+                    if (j == (countResumes - 1)) {   //защита от обращения сверх длинны массива
+                        storage[j] = null;
                     } else {
                         storage[j] = storage[j + 1];
                     }
                 }
-                indResume--;
+                countResumes--;
                 return;
             }
         }
@@ -55,11 +55,10 @@ public class ArrayStorage {
      * @return array, contains only Resumes in storage (without null)
      */
     Resume[] getAll() {
-        return Arrays.copyOf(storage, indResume +1);
-        //new Resume[0];
+        return Arrays.copyOf(storage, countResumes);
     }
 
     int size() {
-        return indResume + 1;
+        return countResumes;
     }
 }
