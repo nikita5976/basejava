@@ -13,18 +13,15 @@ public class ArrayStorage {
 
     void clear() {
         Arrays.fill(storage, 0, countResumes, null);
-        // for (int i = 0; i < countResumes; i++) {
-        //      storage[i] = null;
-        //  }
         countResumes = 0;
     }
 
     void save(Resume r) {
-        if (countResumes == storage.length) {
-            return; //защита от обращения сверх длинны массива
+        if (countResumes >= storage.length) {
+            System.out.println("----------------------------\n" + "данные не сохранены, архив Resume полон");
+            return;
         }
         storage[countResumes++] = r;
-
     }
 
     Resume get(String uuid) {
@@ -39,13 +36,9 @@ public class ArrayStorage {
     void delete(String uuid) {
         for (int i = 0; i < countResumes; i++) {
             if (storage[i].uuid.equals(uuid)) {
-                if (i == (countResumes - 1)) {
-                } else {
-                    System.arraycopy(storage, (i + 1), storage, i, (countResumes - 1) - i);
+                if (i != (countResumes - 1)) {
+                    storage[i] = storage[countResumes - 1];
                 }
-                // for (int j = i; j < countResumes - 1; j++) {
-                //     storage[j] = storage[j + 1];
-                // }
                 storage[countResumes - 1] = null;
                 countResumes--;
                 return;
