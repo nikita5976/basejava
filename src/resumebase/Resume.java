@@ -1,3 +1,5 @@
+package resumebase;
+
 /**
  * Initial resume class
  */

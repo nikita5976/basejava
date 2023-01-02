@@ -1,5 +1,7 @@
+package resumebase;
+
 /**
- * Test for your ArrayStorage implementation
+ * Test for your resumebase.ArrayStorage implementation
  */
 public class MainTestArrayStorage {
     static final ArrayStorage ARRAY_STORAGE = new ArrayStorage();
