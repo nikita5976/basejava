@@ -1,4 +1,6 @@
-package resumebase;
+package webapp.storage;
+
+import webapp.model.Resume;
 
 import java.util.Arrays;
 
@@ -12,24 +14,24 @@ public class ArrayStorage {
     // переменная size соответствует количеству заполненных ячеек массива storage
     private int size;
 
-    void clear() {
+    public void clear() {
         Arrays.fill(storage, 0, size, null);
         size = 0;
     }
 
-    void save(Resume r) {
+    public void save(Resume r) {
         if (size >= storage.length) {
-            System.out.println("\n резюме " + r.uuid + " не сохранено, архив полон");
+            System.out.println("\n резюме " + r.getUuid() + " не сохранено, архив полон");
             return;
         }
-        if (getNumber(r.uuid) == storage.length) {
+        if (getNumber(r.getUuid()) == storage.length) {
             storage[size++] = r;
         } else {
-            System.out.println("\n Резюме " + r.uuid + " уже существует");
+            System.out.println("\n Резюме " + r.getUuid() + " уже существует");
         }
     }
 
-    Resume get(String uuid) {
+    public Resume get(String uuid) {
         int number = getNumber(uuid);
         if (number != storage.length) {
             return storage[number];
@@ -38,7 +40,7 @@ public class ArrayStorage {
         return null;
     }
 
-    void delete(String uuid) {
+    public void delete(String uuid) {
         int number = getNumber(uuid);
         if (number != storage.length) {
             storage[number] = storage[size - 1];
@@ -51,28 +53,28 @@ public class ArrayStorage {
     /**
      * @return array, contains only Resumes in storage (without null)
      */
-    Resume[] getAll() {
+    public Resume[] getAll() {
         return Arrays.copyOf(storage, size);
     }
 
-    int size() {
+    public int size() {
         return size;
     }
 
-    void update(Resume r) {
-        int number = getNumber(r.uuid);
+    public void update(Resume r) {
+        int number = getNumber(r.getUuid());
         if (number != storage.length) {
             storage[number] = r;
-            System.out.println("\n резюме " + r.uuid + " обновлено");
+            System.out.println("\n резюме " + r.getUuid() + " обновлено");
         } else {
-            System.out.println("\n резюме " + r.uuid + " не было в архиве");
+            System.out.println("\n резюме " + r.getUuid() + " не было в архиве");
         }
     }
 
     // метод getNumber возвращает номер позиции в массиве резюме по его uuid и длину массива если такого uuid нет
     int getNumber(String uuid) {
         for (int i = 0; i < size; i++) {
-            if (storage[i].uuid.equals(uuid)) {
+            if (storage[i].getUuid().equals(uuid)) {
                 return i;
             }
         }

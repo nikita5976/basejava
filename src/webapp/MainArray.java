@@ -1,4 +1,7 @@
-package resumebase;
+package webapp;
+
+import webapp.model.Resume;
+import webapp.storage.ArrayStorage;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -34,13 +37,13 @@ public class MainArray {
                     break;
                 case "save":
                     r = new Resume();
-                    r.uuid = uuid;
+                    r.setUuid(uuid);
                     ARRAY_STORAGE.save(r);
                     printAll();
                     break;
                 case "update":
                     r = new Resume();
-                    r.uuid = uuid;
+                    r.setUuid(uuid);
                     ARRAY_STORAGE.update(r);
                     break;
                 case "delete":
