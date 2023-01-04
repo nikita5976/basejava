@@ -10,7 +10,8 @@ import java.util.Arrays;
  * при добавлении resumebase.Resume заносится в следующую свободную справа ячейку массива storage
  */
 public class ArrayStorage {
-    Resume[] storage = new Resume[10000];
+    private final static int STORAGE_LIMIT = 10000;
+    Resume[] storage = new Resume[STORAGE_LIMIT];
     // переменная size соответствует количеству заполненных ячеек массива storage
     private int size;
 
@@ -22,31 +23,29 @@ public class ArrayStorage {
     public void save(Resume r) {
         if (size >= storage.length) {
             System.out.println("\n резюме " + r.getUuid() + " не сохранено, архив полон");
-            return;
-        }
-        if (getNumber(r.getUuid()) == storage.length) {
-            storage[size++] = r;
-        } else {
+        } else if (getIndex(r.getUuid()) !=(-1) ) {
             System.out.println("\n Резюме " + r.getUuid() + " уже существует");
+        } else {
+            storage[size++] = r;
         }
     }
 
     public Resume get(String uuid) {
-        int number = getNumber(uuid);
-        if (number != storage.length) {
-            return storage[number];
+        int index = getIndex(uuid);
+        if (index == (-1)) {
+            System.out.println("\n резюме " + uuid + " отсутствует");
+            return null;
         }
-        System.out.println("\n резюме " + uuid + " отсутствует");
-        return null;
+        return storage[index];
     }
 
     public void delete(String uuid) {
-        int number = getNumber(uuid);
-        if (number != storage.length) {
-            storage[number] = storage[size - 1];
-            size--;
-        } else {
+        int index = getIndex(uuid);
+        if (index == (-1)) {
             System.out.println("\n резюме " + uuid + " не было в архиве");
+        } else {
+            storage[index] = storage[size - 1];
+            size--;
         }
     }
 
@@ -62,22 +61,22 @@ public class ArrayStorage {
     }
 
     public void update(Resume r) {
-        int number = getNumber(r.getUuid());
-        if (number != storage.length) {
-            storage[number] = r;
-            System.out.println("\n резюме " + r.getUuid() + " обновлено");
-        } else {
+        int index = getIndex(r.getUuid());
+        if (index == (-1)) {
             System.out.println("\n резюме " + r.getUuid() + " не было в архиве");
+        } else {
+            storage[index] = r;
+            System.out.println("\n резюме " + r.getUuid() + " обновлено");
         }
     }
 
     // метод getNumber возвращает номер позиции в массиве резюме по его uuid и длину массива если такого uuid нет
-    int getNumber(String uuid) {
+   private int getIndex(String uuid) {
         for (int i = 0; i < size; i++) {
             if (storage[i].getUuid().equals(uuid)) {
                 return i;
             }
         }
-        return storage.length;
+        return -1;
     }
 }
