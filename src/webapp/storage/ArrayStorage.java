@@ -4,7 +4,7 @@ import webapp.model.Resume;
 
 import java.util.Arrays;
 
-public class ArrayStorage {
+public class ArrayStorage implements Storage {
     private final static int STORAGE_LIMIT = 10000;
     private final Resume[] storage = new Resume[STORAGE_LIMIT];
     private int size;
@@ -39,6 +39,7 @@ public class ArrayStorage {
             System.out.println("\n резюме " + uuid + " не было в архиве");
         } else {
             storage[index] = storage[size - 1];
+            storage[size - 1] = null;
             size--;
         }
     }
