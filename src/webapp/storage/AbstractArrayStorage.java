@@ -15,22 +15,15 @@ public abstract class AbstractArrayStorage implements Storage {
     }
 
     public final void save(Resume r) {
-        if (size == 0) {
-            storage[0] = r;
-            size++;
-            return;
-        }
+        int index = getIndex(r.getUuid());
         if (size >= storage.length) {
             System.out.println("\n резюме " + r.getUuid() + " не сохранено, архив полон");
-            return;
-        }
-        int index = getIndex(r.getUuid());
-        if (index >= 0) {
+        } else if (index >= 0) {
             System.out.println("\n Резюме " + r.getUuid() + " уже существует");
-            return;
+        } else {
+            saveResume(size, index, r);
+            size++;
         }
-        saveResume(size, index, r);
-        size++;
     }
 
     public final Resume get(String uuid) {
