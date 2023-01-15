@@ -1,5 +1,8 @@
 package webapp.storage;
 
+import webapp.exception.ExistStorageException;
+import webapp.exception.NotExistStorageException;
+import webapp.exception.StorageException;
 import webapp.model.Resume;
 
 import java.util.Arrays;
@@ -17,9 +20,9 @@ public abstract class AbstractArrayStorage implements Storage {
     public final void save(Resume r) {
         int index = getIndex(r.getUuid());
         if (size >= storage.length) {
-            System.out.println("\n резюме " + r.getUuid() + " не сохранено, архив полон");
+            throw new StorageException("\n резюме " + r.getUuid() + " не сохранено, архив полон",r.getUuid());
         } else if (index >= 0) {
-            System.out.println("\n Резюме " + r.getUuid() + " уже существует");
+            throw new ExistStorageException(r.getUuid());
         } else {
             saveResume(size, index, r);
             size++;
@@ -29,8 +32,7 @@ public abstract class AbstractArrayStorage implements Storage {
     public final Resume get(String uuid) {
         int index = getIndex(uuid);
         if (index == -1) {
-            System.out.println("\n резюме " + uuid + " отсутствует");
-            return null;
+            throw new NotExistStorageException(uuid);
         }
         return storage[index];
     }
@@ -38,7 +40,7 @@ public abstract class AbstractArrayStorage implements Storage {
     public final void delete(String uuid) {
         int index = getIndex(uuid);
         if (index < 0) {
-            System.out.println("\n резюме " + uuid + " не было в архиве");
+            throw new NotExistStorageException(uuid);
         } else {
             deleteResume(size, index, uuid);
             storage[size - 1] = null;
