@@ -1,5 +1,8 @@
 package webapp;
 
+import webapp.exception.ExistStorageException;
+import webapp.exception.NotExistStorageException;
+import webapp.exception.StorageException;
 import webapp.model.Resume;
 import webapp.storage.SortedArrayStorage;
 import webapp.storage.Storage;
@@ -38,19 +41,37 @@ public class MainArray {
                     break;
                 case "save":
                     r = new Resume(uuid);
-                    ARRAY_STORAGE.save(r);
+                    try {
+                        ARRAY_STORAGE.save(r);
+                    } catch (ExistStorageException e) {
+                        System.out.println(e.getMessage());
+                    } catch (StorageException e) {
+                        System.out.println(e.getMessage());
+                    }
                     printAll();
                     break;
                 case "update":
                     r = new Resume(uuid);
-                    ARRAY_STORAGE.update(r);
+                    try {
+                        ARRAY_STORAGE.update(r);
+                    } catch (NotExistStorageException e) {
+                        System.out.println(e.getMessage());
+                    }
                     break;
                 case "delete":
-                    ARRAY_STORAGE.delete(uuid);
+                    try {
+                        ARRAY_STORAGE.delete(uuid);
+                    } catch (NotExistStorageException e) {
+                        System.out.println(e.getMessage());
+                    }
                     printAll();
                     break;
                 case "get":
-                    System.out.println(ARRAY_STORAGE.get(uuid));
+                    try {
+                        System.out.println(ARRAY_STORAGE.get(uuid));
+                    } catch (NotExistStorageException e) {
+                        System.out.println(e.getMessage());
+                    }
                     break;
                 case "clear":
                     ARRAY_STORAGE.clear();

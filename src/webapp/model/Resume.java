@@ -12,6 +12,7 @@ public class Resume implements Comparable<Resume> {
 
     public Resume(String uuid) {
         // разобраться с проверкой когда будет возможно обеспечить uuid всегда не null на входе
+        //решить аналогичный вопрос с методами delete и update
         if (uuid == null) {
             this.uuid = (UUID.randomUUID().toString());
         } else {
