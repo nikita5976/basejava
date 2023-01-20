@@ -1,29 +1,41 @@
 package webapp.storage;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import webapp.exception.NotExistStorageException;
 import webapp.model.Resume;
 
+import java.util.Arrays;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
 public class AbstractArrayStorageTest {
-   //private Storage storage;
-    private Storage storage = new ArrayStorage();
+    private final Storage arrayStorageTested;
 
     private static final String UUID_1 = "uuid1";
     private static final String UUID_2 = "uuid2";
     private static final String UUID_3 = "uuid3";
 
+    public AbstractArrayStorageTest(Storage arrayStorageTested) {
+        this.arrayStorageTested = arrayStorageTested;
+    }
+
     @Before
-    public void setUp() throws Exception {
-        storage.clear();
-        storage.save(new Resume(UUID_1));
-        storage.save(new Resume(UUID_2));
-        storage.save(new Resume(UUID_3));
+    public void setUp()  {
+        arrayStorageTested.clear();
+        arrayStorageTested.save(new Resume(UUID_1));
+        arrayStorageTested.save(new Resume(UUID_2));
+        arrayStorageTested.save(new Resume(UUID_3));
     }
 
     @Test
     public void clear() {
+        arrayStorageTested.clear();
+        Resume[] arrayAll = arrayStorageTested.getAll();
+        for (Resume r : arrayAll) {
+            assertNull(r);
+        }
     }
 
     @Test
@@ -44,7 +56,7 @@ public class AbstractArrayStorageTest {
 
     @Test
     public void size() {
-        Assert.assertEquals(3, storage.size());
+        assertEquals(3, arrayStorageTested.size());
     }
 
     @Test
@@ -52,7 +64,7 @@ public class AbstractArrayStorageTest {
     }
 
     @Test(expected = NotExistStorageException.class)
-    public void getNotExist() throws Exception {
-        storage.get("dummy");
+    public void getNotExist()  {
+        arrayStorageTested.get("dummy");
     }
 }

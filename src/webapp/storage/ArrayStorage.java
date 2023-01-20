@@ -5,12 +5,12 @@ import webapp.model.Resume;
 public class ArrayStorage extends AbstractArrayStorage {
 
     @Override
-    public void saveResume(int size, int index, Resume r) {
+    protected void saveResume(int size, int index, Resume r) {
         storage[size] = r;
     }
 
     @Override
-    public void deleteResume(int size, int index, String uuid) {
+    protected void deleteResume(int size, int index, String uuid) {
         storage[index] = storage[size - 1];
     }
 
