@@ -57,7 +57,7 @@ public class AbstractArrayStorageTest {
                 Resume r = new Resume(String.valueOf(i));
                 arrayStorageTested.save(r);
             }
-        } catch (ExistStorageException e) {
+        } catch (StorageException e) {
             fail("overflow happened ahead of time");
         }
         arrayStorageTested.save(resumeUuid_1);
