@@ -7,8 +7,6 @@ import webapp.exception.NotExistStorageException;
 import webapp.exception.StorageException;
 import webapp.model.Resume;
 
-import java.util.Arrays;
-
 import static org.junit.Assert.*;
 
 public class AbstractArrayStorageTest {
@@ -18,7 +16,7 @@ public class AbstractArrayStorageTest {
     private static final String UUID_2 = "uuid2";
     private static final String UUID_3 = "uuid3";
 
-    private final Resume resume = new Resume(UUID_1);
+    private final Resume resumeUuid_1 = new Resume(UUID_1);
 
     public AbstractArrayStorageTest(Storage arrayStorageTested) {
         this.arrayStorageTested = arrayStorageTested;
@@ -27,7 +25,7 @@ public class AbstractArrayStorageTest {
     @Before
     public void setUp() {
         arrayStorageTested.clear();
-        arrayStorageTested.save(resume);
+        arrayStorageTested.save(resumeUuid_1);
         arrayStorageTested.save(new Resume(UUID_2));
         arrayStorageTested.save(new Resume(UUID_3));
     }
@@ -51,25 +49,29 @@ public class AbstractArrayStorageTest {
         assertEquals(4, arrayAll.length);
     }
 
-    @Test
-    public void saveNotFullStorage() {
-        // some code
-    }
-
     @Test(expected = StorageException.class)
     public void saveFullStorage() {
-        // some code
+        arrayStorageTested.clear();
+        try {
+            for (int i = 0; i < 10000; i++) {
+                Resume r = new Resume(String.valueOf(i));
+                arrayStorageTested.save(r);
+            }
+        } catch (ExistStorageException e) {
+            fail("overflow happened ahead of time");
+        }
+        arrayStorageTested.save(resumeUuid_1);
     }
 
     @Test(expected = ExistStorageException.class)
     public void saveExistStorageException() {
-        // some code
+        arrayStorageTested.save(resumeUuid_1);
     }
 
 
     @Test
     public void get() {
-        assertSame(resume, arrayStorageTested.get(UUID_1));
+        assertSame(resumeUuid_1, arrayStorageTested.get(UUID_1));
     }
 
     @Test(expected = NotExistStorageException.class)
