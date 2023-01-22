@@ -37,6 +37,7 @@ public class AbstractArrayStorageTest {
         for (Resume r : arrayAll) {
             assertNull(r);
         }
+        assertEquals(0,arrayStorageTested.size());
     }
 
     @Test
