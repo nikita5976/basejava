@@ -11,12 +11,12 @@ import static org.junit.Assert.*;
 
 public class AbstractArrayStorageTest {
     private final Storage arrayStorageTested;
+    private final Resume resumeUuid_1 = new Resume(UUID_1);
 
     private static final String UUID_1 = "uuid1";
     private static final String UUID_2 = "uuid2";
     private static final String UUID_3 = "uuid3";
-
-    private final Resume resumeUuid_1 = new Resume(UUID_1);
+    private static final int TEST_SIZE = 3;
 
     public AbstractArrayStorageTest(Storage arrayStorageTested) {
         this.arrayStorageTested = arrayStorageTested;
@@ -83,7 +83,7 @@ public class AbstractArrayStorageTest {
     public void delete() {
         arrayStorageTested.delete(UUID_1);
         Resume[] arrayAll = arrayStorageTested.getAll();
-        assertEquals(2, arrayAll.length);
+        assertEquals(TEST_SIZE - 1, arrayAll.length);
         arrayStorageTested.get(UUID_1);
     }
 
@@ -95,12 +95,12 @@ public class AbstractArrayStorageTest {
     @Test
     public void getAll() {
         Resume[] arrayAll = arrayStorageTested.getAll();
-        assertEquals(3, arrayAll.length);
+        assertEquals(TEST_SIZE, arrayAll.length);
     }
 
     @Test
     public void size() {
-        assertEquals(3, arrayStorageTested.size());
+        assertEquals(TEST_SIZE, arrayStorageTested.size());
     }
 
     @Test
