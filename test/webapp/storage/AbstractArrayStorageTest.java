@@ -122,12 +122,12 @@ public abstract class AbstractArrayStorageTest {
     }
 
     private void assertSize(int size) {
-        assertEquals(size,storage.size());
+        assertEquals(size, storage.size());
     }
 
     private void assertGet(Resume r) {
         String uuid = r.getUuid();
         Resume rStorage = storage.get(uuid);
-        assertEquals(r,rStorage);
+        assertEquals(r, rStorage);
     }
 }
