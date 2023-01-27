@@ -1,13 +1,12 @@
 package webapp.storage;
 
-import webapp.exception.ExistStorageException;
 import webapp.exception.NotExistStorageException;
 import webapp.exception.StorageException;
 import webapp.model.Resume;
 
 import java.util.Arrays;
 
-public abstract class AbstractArrayStorage implements Storage {
+public abstract class AbstractArrayStorage extends AbstractStorage {
     protected final static int STORAGE_LIMIT = 10000;
     protected final Resume[] storage = new Resume[STORAGE_LIMIT];
     protected int size;
@@ -17,12 +16,16 @@ public abstract class AbstractArrayStorage implements Storage {
         size = 0;
     }
 
-    public final void save(Resume r) {
+    @Override
+    protected boolean ExistStorage(Resume r) {
+        int index = getIndex(r.getUuid());
+        return index >= 0;
+    }
+    @Override
+    protected void addResume(Resume r) {
         int index = getIndex(r.getUuid());
         if (size >= storage.length) {
             throw new StorageException("\n резюме " + r.getUuid() + " не сохранено, архив полон", r.getUuid());
-        } else if (index >= 0) {
-            throw new ExistStorageException(r.getUuid());
         } else {
             saveResume(size, index, r);
             size++;

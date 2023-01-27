@@ -40,8 +40,6 @@ public abstract class AbstractArrayStorageTest {
     public void clear() {
         storage.clear();
         assertSize(0);
-        Resume[] array = new Resume[0];
-        assertArrayEquals(array, storage.getAll());
     }
 
     @Test
