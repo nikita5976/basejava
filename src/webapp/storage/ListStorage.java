@@ -19,22 +19,12 @@ public class ListStorage extends AbstractStorage {
 
     @Override
     public Resume extractResume(String uuid) {
-        for (Resume r : storage) {
-            if (uuid.equals(r.getUuid())) {
-                return r;
-            }
-        }
-        return null;
+        return storage.get(getIndex(uuid));
     }
 
     @Override
     public void eraseResume(String uuid) {
-        for (Resume r : storage) {
-            if (uuid.equals(r.getUuid())) {
-                storage.remove(r);
-                return;
-            }
-        }
+        storage.remove(getIndex(uuid));
     }
 
     @Override
@@ -58,11 +48,15 @@ public class ListStorage extends AbstractStorage {
 
     @Override
     protected boolean isExist(String uuid) {
+        return getIndex(uuid) >= 0;
+    }
+
+    protected final int getIndex(String uuid) {
         for (Resume r : storage) {
             if (uuid.equals(r.getUuid())) {
-                return true;
+                return storage.indexOf(r);
             }
         }
-        return false;
+        return -1;
     }
 }
