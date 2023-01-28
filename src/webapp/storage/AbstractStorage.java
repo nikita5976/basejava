@@ -10,7 +10,7 @@ public abstract class AbstractStorage implements Storage {
     @Override
     public final void save(Resume r) {
         checkExist(r);
-        addResume(r);
+        doSave(r);
     }
 
     @Override
@@ -31,7 +31,7 @@ public abstract class AbstractStorage implements Storage {
         updateResume(r);
     }
 
-    abstract protected void addResume(Resume r);
+    abstract protected void doSave(Resume r);
 
     abstract protected Resume extractResume(String uuid);
 
@@ -40,17 +40,17 @@ public abstract class AbstractStorage implements Storage {
     abstract protected void updateResume(Resume r);
 
     private void checkExist(Resume r) {
-        if (ExistStorage(r.getUuid())) {
+        if (isExist(r.getUuid())) {
             throw new ExistStorageException(r.getUuid());
         }
     }
 
     private void checkNotExist(String uuid) {
-        if (!ExistStorage(uuid)) {
+        if (!isExist(uuid)) {
             throw new NotExistStorageException(uuid);
         }
     }
 
-    abstract protected boolean ExistStorage(String uuid);
+    abstract protected boolean isExist(String uuid);
 
 }

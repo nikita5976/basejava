@@ -13,7 +13,7 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    protected void addResume(Resume r) {
+    protected void doSave(Resume r) {
         storage.add(r);
     }
 
@@ -57,7 +57,7 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    protected boolean ExistStorage(String uuid) {
+    protected boolean isExist(String uuid) {
         for (Resume r : storage) {
             if (uuid.equals(r.getUuid())) {
                 return true;

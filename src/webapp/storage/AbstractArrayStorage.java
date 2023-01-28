@@ -16,7 +16,7 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     }
 
     @Override
-    protected void addResume(Resume r) {
+    protected void doSave(Resume r) {
         int index = getIndex(r.getUuid());
         if (size >= storage.length) {
             throw new StorageException("\n резюме " + r.getUuid() + " не сохранено, архив полон", r.getUuid());
@@ -59,7 +59,7 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     protected abstract void deleteResume(int size, int index, String uuid);
 
     @Override
-    protected boolean ExistStorage(String uuid) {
+    protected boolean isExist(String uuid) {
         int index = getIndex(uuid);
         return index >= 0;
     }
