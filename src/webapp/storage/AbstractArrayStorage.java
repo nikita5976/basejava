@@ -1,6 +1,5 @@
 package webapp.storage;
 
-import webapp.exception.NotExistStorageException;
 import webapp.exception.StorageException;
 import webapp.model.Resume;
 
@@ -17,11 +16,6 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     }
 
     @Override
-    protected boolean ExistStorage(Resume r) {
-        int index = getIndex(r.getUuid());
-        return index >= 0;
-    }
-    @Override
     protected void addResume(Resume r) {
         int index = getIndex(r.getUuid());
         if (size >= storage.length) {
@@ -32,23 +26,16 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
         }
     }
 
-    public final Resume get(String uuid) {
+    public final Resume extractResume(String uuid) {
         int index = getIndex(uuid);
-        if (index == -1) {
-            throw new NotExistStorageException(uuid);
-        }
         return storage[index];
     }
 
-    public final void delete(String uuid) {
+    public final void eraseResume(String uuid) {
         int index = getIndex(uuid);
-        if (index < 0) {
-            throw new NotExistStorageException(uuid);
-        } else {
-            deleteResume(size, index, uuid);
-            storage[size - 1] = null;
-            size--;
-        }
+        deleteResume(size, index, uuid);
+        storage[size - 1] = null;
+        size--;
     }
 
     public final Resume[] getAll() {
@@ -59,15 +46,10 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
         return size;
     }
 
-
-    public final void update(Resume r) {
+    public final void updateResume(Resume r) {
         int index = getIndex(r.getUuid());
-        if (index < 0) {
-            throw new NotExistStorageException(r.getUuid());
-        } else {
-            storage[index] = r;
-            System.out.println("\n резюме " + r.getUuid() + " обновлено");
-        }
+        storage[index] = r;
+        System.out.println("\n резюме " + r.getUuid() + " обновлено");
     }
 
     protected abstract int getIndex(String uuid);
@@ -75,4 +57,10 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     protected abstract void saveResume(int size, int index, Resume r);
 
     protected abstract void deleteResume(int size, int index, String uuid);
+
+    @Override
+    protected boolean ExistStorage(String uuid) {
+        int index = getIndex(uuid);
+        return index >= 0;
+    }
 }

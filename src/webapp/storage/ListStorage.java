@@ -1,6 +1,5 @@
 package webapp.storage;
 
-import webapp.exception.NotExistStorageException;
 import webapp.model.Resume;
 
 import java.util.ArrayList;
@@ -14,34 +13,28 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    protected boolean ExistStorage(Resume r) {
-        return storage.contains(r);
-    }
-
-    @Override
     protected void addResume(Resume r) {
         storage.add(r);
     }
 
     @Override
-    public Resume get(String uuid) {
+    public Resume extractResume(String uuid) {
         for (Resume r : storage) {
             if (uuid.equals(r.getUuid())) {
                 return r;
             }
         }
-        throw new NotExistStorageException(uuid);
+        return null;
     }
 
     @Override
-    public void delete(String uuid) {
+    public void eraseResume(String uuid) {
         for (Resume r : storage) {
             if (uuid.equals(r.getUuid())) {
                 storage.remove(r);
                 return;
             }
         }
-        throw new NotExistStorageException(uuid);
     }
 
     @Override
@@ -57,13 +50,19 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    public void update(Resume r) {
+    public void updateResume(Resume r) {
         int index = storage.indexOf(r);
-        if (index < 0) {
-            throw new NotExistStorageException(r.getUuid());
-        } else {
-            storage.set(index, r);
-            System.out.println("\n резюме " + r.getUuid() + " обновлено");
+        storage.set(index, r);
+        System.out.println("\n резюме " + r.getUuid() + " обновлено");
+    }
+
+    @Override
+    protected boolean ExistStorage(String uuid) {
+        for (Resume r : storage) {
+            if (uuid.equals(r.getUuid())) {
+                return true;
+            }
         }
+        return false;
     }
 }
