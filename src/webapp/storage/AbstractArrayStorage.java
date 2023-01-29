@@ -59,7 +59,7 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     }
 
     @Override
-    protected final int getKey(String uuid){
+    protected final int searchKey(String uuid){
         return getIndex(uuid);
     }
 
