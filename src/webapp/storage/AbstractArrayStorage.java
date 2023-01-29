@@ -26,14 +26,12 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
         }
     }
 
-    public final Resume extractResume(String uuid) {
-        int index = getIndex(uuid);
-        return storage[index];
+    public final Resume doGet(int key) {
+        return storage[key];
     }
 
-    public final void eraseResume(String uuid) {
-        int index = getIndex(uuid);
-        deleteResume(size, index, uuid);
+    public final void doDelete(int key) {
+        deleteResume(size, key);
         storage[size - 1] = null;
         size--;
     }
@@ -46,21 +44,24 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
         return size;
     }
 
-    public final void updateResume(Resume r) {
-        int index = getIndex(r.getUuid());
-        storage[index] = r;
+    public final void doUpdate(int key, Resume r) {
+        storage[key] = r;
         System.out.println("\n резюме " + r.getUuid() + " обновлено");
     }
 
-    protected abstract int getIndex(String uuid);
-
     protected abstract void saveResume(int size, int index, Resume r);
 
-    protected abstract void deleteResume(int size, int index, String uuid);
+    protected abstract void deleteResume(int size, int index);
 
     @Override
-    protected boolean isExist(String uuid) {
-        int index = getIndex(uuid);
-        return index >= 0;
+    protected boolean isExist(int key) {
+        return key >= 0;
     }
+
+    @Override
+    protected final int getKey(String uuid){
+        return getIndex(uuid);
+    }
+
+    protected abstract int getIndex(String uuid);
 }

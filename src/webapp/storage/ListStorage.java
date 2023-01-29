@@ -3,9 +3,10 @@ package webapp.storage;
 import webapp.model.Resume;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ListStorage extends AbstractStorage {
-    private final ArrayList<Resume> storage = new ArrayList<>();
+    private final List<Resume> storage = new ArrayList<>();
 
     @Override
     public void clear() {
@@ -18,13 +19,13 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    public Resume extractResume(String uuid) {
-        return storage.get(getIndex(uuid));
+    public Resume doGet(int key) {
+        return storage.get(key);
     }
 
     @Override
-    public void eraseResume(String uuid) {
-        storage.remove(getIndex(uuid));
+    public void doDelete(int key) {
+        storage.remove(key);
     }
 
     @Override
@@ -40,18 +41,18 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    public void updateResume(Resume r) {
-        int index = storage.indexOf(r);
-        storage.set(index, r);
+    public void doUpdate(int kay, Resume r) {
+        storage.set(kay, r);
         System.out.println("\n резюме " + r.getUuid() + " обновлено");
     }
 
     @Override
-    protected boolean isExist(String uuid) {
-        return getIndex(uuid) >= 0;
+    protected boolean isExist(int key) {
+        return key >= 0;
     }
 
-    protected final int getIndex(String uuid) {
+    @Override
+    protected final int getKey(String uuid) {
         for (Resume r : storage) {
             if (uuid.equals(r.getUuid())) {
                 return storage.indexOf(r);
