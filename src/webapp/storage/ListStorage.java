@@ -19,13 +19,15 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    public Resume doGet(int key) {
-        return storage.get(key);
+    public Resume doGet(Object key) {
+        int keyInt = (Integer) key;
+        return storage.get(keyInt);
     }
 
     @Override
-    public void doDelete(int key) {
-        storage.remove(key);
+    public void doDelete(Object key) {
+        int keyInt = (Integer) key;
+        storage.remove(keyInt);
     }
 
     @Override
@@ -41,21 +43,23 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    public void doUpdate(int kay, Resume r) {
-        storage.set(kay, r);
+    public void doUpdate(Object key, Resume r) {
+        int keyInt = (Integer) key;
+        storage.set(keyInt, r);
         System.out.println("\n резюме " + r.getUuid() + " обновлено");
     }
 
     @Override
-    protected boolean isExist(int key) {
-        return key >= 0;
+    protected boolean isExist(Object key) {
+        int keyInt = (Integer) key;
+        return keyInt >= 0;
     }
 
     @Override
-    protected final int getKey(String uuid) {
-        for (Resume r : storage) {
-            if (uuid.equals(r.getUuid())) {
-                return storage.indexOf(r);
+    protected final Object getSearchKey(String uuid) {
+        for (int i = 0; i < storage.size(); i++) {
+            if (uuid.equals(storage.get(i).getUuid())) {
+                return i;
             }
         }
         return -1;
