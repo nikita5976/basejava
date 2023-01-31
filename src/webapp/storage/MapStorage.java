@@ -31,7 +31,7 @@ public class MapStorage extends AbstractStorage {
     @Override
     protected void doUpdate(Object key, Resume r) {
         String keyMap = (String) key;
-        storage.replace(keyMap, r);
+        storage.put(keyMap, r);
     }
 
     @Override
