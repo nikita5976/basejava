@@ -14,7 +14,7 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    protected void doSave(Resume r) {
+    protected void doSave(Resume r, Object key) {
         storage.add(r);
     }
 
@@ -31,10 +31,8 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    public Resume[] getAll() {
-        Resume[] resumes = new Resume[storage.size()];
-        storage.toArray(resumes);
-        return resumes;
+    public List<Resume> getAll() {
+        return storage;
     }
 
     @Override
@@ -56,7 +54,7 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    protected final Object getSearchKey(String uuid) {
+    protected final Integer getSearchKey(String uuid) {
         for (int i = 0; i < storage.size(); i++) {
             if (uuid.equals(storage.get(i).getUuid())) {
                 return i;

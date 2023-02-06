@@ -3,7 +3,7 @@ package webapp.storage;
 import webapp.exception.StorageException;
 import webapp.model.Resume;
 
-import java.util.Arrays;
+import java.util.*;
 
 public abstract class AbstractArrayStorage extends AbstractStorage {
     protected final static int STORAGE_LIMIT = 10000;
@@ -16,8 +16,8 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     }
 
     @Override
-    protected void doSave(Resume r) {
-        int index = getIndex(r.getUuid());
+    protected void doSave(Resume r, Object key) {
+        int index = (int) key;
         if (size >= storage.length) {
             throw new StorageException("\n резюме " + r.getUuid() + " не сохранено, архив полон", r.getUuid());
         } else {
@@ -38,14 +38,21 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
         size--;
     }
 
-    public final Resume[] getAll() {
-        return Arrays.copyOf(storage, size);
+    @Override
+    public final List<Resume> getAll() {
+        ArrayList<Resume> all = new ArrayList<>();
+        for (int i = 0; i < size; i++) {
+            all.add(storage[i]);
+        }
+        return all;
     }
 
+    @Override
     public final int size() {
         return size;
     }
 
+    @Override
     public final void doUpdate(Object key, Resume r) {
         int keyInt = (Integer) key;
         storage[keyInt] = r;
@@ -59,7 +66,7 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     }
 
     @Override
-    protected final Object getSearchKey(String uuid) {
+    protected final Integer getSearchKey(String uuid) {
         return getIndex(uuid);
     }
 
@@ -68,4 +75,5 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     protected abstract void deleteResume(int size, int index);
 
     protected abstract int getIndex(String uuid);
+
 }

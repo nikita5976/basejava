@@ -5,6 +5,7 @@ import webapp.model.Resume;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class MapStorage extends AbstractStorage {
@@ -12,7 +13,7 @@ public class MapStorage extends AbstractStorage {
     private final Map<String, Resume> storage = new HashMap<>();
 
     @Override
-    protected void doSave(Resume r) {
+    protected void doSave(Resume r, Object key) {
         storage.put(r.getUuid(), r);
     }
 
@@ -41,8 +42,8 @@ public class MapStorage extends AbstractStorage {
     }
 
     @Override
-    protected Object getSearchKey(String uuid) {
-        return  uuid;
+    protected String getSearchKey(String uuid) {
+        return uuid;
     }
 
     @Override
@@ -51,11 +52,8 @@ public class MapStorage extends AbstractStorage {
     }
 
     @Override
-    public Resume[] getAll() {
-        ArrayList<Resume> resumesList = new ArrayList<>(storage.values());
-        Resume[] resumes = new Resume[storage.size()];
-        resumesList.toArray(resumes);
-        return resumes;
+    public List<Resume> getAll() {
+        return new ArrayList<>(storage.values());
     }
 
     @Override

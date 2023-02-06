@@ -3,8 +3,9 @@ package webapp.model;
 import java.util.Objects;
 import java.util.UUID;
 
-public class Resume implements Comparable<Resume> {
+public class Resume {
     private final String uuid;
+    private final String fullName;
 
     public Resume() {
         this(UUID.randomUUID().toString());
@@ -18,10 +19,15 @@ public class Resume implements Comparable<Resume> {
         } else {
             this.uuid = uuid;
         }
+        this.fullName = new GeneratorNames().getFullName();
     }
 
     public String getUuid() {
         return uuid;
+    }
+
+    public String getFullName() {
+        return fullName;
     }
 
     @Override
@@ -39,11 +45,8 @@ public class Resume implements Comparable<Resume> {
 
     @Override
     public String toString() {
-        return uuid;
+        return fullName + " uuid " + uuid;
     }
 
-    @Override
-    public int compareTo(Resume o) {
-        return uuid.compareTo(o.uuid);
-    }
+
 }

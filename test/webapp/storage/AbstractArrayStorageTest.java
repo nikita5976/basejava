@@ -7,22 +7,24 @@ import webapp.exception.NotExistStorageException;
 import webapp.exception.StorageException;
 import webapp.model.Resume;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 import static org.junit.Assert.*;
 import static webapp.storage.AbstractArrayStorage.STORAGE_LIMIT;
 
 public abstract class AbstractArrayStorageTest {
-    private final Storage storage;
+    protected final Storage storage;
 
     private static final String UUID_1 = "uuid1";
     private static final String UUID_2 = "uuid2";
     private static final String UUID_3 = "uuid3";
     private static final String UUID_4 = "uuid4";
     private static final String UUID_NOT_EXIST = "UUID_NOT_EXIST";
-    private static final Resume RESUME_1 = new Resume(UUID_1);
-    private static final Resume RESUME_2 = new Resume(UUID_2);
-    private static final Resume RESUME_3 = new Resume(UUID_3);
+    protected static final Resume RESUME_1 = new Resume(UUID_1);
+    protected static final Resume RESUME_2 = new Resume(UUID_2);
+    protected static final Resume RESUME_3 = new Resume(UUID_3);
     private static final Resume RESUME_4 = new Resume(UUID_4);
     private static final int TEST_SIZE = 3;
 
@@ -96,12 +98,15 @@ public abstract class AbstractArrayStorageTest {
     }
 
     @Test
-    public void getAll() {
-        Resume[] expected = {RESUME_1, RESUME_2, RESUME_3};
-        Resume[] getAll = storage.getAll();
-        Arrays.sort(getAll);
-        assertArrayEquals(expected, getAll);
-        assertSize(getAll.length);
+    public void getAllSorted() {
+        List<Resume> expected = new ArrayList<>();
+        expected.add(new Resume(UUID_1));
+        expected.add(new Resume(UUID_2));
+        expected.add(new Resume(UUID_3));
+        List<Resume> getAll = storage.getAllSorted();
+        getAll.sort(Comparator.comparing(Resume::getUuid));
+        assertEquals(expected, getAll);
+        assertSize(getAll.size());
     }
 
     @Test
@@ -122,7 +127,7 @@ public abstract class AbstractArrayStorageTest {
         storage.update(test);
     }
 
-    private void assertSize(int size) {
+    protected void assertSize(int size) {
         assertEquals(size, storage.size());
     }
 
