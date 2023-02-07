@@ -46,7 +46,7 @@ public abstract class AbstractStorage implements Storage {
 
 
     private Object getNotExistingSearchKey(Resume r) {
-        Object searchKey = getSearchKey(r.getUuid());
+        Object searchKey = getSearchKey(r);
         if (isExist(searchKey)) {
             throw new ExistStorageException(r.getUuid());
         }
@@ -59,6 +59,10 @@ public abstract class AbstractStorage implements Storage {
             throw new NotExistStorageException(uuid);
         }
         return searchKey;
+    }
+
+    protected Object getSearchKey(Resume r) {
+        return getSearchKey(r.getUuid());
     }
 
     abstract protected void doSave(Resume r, Object key);

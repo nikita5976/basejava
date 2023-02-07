@@ -4,7 +4,7 @@ import webapp.exception.ExistStorageException;
 import webapp.exception.NotExistStorageException;
 import webapp.exception.StorageException;
 import webapp.model.Resume;
-import webapp.storage.SortedArrayStorage;
+import webapp.storage.FullNameMapStorage;
 import webapp.storage.Storage;
 
 import java.io.BufferedReader;
@@ -17,7 +17,7 @@ import java.util.List;
  * (just run, no need to understand)
  */
 public class MainArray {
-    private final static Storage ARRAY_STORAGE = new SortedArrayStorage();
+    private final static Storage ARRAY_STORAGE = new FullNameMapStorage();
 
     public static void main(String[] args) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));

@@ -12,14 +12,12 @@ public class Resume {
     }
 
     public Resume(String uuid) {
-        // разобраться с проверкой когда будет возможно обеспечить uuid всегда не null на входе
-        //решить аналогичный вопрос с методами delete и update
-        if (uuid == null) {
-            this.uuid = (UUID.randomUUID().toString());
-        } else {
-            this.uuid = uuid;
-        }
-        this.fullName = new GeneratorNames().getFullName();
+        this(uuid, GeneratorNames.getFullName());
+    }
+
+    public Resume(String uuid, String fullName) {
+        this.uuid = uuid;
+        this.fullName = fullName;
     }
 
     public String getUuid() {

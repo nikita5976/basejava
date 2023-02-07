@@ -1,6 +1,5 @@
 package webapp.storage;
 
-
 import webapp.model.Resume;
 
 import java.util.ArrayList;
@@ -8,12 +7,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MapStorage extends AbstractStorage {
+public class FullNameMapStorage extends AbstractStorage {
     private final Map<String, Resume> storage = new HashMap<>();
 
     @Override
     protected void doSave(Resume r, Object key) {
-        storage.put(r.getUuid(), r);
+        storage.put(r.getFullName(), r);
     }
 
     @Override
@@ -41,8 +40,13 @@ public class MapStorage extends AbstractStorage {
     }
 
     @Override
-    protected String getSearchKey(String uuid) {
-        return uuid;
+    protected Object getSearchKey(Resume r) {
+        return r.getFullName();
+    }
+
+    @Override
+    protected Object getSearchKey(String fullName) {
+        return fullName;
     }
 
     @Override
@@ -55,11 +59,8 @@ public class MapStorage extends AbstractStorage {
         storage.clear();
     }
 
-
     @Override
     public int size() {
         return storage.size();
     }
 }
-
-

@@ -1,8 +1,8 @@
 package webapp.model;
 
-public class GeneratorNames {
+class GeneratorNames {
     private static int enumerator = -1;
-    private final String[] names = {
+    private static final String[] names = {
             "Иванов Пётр",
             "Петров Иван",
             "Петров Иван",
@@ -17,7 +17,7 @@ public class GeneratorNames {
             "Алексеев Иван"
     };
 
-    protected String getFullName() {
+    protected static String getFullName() {
         if (enumerator == 11) {
             enumerator = -1;
         }
