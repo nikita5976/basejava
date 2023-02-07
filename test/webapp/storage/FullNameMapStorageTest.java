@@ -7,7 +7,7 @@ import webapp.model.Resume;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 
-public class FullNameMapStorageTest extends AbstractArrayStorageTest{
+public class FullNameMapStorageTest extends AbstractArrayStorageTest {
     public FullNameMapStorageTest() {
         super(new FullNameMapStorage());
     }
