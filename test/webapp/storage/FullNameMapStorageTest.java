@@ -26,9 +26,10 @@ public class FullNameMapStorageTest extends AbstractArrayStorageTest {
     @Override
     @Test
     public void update() {
-        Resume resumeUpdated = new Resume(FULL_NAME_1);
+        Resume resumeUpdated = new Resume(UUID_1,FULL_NAME_1);
         storage.update(resumeUpdated);
         assertSame(resumeUpdated, storage.get(FULL_NAME_1));
+        assertSame(resumeUpdated,storage.get(UUID_1));
     }
 
     @Override
