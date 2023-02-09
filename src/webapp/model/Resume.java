@@ -12,7 +12,7 @@ public class Resume {
     }
 
     public Resume(String uuid) {
-        this(uuid, GeneratorNames.getFullName());
+        this(uuid, "Иванов Иван");
     }
 
     public Resume(String uuid, String fullName) {
