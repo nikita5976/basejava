@@ -16,8 +16,8 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     }
 
     @Override
-    protected void doSave(Resume r, Object key) {
-        int index = (int) key;
+    protected void doSave(Resume r, Object searchKey) {
+        int index = (int) searchKey;
         if (size >= storage.length) {
             throw new StorageException("\n резюме " + r.getUuid() + " не сохранено, архив полон", r.getUuid());
         } else {
@@ -26,13 +26,13 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
         }
     }
 
-    public final Resume doGet(Object key) {
-        int keyInt = (Integer) key;
+    public final Resume doGet(Object searchKey) {
+        int keyInt = (Integer) searchKey;
         return storage[keyInt];
     }
 
-    public final void doDelete(Object key) {
-        int keyInt = (Integer) key;
+    public final void doDelete(Object searchKey) {
+        int keyInt = (Integer) searchKey;
         deleteResume(size, keyInt);
         storage[size - 1] = null;
         size--;
@@ -53,15 +53,15 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     }
 
     @Override
-    public final void doUpdate(Object key, Resume r) {
-        int keyInt = (Integer) key;
+    public final void doUpdate(Object searchKey, Resume r) {
+        int keyInt = (Integer) searchKey;
         storage[keyInt] = r;
         System.out.println("\n резюме " + r.getUuid() + " обновлено");
     }
 
     @Override
-    protected boolean isExist(Object key) {
-        int keyInt = (Integer) key;
+    protected boolean isExist(Object searchKey) {
+        int keyInt = (Integer) searchKey;
         return keyInt >= 0;
     }
 
