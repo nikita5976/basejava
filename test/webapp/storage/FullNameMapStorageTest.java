@@ -7,15 +7,11 @@ import webapp.model.Resume;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 
-public class FullNameMapStorageTest extends AbstractArrayStorageTest {
+public class FullNameMapStorageTest extends AbstractStorageTest {
     public FullNameMapStorageTest() {
         super(new FullNameMapStorage());
     }
 
-    @Override
-    @Test
-    public void saveOverflow() {
-    }
 
     @Override
     @Test(expected = ExistStorageException.class)
@@ -26,10 +22,10 @@ public class FullNameMapStorageTest extends AbstractArrayStorageTest {
     @Override
     @Test
     public void update() {
-        Resume resumeUpdated = new Resume(UUID_1,FULL_NAME_1);
+        Resume resumeUpdated = new Resume(UUID_1, FULL_NAME_1);
         storage.update(resumeUpdated);
         assertSame(resumeUpdated, storage.get(FULL_NAME_1));
-        assertSame(resumeUpdated,storage.get(UUID_1));
+        assertSame(resumeUpdated, storage.get(UUID_1));
     }
 
     @Override
