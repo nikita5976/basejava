@@ -8,36 +8,32 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MapStorage extends AbstractStorage {
+public class MapStorage extends AbstractStorage <String> {
     private final Map<String, Resume> storage = new HashMap<>();
 
     @Override
-    protected void doSave(Resume r, Object key) {
+    protected void doSave(Resume r, String searchKey) {
         storage.put(r.getUuid(), r);
     }
 
     @Override
-    protected Resume doGet(Object searchKey) {
-        String keyMap = (String) searchKey;
-        return storage.get(keyMap);
+    protected Resume doGet(String searchKey) {
+        return storage.get(searchKey);
     }
 
     @Override
-    protected void doDelete(Object searchKey) {
-        String keyMap = (String) searchKey;
-        storage.remove(keyMap);
+    protected void doDelete(String searchKey) {
+        storage.remove(searchKey);
     }
 
     @Override
-    protected void doUpdate(Object searchKey, Resume r) {
-        String keyMap = (String) searchKey;
-        storage.put(keyMap, r);
+    protected void doUpdate(String searchKey, Resume r) {
+        storage.put(searchKey, r);
     }
 
     @Override
-    protected boolean isExist(Object searchKey) {
-        String keyMap = (String) searchKey;
-        return storage.containsKey(keyMap);
+    protected boolean isExist(String searchKey) {
+        return storage.containsKey(searchKey);
     }
 
     @Override

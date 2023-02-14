@@ -10,33 +10,31 @@ import java.util.Map;
 
 import static java.util.Objects.isNull;
 
-public class MapResumeStorage extends AbstractStorage {
+public class MapResumeStorage extends AbstractStorage <Resume> {
     private final Map<String, Resume> storage = new HashMap<>();
 
     @Override
-    protected void doSave(Resume r, Object key) {
+    protected void doSave(Resume r, Resume searchKey) {
         storage.put(r.getUuid(), r);
     }
 
     @Override
-    protected Resume doGet(Object searchKey) {
-        return (Resume) searchKey;
+    protected Resume doGet(Resume searchKey) {
+        return searchKey;
     }
 
     @Override
-    protected void doDelete(Object searchKey) {
-        Resume r = (Resume) searchKey;
-        storage.remove(r.getUuid());
+    protected void doDelete(Resume searchKey) {
+        storage.remove(searchKey.getUuid());
     }
 
     @Override
-    protected void doUpdate(Object searchKey, Resume r) {
-        Resume keyResume = (Resume) searchKey;
-        storage.put(keyResume.getUuid(), r);
+    protected void doUpdate(Resume searchKey, Resume r) {
+        storage.put(searchKey.getUuid(), r);
     }
 
     @Override
-    protected boolean isExist(Object searchKey) {
+    protected boolean isExist(Resume searchKey) {
         return !isNull(searchKey);
     }
 

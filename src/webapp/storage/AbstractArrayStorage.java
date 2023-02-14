@@ -5,7 +5,7 @@ import webapp.model.Resume;
 
 import java.util.*;
 
-public abstract class AbstractArrayStorage extends AbstractStorage {
+public abstract class AbstractArrayStorage extends AbstractStorage <Integer> {
     protected final static int STORAGE_LIMIT = 10000;
     protected final Resume[] storage = new Resume[STORAGE_LIMIT];
     protected int size;
@@ -16,24 +16,21 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     }
 
     @Override
-    protected void doSave(Resume r, Object searchKey) {
-        int index = (int) searchKey;
+    protected void doSave(Resume r, Integer searchKey) {
         if (size >= storage.length) {
             throw new StorageException("\n резюме " + r.getUuid() + " не сохранено, архив полон", r.getUuid());
         } else {
-            saveResume(size, index, r);
+            saveResume(size, searchKey, r);
             size++;
         }
     }
 
-    public final Resume doGet(Object searchKey) {
-        int keyInt = (Integer) searchKey;
-        return storage[keyInt];
+    public final Resume doGet(Integer searchKey) {
+        return storage[searchKey];
     }
 
-    public final void doDelete(Object searchKey) {
-        int keyInt = (Integer) searchKey;
-        deleteResume(size, keyInt);
+    public final void doDelete(Integer searchKey) {
+        deleteResume(size, searchKey);
         storage[size - 1] = null;
         size--;
     }
@@ -53,16 +50,14 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     }
 
     @Override
-    public final void doUpdate(Object searchKey, Resume r) {
-        int keyInt = (Integer) searchKey;
-        storage[keyInt] = r;
+    public final void doUpdate(Integer searchKey, Resume r) {
+        storage[searchKey] = r;
         System.out.println("\n резюме " + r.getUuid() + " обновлено");
     }
 
     @Override
-    protected boolean isExist(Object searchKey) {
-        int keyInt = (Integer) searchKey;
-        return keyInt >= 0;
+    protected boolean isExist(Integer searchKey) {
+        return searchKey >= 0;
     }
 
     @Override

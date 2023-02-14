@@ -4,53 +4,49 @@ import webapp.model.Resume;
 
 import java.util.*;
 
-public class FullNameMapStorage extends AbstractStorage {
+public class FullNameMapStorage extends AbstractStorage <String>{
     private final Map<String, Resume> storage = new HashMap<>();
 
     private static String uuid = "empty";
 
     @Override
-    protected void doSave(Resume r, Object key) {
+    protected void doSave(Resume r, String searchKey) {
         storage.put(r.getFullName(), r);
     }
 
     @Override
-    protected Resume doGet(Object key) {
-        String keyMap = (String) key;
-        return storage.get(keyMap);
+    protected Resume doGet(String searchKey) {
+        return storage.get(searchKey);
     }
 
     @Override
-    protected void doDelete(Object key) {
-        String keyMap = (String) key;
-        storage.remove(keyMap);
+    protected void doDelete(String searchKey) {
+        storage.remove(searchKey);
     }
 
     @Override
-    protected void doUpdate(Object key, Resume r) {
-        String keyMap = (String) key;
-        storage.put(keyMap, r);
+    protected void doUpdate(String searchKey, Resume r) {
+        storage.put(searchKey, r);
     }
 
     @Override
-    protected boolean isExist(Object key) {
+    protected boolean isExist(String searchKey) {
         final boolean [] is = {false};
-        String keyMap = (String) key;
         storage.forEach((k, r) ->  {
             if (Objects.equals(uuid, r.getUuid())) is [0] = true;
         });
-        if (storage.containsKey(keyMap)) is[0] = true;
+        if (storage.containsKey(searchKey)) is[0] = true;
         return is[0];
     }
 
     @Override
-    protected Object getSearchKey(Resume r) {
+    protected String getSearchKey(Resume r) {
         uuid = r.getUuid();
         return r.getFullName();
     }
 
     @Override
-    protected Object getSearchKey(String fullName) {
+    protected String getSearchKey(String fullName) {
         uuid = "empty";
         String[] name = {fullName};
         storage.forEach((k, r) ->  {
