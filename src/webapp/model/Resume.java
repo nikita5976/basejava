@@ -81,7 +81,7 @@ public class Resume {
         }
     }
 
-    private final static class ObjectivePersonal {
+    private final  class ObjectivePersonal {
         private final StringBuilder op = new StringBuilder();
 
         private void setOp(String[] inData) {
@@ -94,7 +94,7 @@ public class Resume {
         }
     }
 
-    private final static class AchievementQualifications {
+    private final  class AchievementQualifications {
         private final LinkedList<String> aq = new LinkedList<>();
 
         private void setAq(String[] inData) {
@@ -109,7 +109,7 @@ public class Resume {
         }
     }
 
-    private final static class ExperienceEducation {
+    private final  class ExperienceEducation {
 
         private final LinkedList<String[]> ee = new LinkedList<>();
 
