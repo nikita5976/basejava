@@ -1,3 +1,4 @@
+import webapp.model.ContactType;
 import webapp.model.Resume;
 import webapp.model.SectionType;
 
@@ -18,9 +19,8 @@ public class ResumeTestData {
         System.out.println(testResume.getFullName());
         System.out.println("----------------------------------------------");
         System.out.println("Контакты");
-        String[] nameContact = testResume.getNamesContacts();
-        for (String name: nameContact){
-            System.out.println(name +"  "+testResume.getContact(name));
+        for (ContactType contactType : ContactType.values()) {
+            System.out.println(contactType.getTitle() + "  " + testResume.getContact(contactType));
         }
         System.out.println("----------------------------------------------");
         printSection(SectionType.OBJECTIVE);
@@ -31,10 +31,10 @@ public class ResumeTestData {
         printSection(SectionType.EDUCATION);
     }
 
-    private static void printSection(SectionType type){
+    private static void printSection(SectionType type) {
         int size = testResume.getSectionSize(type);
         System.out.println(type.getTitle());
-        for (int i=0; i< size; i++ ){
+        for (int i = 0; i < size; i++) {
             System.out.println(Arrays.toString(testResume.getSection(type)));
             System.out.println();
         }
@@ -42,28 +42,28 @@ public class ResumeTestData {
     }
 
     private static void fillingContactTestResume() {
-        testResume.setContact("Тел.: ", "+7(921) 855-0482");
-        testResume.setContact("Skype: ", "skype:grigory.kislin");
-        testResume.setContact("Почта: ", "gkislin@yandex.ru");
-        testResume.setContact("Профиль LinkedIn", "https://www.linkedin.com/in/gkislin");
-        testResume.setContact("Профиль GitHub", "https://github.com/gkislin");
-        testResume.setContact("Профиль Stackoverflow", "https://stackoverflow.com/users/548473");
-        testResume.setContact("Домашняя страница", "http://gkislin.ru/");
+        testResume.setContact(ContactType.TELEPHONE, "+7(921) 855-0482");
+        testResume.setContact(ContactType.SKYPE, "skype:grigory.kislin");
+        testResume.setContact(ContactType.EMAIL, "gkislin@yandex.ru");
+        testResume.setContact(ContactType.LINKEDIN, "https://www.linkedin.com/in/gkislin");
+        testResume.setContact(ContactType.GITHUB, "https://github.com/gkislin");
+        testResume.setContact(ContactType.STACKOVRFLOW, "https://stackoverflow.com/users/548473");
+        testResume.setContact(ContactType.HOMEPAGE, "http://gkislin.ru/");
     }
 
     private static void filingPersonalTestResume() {
         String[] personalData = {"Аналитический склад ума, сильная логика, креативность, инициативность." +
                 " Пурист кода и архитектуры."};
-        testResume.setSection(SectionType.PERSONAL, personalData );
+        testResume.setSection(SectionType.PERSONAL, personalData);
     }
 
-    private static void filingObjectiveTestResume (){
+    private static void filingObjectiveTestResume() {
         String[] objectiveData = {"Ведущий стажировок и корпоративного обучения " +
                 "по Java Web и Enterprise технологиям"};
         testResume.setSection(SectionType.OBJECTIVE, objectiveData);
     }
 
-    private static void filingAchievementTestResume(){
+    private static void filingAchievementTestResume() {
         String[] achievementData1 = {"Организация команды и успешная реализация " +
                 "Java проектов для сторонних заказчиков: приложения автопарк на " +
                 "стеке Spring Cloud/микросервисы, система мониторинга показателей " +
@@ -93,7 +93,7 @@ public class ResumeTestData {
         testResume.setSection(SectionType.ACHIEVEMENT, achievementData7);
     }
 
-    private static void filingQualificationsTestResume(){
+    private static void filingQualificationsTestResume() {
         String[] qualificationsData1 = {"EE AS: GlassFish (v2.1, v3), OC4J, JBoss, Tomcat, Jetty, WebLogic, WSO2"};
         testResume.setSection(SectionType.QUALIFICATIONS, qualificationsData1);
         String[] qualificationsData2 = {"Version control: Subversion, Git, Mercury, ClearCase, Perforce"};
@@ -129,10 +129,10 @@ public class ResumeTestData {
         testResume.setSection(SectionType.QUALIFICATIONS, qualificationsData14);
     }
 
-    private static void filingExperienceTestResume(){
-    String[] experienceData1 = {"10/2013 - Сейчас", "Java Online Projects", "http://javaops.ru/",
-            "Автор проекта.", "Создание, организация и проведение Java онлайн проектов и стажировок."};
-    testResume.setSection(SectionType.EXPERIENCE, experienceData1);
+    private static void filingExperienceTestResume() {
+        String[] experienceData1 = {"10/2013 - Сейчас", "Java Online Projects", "http://javaops.ru/",
+                "Автор проекта.", "Создание, организация и проведение Java онлайн проектов и стажировок."};
+        testResume.setSection(SectionType.EXPERIENCE, experienceData1);
         String[] experienceData2 = {"10/2014 - 01/2016", "Wrike", "https://www.wrike.com/",
                 "Старший разработчик (backend)", "Проектирование и разработка онлайн платформы управления проектами Wrike " +
                 "(Java 8 API, Maven, Spring, MyBatis, Guava, Vaadin, PostgreSQL, Redis). Двухфакторная аутентификация, авторизация по OAuth1," +
@@ -170,9 +170,9 @@ public class ResumeTestData {
         testResume.setSection(SectionType.EXPERIENCE, experienceData8);
     }
 
-    private static void filingEducationTestResume(){
+    private static void filingEducationTestResume() {
         String[] educationData1 = {"03/2013 - 05/2013", "Coursera", "https://www.coursera.org/course/progfun",
-        "Functional Programming Principles in Scala' by Martin Odersky"};
+                "Functional Programming Principles in Scala' by Martin Odersky"};
         testResume.setSection(SectionType.EDUCATION, educationData1);
         String[] educationData2 = {"03/2011 - 04/2011", "Luxoft", "http://www.luxoft-training.ru/training/catalog/course.html?ID=22366",
                 "Курс 'Объектно-ориентированный анализ ИС. Концептуальное моделирование на UML."};

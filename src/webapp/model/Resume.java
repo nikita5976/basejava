@@ -12,7 +12,7 @@ public class Resume {
     private final ArrayListSection experience = new ArrayListSection();
     private final ArrayListSection education = new ArrayListSection();
 
-    private final Map<String, String> contacts = new HashMap<>();
+    private final Map<ContactType, String> contacts = new HashMap<>();
 
     public Resume() {
 
@@ -53,19 +53,12 @@ public class Resume {
         return fullName + " uuid " + uuid;
     }
 
-    public void setContact(String name, String umlData) {
-        contacts.put(name, umlData);
+    public void setContact(ContactType contactType, String content) {
+        contacts.put(contactType, content);
     }
 
-    public String[] getNamesContacts() {
-        Set<String> temp1 = contacts.keySet();
-        String[] temp = new String[temp1.size()];
-        temp1.toArray(temp);
-        return temp;
-    }
-
-    public String getContact(String contactName) {
-        return contacts.get(contactName);
+    public String getContact(ContactType contactType) {
+        return contacts.get(contactType);
     }
 
     public String[] getSection(SectionType section) {
