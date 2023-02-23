@@ -22,54 +22,12 @@ public class ResumeTestData {
             System.out.println(contactType.getTitle() + "  " + testResume.getContact(contactType));
         }
 
-        System.out.println("----------------------------------------------");
-        System.out.println(SectionType.OBJECTIVE.getTitle());
-        TextSection objectiveText = (TextSection) sectionMap.get(SectionType.OBJECTIVE);
-        System.out.println(objectiveText.getSectionData());
-
-        System.out.println("----------------------------------------------");
-        System.out.println(SectionType.PERSONAL.getTitle());
-        TextSection personalText = (TextSection) sectionMap.get(SectionType.PERSONAL);
-        System.out.println(personalText.getSectionData());
-
-        System.out.println("----------------------------------------------");
-        System.out.println(SectionType.ACHIEVEMENT.getTitle());
-        ListSection achievementList = (ListSection) sectionMap.get(SectionType.ACHIEVEMENT);
-        for (String achievement : achievementList.getSectionData()) {
-            System.out.println(achievement);
-        }
-
-        System.out.println("----------------------------------------------");
-        System.out.println(SectionType.QUALIFICATIONS.getTitle());
-        ListSection qualificationsList = (ListSection) sectionMap.get(SectionType.QUALIFICATIONS);
-        for (String qualification : qualificationsList.getSectionData()) {
-            System.out.println(qualification);
-        }
-
-        System.out.println("----------------------------------------------");
-        System.out.println(SectionType.EXPERIENCE.getTitle());
-        CompanySection companySection = (CompanySection) sectionMap.get(SectionType.EXPERIENCE);
-        for (CompanySection.Company a : companySection.getSectionData()) {
-            for (Periods p : a.getPeriods()) {
-                System.out.println(p.getDateStart() + " - " + p.getDateEnd());
-            }
-            System.out.println(a.getName() + "  " + a.getWebsite());
-            System.out.println(a.getPosition());
-            System.out.println(a.getPractice());
-        }
-
-        System.out.println("----------------------------------------------");
-        System.out.println(SectionType.EDUCATION.getTitle());
-        CompanySection companySection2 = (CompanySection) sectionMap.get(SectionType.EDUCATION);
-        for (CompanySection.Company a : companySection2.getSectionData()) {
-            for (Periods p : a.getPeriods()) {
-                System.out.println(p.getDateStart() + " - " + p.getDateEnd());
-            }
-            System.out.println(a.getName() + "  " + a.getWebsite());
-            System.out.println(a.getPosition());
+        for (SectionType type : SectionType.values()) {
+            System.out.println("----------------------------------------------");
+            System.out.println(type.getTitle());
+            System.out.println(sectionMap.get(type).toString());
         }
     }
-
 
     // заполнение
     private static void fillingContactTestResume() {
@@ -227,3 +185,21 @@ public class ResumeTestData {
                 "Закончил с отличием");
     }
 }
+/*  заметка на память
+System.out.println("----------------------------------------------");
+        System.out.println(SectionType.QUALIFICATIONS.getTitle());
+        ListSection qualificationsList = (ListSection) sectionMap.get(SectionType.QUALIFICATIONS);
+        for (String qualification : qualificationsList.getSectionData()) {
+            System.out.println(qualification);
+
+System.out.println("----------------------------------------------");
+        System.out.println(SectionType.EDUCATION.getTitle());
+        CompanySection companySection2 = (CompanySection) sectionMap.get(SectionType.EDUCATION);
+        for (CompanySection.Company a : companySection2.getSectionData()) {
+            for (Periods p : a.getPeriods()) {
+                System.out.println(p.getDateStart() + " - " + p.getDateEnd());
+            }
+            System.out.println(a.getName() + "  " + a.getWebsite());
+            System.out.println(a.getPosition());
+        }
+ */

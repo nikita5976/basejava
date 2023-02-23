@@ -9,8 +9,8 @@ public class Resume {
     protected final Map<SectionType, AbstractSection> resumeSection = new HashMap<>();
     protected final AbstractSection<String, String> sectionObjective = new TextSection();
     protected final AbstractSection<String, String> sectionPersonal = new TextSection();
-    protected final AbstractSection<String, LinkedList<String>> sectionAchievement = new ListSection();
-    protected final AbstractSection<String, LinkedList<String>> sectionQualification = new ListSection();
+    protected final AbstractSection<String, ArrayList<String>> sectionAchievement = new ListSection();
+    protected final AbstractSection<String, ArrayList<String>> sectionQualification = new ListSection();
     protected final AbstractSection<CompanySection.Company, ArrayList<CompanySection.Company>> sectionExperience = new CompanySection();
     protected final AbstractSection<CompanySection.Company, ArrayList<CompanySection.Company>> sectionEducation = new CompanySection();
 

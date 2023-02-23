@@ -1,5 +1,7 @@
 package webapp.model;
 
+import java.util.Objects;
+
 public class TextSection extends AbstractSection<String, String> {
     private String sectionData;
 
@@ -17,4 +19,23 @@ public class TextSection extends AbstractSection<String, String> {
     protected String getCompany(String a, String b) {
         return null;
     }
+
+    @Override
+    public String toString() {
+        return sectionData;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TextSection textSection = (TextSection) o;
+        return sectionData.equals(textSection.sectionData);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(sectionData);
+    }
 }
+
