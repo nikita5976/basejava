@@ -1,11 +1,12 @@
 package webapp.model;
 
-public abstract class AbstractSection {
+public abstract class AbstractSection<IN, OUT> {
 
-    abstract void setSectionData(String[] data);
 
-    abstract String[] getSectionData();
+    abstract void setSectionData(IN data);
 
-    abstract int getSize ();
+    abstract OUT getSectionData();
+
+    abstract IN getCompany(String name, String website);
 
 }

@@ -5,17 +5,16 @@ import java.util.*;
 public class Resume {
     private String uuid;
     private String fullName;
-    private final TextSection objective = new TextSection();
-    private final TextSection personal = new TextSection();
-    private final ListSection achievement = new ListSection();
-    private final ListSection qualifications = new ListSection();
-    private final ArrayListSection experience = new ArrayListSection();
-    private final ArrayListSection education = new ArrayListSection();
-
     private final Map<ContactType, String> contacts = new HashMap<>();
+    protected final Map<SectionType, AbstractSection> resumeSection = new HashMap<>();
+    protected final AbstractSection<String, String> sectionObjective = new TextSection();
+    protected final AbstractSection<String, String> sectionPersonal = new TextSection();
+    protected final AbstractSection<String, LinkedList<String>> sectionAchievement = new ListSection();
+    protected final AbstractSection<String, LinkedList<String>> sectionQualification = new ListSection();
+    protected final AbstractSection<CompanySection.Company, ArrayList<CompanySection.Company>> sectionExperience = new CompanySection();
+    protected final AbstractSection<CompanySection.Company, ArrayList<CompanySection.Company>> sectionEducation = new CompanySection();
 
     public Resume() {
-
     }
 
     public Resume(String fullName) {
@@ -61,136 +60,51 @@ public class Resume {
         return contacts.get(contactType);
     }
 
-    public String[] getSection(SectionType section) {
-        String[] dataSection;
-        switch (section) {
-            case OBJECTIVE:
-                dataSection = objective.getSectionData();
-                break;
-            case PERSONAL:
-                dataSection = personal.getSectionData();
-                break;
-            case ACHIEVEMENT:
-                dataSection = achievement.getSectionData();
-                break;
-            case QUALIFICATIONS:
-                dataSection = qualifications.getSectionData();
-                break;
-            case EDUCATION:
-                dataSection = education.getSectionData();
-                break;
-            case EXPERIENCE:
-                dataSection = experience.getSectionData();
-                break;
-            default:
-                dataSection = null;
-        }
-        return dataSection;
+    public void setSectionObjective(String objectiveData) {
+        sectionObjective.setSectionData(objectiveData);
+        resumeSection.put(SectionType.OBJECTIVE, sectionObjective);
     }
 
-    public int getSectionSize(SectionType section) {
-        int size;
-        switch (section) {
-            case OBJECTIVE:
-                size = objective.getSize();
-                break;
-            case PERSONAL:
-                size = personal.getSize();
-                break;
-            case ACHIEVEMENT:
-                size = achievement.getSize();
-                break;
-            case QUALIFICATIONS:
-                size = qualifications.getSize();
-                break;
-            case EDUCATION:
-                size = education.getSize();
-                break;
-            case EXPERIENCE:
-                size = experience.getSize();
-                break;
-            default:
-                size = 0;
-        }
-        return size;
+    public void setSectionPersonal(String personalData) {
+        sectionPersonal.setSectionData(personalData);
+        resumeSection.put(SectionType.PERSONAL, sectionPersonal);
     }
 
-    public void setSection(SectionType section, String[] data) {
-        switch (section) {
-            case OBJECTIVE:
-                objective.setSectionData(data);
-                break;
-            case PERSONAL:
-                personal.setSectionData(data);
-                break;
-            case ACHIEVEMENT:
-                achievement.setSectionData(data);
-                break;
-            case QUALIFICATIONS:
-                qualifications.setSectionData(data);
-                break;
-            case EDUCATION:
-                education.setSectionData(data);
-                break;
-            case EXPERIENCE:
-                experience.setSectionData(data);
-                break;
-        }
+    public void setSectionAchievement(String achievementData) {
+        sectionAchievement.setSectionData(achievementData);
+        resumeSection.put(SectionType.ACHIEVEMENT, sectionAchievement);
     }
 
-    private final class TextSection extends AbstractSection {
-        private final StringBuilder sectionData = new StringBuilder();
-
-        protected void setSectionData(String[] inData) {
-            sectionData.append(inData[0]);
-        }
-
-        protected String[] getSectionData() {
-            String[] a = {sectionData.toString()};
-            return a;
-        }
-
-        protected int getSize() {
-            return 1;
-        }
-
+    public void setSectionQualification(String qualificationData) {
+        sectionQualification.setSectionData(qualificationData);
+        resumeSection.put(SectionType.QUALIFICATIONS, sectionQualification);
     }
 
-    private final class ListSection extends AbstractSection {
-        private final LinkedList<String> sectionData = new LinkedList<>();
-
-        protected void setSectionData(String[] inData) {
-            sectionData.addLast(inData[0]);
-        }
-
-        protected String[] getSectionData() {
-            String temp = sectionData.pollFirst();
-            sectionData.addLast(temp);
-            String[] a = {temp};
-            return a;
-        }
-
-        protected int getSize() {
-            return sectionData.size();
-        }
+    public void setSectionExperience(String dataStart, String dataStop, String name, String website, String position, String practice) {
+        CompanySection.Company company = sectionExperience.getCompany(name, website);
+        company.setPeriod(dataStart, dataStop);
+        company.setPosition(position);
+        company.setPractice(practice);
+        sectionExperience.setSectionData(company);
+        resumeSection.put(SectionType.EXPERIENCE, sectionExperience);
     }
 
-    private final class ArrayListSection extends AbstractSection {
-
-        private final LinkedList<String[]> sectionData = new LinkedList<>();
-
-        protected void setSectionData(String[] data) {
-            sectionData.addLast(data);
-        }
-
-        protected String[] getSectionData() {
-            String[] data = sectionData.pollFirst();
-            sectionData.addLast(data);
-            return data;
-        }
-
-        protected int getSize() {
-            return sectionData.size();
-        }
+    public void setSectionEducation(String dataStart, String dataStop, String name, String website, String position) {
+        CompanySection.Company placeOfStudy = sectionEducation.getCompany(name, website);
+        placeOfStudy.setPeriod(dataStart, dataStop);
+        placeOfStudy.setPosition(position);
+        sectionEducation.setSectionData(placeOfStudy);
+        resumeSection.put(SectionType.EDUCATION, sectionEducation);
     }
+
+    public Map<SectionType, AbstractSection> getResumeSection() {
+        return new HashMap<>(resumeSection);
+    }
+
+    //пока без надобности
+    public Object getSection(SectionType type) {
+        return resumeSection.get(type);
+    }
+
+
 }
