@@ -22,29 +22,21 @@ public class CompanySection extends AbstractSection<CompanySection.Company, Arra
         return new Company(name, website);
     }
 
-    public class Company {
+    public static class Company {
         private final String name;
         private final String website;
-        private String position;
-        private String practice = "";
-        List<Periods> periods = new ArrayList<>();
+
+        List<Period> periods = new ArrayList<>();
 
         Company(String name, String website) {
             this.name = name;
             this.website = website;
         }
 
-        void setPosition(String position) {
-            this.position = position;
-        }
-
-        void setPractice(String practice) {
-            this.practice = practice;
-        }
-
-        void setPeriod(String dataStart, String dataStop) {
-            Periods periodsClass = new Periods(dataStart, dataStop);
-            periods.add(periodsClass);
+        void setPeriod(String dataStart, String dataStop, String title, String description) {
+            Period periodClass = new Period(dataStart, dataStop, title);
+            periodClass.setDescription(description);
+            periods.add(periodClass);
         }
 
         public String getName() {
@@ -55,21 +47,13 @@ public class CompanySection extends AbstractSection<CompanySection.Company, Arra
             return website;
         }
 
-        public String getPosition() {
-            return position;
-        }
-
-        public String getPractice() {
-            return practice;
-        }
-
-        public List<Periods> getPeriods() {
+        public List<Period> getPeriods() {
             return new ArrayList<>(periods);
         }
 
         @Override
         public String toString() {
-            return periods.toString() + " -  \n" + name + "  " + website + "\n" + position + "\n" + practice;
+            return periods.toString() + " -  \n" + name + "  " + website;
         }
 
         @Override
@@ -77,13 +61,12 @@ public class CompanySection extends AbstractSection<CompanySection.Company, Arra
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
             Company company = (Company) o;
-            return name.equals(company.name) && website.equals(company.website) && position.equals(company.position)
-                    && practice.equals(company.practice);
+            return name.equals(company.name) && website.equals(company.website);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(name + website + position + practice);
+            return Objects.hash(name + website);
         }
     }
 

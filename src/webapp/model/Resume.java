@@ -80,19 +80,16 @@ public class Resume {
         resumeSection.put(SectionType.QUALIFICATIONS, sectionQualification);
     }
 
-    public void setSectionExperience(String dataStart, String dataStop, String name, String website, String position, String practice) {
+    public void setSectionExperience(String dataStart, String dataStop, String name, String website, String title, String description) {
         CompanySection.Company company = sectionExperience.getCompany(name, website);
-        company.setPeriod(dataStart, dataStop);
-        company.setPosition(position);
-        company.setPractice(practice);
+        company.setPeriod(dataStart, dataStop, title, description);
         sectionExperience.setSectionData(company);
         resumeSection.put(SectionType.EXPERIENCE, sectionExperience);
     }
 
-    public void setSectionEducation(String dataStart, String dataStop, String name, String website, String position) {
+    public void setSectionEducation(String dataStart, String dataStop, String name, String website, String title) {
         CompanySection.Company placeOfStudy = sectionEducation.getCompany(name, website);
-        placeOfStudy.setPeriod(dataStart, dataStop);
-        placeOfStudy.setPosition(position);
+        placeOfStudy.setPeriod(dataStart, dataStop, title,"");
         sectionEducation.setSectionData(placeOfStudy);
         resumeSection.put(SectionType.EDUCATION, sectionEducation);
     }
