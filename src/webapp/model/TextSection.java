@@ -2,22 +2,16 @@ package webapp.model;
 
 import java.util.Objects;
 
-public class TextSection extends AbstractSection<String, String> {
-    private String sectionData;
+public class TextSection extends AbstractSection {
+    private final String sectionData;
 
-    @Override
-    protected void setSectionData(String data) {
-        sectionData = data;
+    protected TextSection(String sectionData) {
+        Objects.requireNonNull(sectionData, "sectionData  TextSection must not be null");
+        this.sectionData = sectionData;
     }
 
-    @Override
     public String getSectionData() {
         return sectionData;
-    }
-
-    @Override
-    protected String getCompany(String a, String b) {
-        return null;
     }
 
     @Override

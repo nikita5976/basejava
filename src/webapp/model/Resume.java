@@ -5,14 +5,8 @@ import java.util.*;
 public class Resume {
     private String uuid;
     private String fullName;
-    private final Map<ContactType, String> contacts = new HashMap<>();
-    protected final Map<SectionType, AbstractSection> resumeSection = new HashMap<>();
-    protected final AbstractSection<String, String> sectionObjective = new TextSection();
-    protected final AbstractSection<String, String> sectionPersonal = new TextSection();
-    protected final AbstractSection<String, ArrayList<String>> sectionAchievement = new ListSection();
-    protected final AbstractSection<String, ArrayList<String>> sectionQualification = new ListSection();
-    protected final AbstractSection<CompanySection.Company, ArrayList<CompanySection.Company>> sectionExperience = new CompanySection();
-    protected final AbstractSection<CompanySection.Company, ArrayList<CompanySection.Company>> sectionEducation = new CompanySection();
+    private final Map<ContactType, String> contacts = new EnumMap<>(ContactType.class);
+    protected final Map<SectionType, AbstractSection> section = new EnumMap<>(SectionType.class);
 
     public Resume() {
     }
@@ -22,6 +16,8 @@ public class Resume {
     }
 
     public Resume(String uuid, String fullName) {
+        Objects.requireNonNull(uuid, "uuid must not be null");
+        Objects.requireNonNull(fullName, "fullName must not be null");
         this.uuid = uuid;
         this.fullName = fullName;
     }
@@ -34,6 +30,86 @@ public class Resume {
         return fullName;
     }
 
+
+    public void setContact(ContactType contactType, String content) {
+        contacts.put(contactType, content);
+    }
+
+    public String getContact(ContactType contactType) {
+        return contacts.get(contactType);
+    }
+
+    public void setSectionObjective(String objectiveData) {
+        TextSection sectionObjective = new TextSection(objectiveData);
+        section.put(SectionType.OBJECTIVE, sectionObjective);
+    }
+
+    public void setSectionPersonal(String personalData) {
+        TextSection sectionPersonal = new TextSection(personalData);
+        section.put(SectionType.PERSONAL, sectionPersonal);
+    }
+
+    public void setSectionAchievement(String achievementData) {
+        ListSection sectionAchievement;
+        if (section.get(SectionType.ACHIEVEMENT) == null) {
+            ArrayList<String> al = new ArrayList<>();
+            al.add(achievementData);
+            sectionAchievement = new ListSection(new ArrayList<>(al));
+        } else {
+            sectionAchievement = (ListSection) section.get(SectionType.ACHIEVEMENT);
+            sectionAchievement.getSectionData()
+                    .add(achievementData);
+        }
+        section.put(SectionType.ACHIEVEMENT, sectionAchievement);
+    }
+
+    public void setSectionQualification(String qualificationData) {
+        ListSection sectionQualification;
+        if (section.get(SectionType.QUALIFICATIONS) == null) {
+            ArrayList<String> al = new ArrayList<>();
+            al.add(qualificationData);
+            sectionQualification = new ListSection(al);
+        } else {
+            sectionQualification = (ListSection) section.get(SectionType.ACHIEVEMENT);
+            sectionQualification.getSectionData()
+                    .add(qualificationData);
+        }
+        section.put(SectionType.QUALIFICATIONS, sectionQualification);
+    }
+
+    public void setSectionExperience(String dataStart, String dataEnd, String name, String website, String title, String description) {
+        CompanySection sectionExperience;
+        if (section.get(SectionType.EXPERIENCE) == null) {
+            ArrayList<Company> al = new ArrayList<>();
+            al.add(new Company(dataStart, dataEnd, title, description, name, website));
+            sectionExperience = new CompanySection(al);
+        } else {
+            sectionExperience = (CompanySection) section.get(SectionType.EXPERIENCE);
+            sectionExperience.getSectionData()
+                    .add(new Company(dataStart, dataEnd, title, description, name, website));
+        }
+        section.put(SectionType.EXPERIENCE, sectionExperience);
+    }
+
+    public void setSectionEducation(String dataStart, String dataEnd, String name, String website, String title) {
+        CompanySection sectionEducation;
+        if (section.get(SectionType.EDUCATION) == null) {
+            ArrayList<Company> al = new ArrayList<>();
+            al.add(new Company(dataStart, dataEnd, title, "", name, website));
+            sectionEducation = new CompanySection(al);
+        } else {
+            sectionEducation = (CompanySection) section.get(SectionType.EDUCATION);
+            sectionEducation.getSectionData()
+                    .add(new Company(dataStart, dataEnd, title, "", name, website));
+        }
+        section.put(SectionType.EDUCATION, sectionEducation);
+    }
+
+    public Map<SectionType, AbstractSection> getSection() {
+        return new HashMap<>(section);
+    }
+
+    //переделать
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -51,57 +127,4 @@ public class Resume {
     public String toString() {
         return fullName + " uuid " + uuid;
     }
-
-    public void setContact(ContactType contactType, String content) {
-        contacts.put(contactType, content);
-    }
-
-    public String getContact(ContactType contactType) {
-        return contacts.get(contactType);
-    }
-
-    public void setSectionObjective(String objectiveData) {
-        sectionObjective.setSectionData(objectiveData);
-        resumeSection.put(SectionType.OBJECTIVE, sectionObjective);
-    }
-
-    public void setSectionPersonal(String personalData) {
-        sectionPersonal.setSectionData(personalData);
-        resumeSection.put(SectionType.PERSONAL, sectionPersonal);
-    }
-
-    public void setSectionAchievement(String achievementData) {
-        sectionAchievement.setSectionData(achievementData);
-        resumeSection.put(SectionType.ACHIEVEMENT, sectionAchievement);
-    }
-
-    public void setSectionQualification(String qualificationData) {
-        sectionQualification.setSectionData(qualificationData);
-        resumeSection.put(SectionType.QUALIFICATIONS, sectionQualification);
-    }
-
-    public void setSectionExperience(String dataStart, String dataStop, String name, String website, String title, String description) {
-        CompanySection.Company company = sectionExperience.getCompany(name, website);
-        company.setPeriod(dataStart, dataStop, title, description);
-        sectionExperience.setSectionData(company);
-        resumeSection.put(SectionType.EXPERIENCE, sectionExperience);
-    }
-
-    public void setSectionEducation(String dataStart, String dataStop, String name, String website, String title) {
-        CompanySection.Company placeOfStudy = sectionEducation.getCompany(name, website);
-        placeOfStudy.setPeriod(dataStart, dataStop, title,"");
-        sectionEducation.setSectionData(placeOfStudy);
-        resumeSection.put(SectionType.EDUCATION, sectionEducation);
-    }
-
-    public Map<SectionType, AbstractSection> getResumeSection() {
-        return new HashMap<>(resumeSection);
-    }
-
-    //пока без надобности
-    public Object getSection(SectionType type) {
-        return resumeSection.get(type);
-    }
-
-
 }

@@ -1,23 +1,18 @@
 package webapp.model;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
-public class ListSection extends AbstractSection<String, ArrayList<String>> {
-    private final ArrayList<String> sectionData = new ArrayList<>();
+public class ListSection extends AbstractSection {
+    private final List<String> sectionData;
 
-    protected void setSectionData(String data) {
-        sectionData.add(data);
+    protected ListSection(List<String> sectionData) {
+        Objects.requireNonNull(sectionData, "sectionData in ListSection must not be null");
+        this.sectionData = sectionData;
     }
 
-    @Override
-    public ArrayList<String> getSectionData() {
-        return new ArrayList<>(sectionData);
-    }
-
-    @Override
-    protected String getCompany(String a, String b) {
-        return null;
+    public List<String> getSectionData() {
+        return sectionData;
     }
 
     @Override
@@ -35,6 +30,6 @@ public class ListSection extends AbstractSection<String, ArrayList<String>> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(sectionData.hashCode());
+        return sectionData.hashCode();
     }
 }
