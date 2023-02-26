@@ -1,3 +1,5 @@
+package webapp;
+
 import webapp.model.SectionType;
 
 public class TestSingleton {
@@ -14,7 +16,7 @@ public class TestSingleton {
     }
 
     public static void main(String[] args) {
-        TestSingleton.getInstance().toString();
+        System.out.println(TestSingleton.getInstance().toString());
         Singleton instance = Singleton.valueOf("INSTANCE");
         System.out.println(instance.ordinal());
 

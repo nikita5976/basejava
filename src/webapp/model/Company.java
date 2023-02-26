@@ -1,15 +1,16 @@
 package webapp.model;
 
+import java.time.LocalDate;
 import java.util.Objects;
 
 public class Company {
-    private final String dateStart;
-    private final String dateEnd;
+    private final LocalDate dateStart;
+    private final LocalDate dateEnd;
     private final String title;
     private final String description;
     Link link;
 
-    Company(String dataStart, String dataEnd, String title, String description, String name, String website) {
+    Company(LocalDate dataStart, LocalDate dataEnd, String title, String description, String name, String website) {
         Objects.requireNonNull(dataStart, "dataStart must not be null");
         Objects.requireNonNull(dataEnd, "dataEnd must not be null");
         Objects.requireNonNull(title, "title must not be null");

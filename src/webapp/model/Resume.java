@@ -1,5 +1,9 @@
 package webapp.model;
 
+import webapp.util.DateUtil;
+
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.*;
 
 public class Resume {
@@ -77,7 +81,9 @@ public class Resume {
         section.put(SectionType.QUALIFICATIONS, sectionQualification);
     }
 
-    public void setSectionExperience(String dataStart, String dataEnd, String name, String website, String title, String description) {
+    public void setSectionExperience(int monthDataStart, int yearDataStart, int monthDataEnd, int yearDataEnd, String name, String website, String title, String description) {
+        LocalDate dataStart = DateUtil.of(yearDataStart, Month.of (monthDataStart));
+        LocalDate dataEnd = DateUtil.of(yearDataEnd,Month.of(monthDataEnd));
         CompanySection sectionExperience;
         if (section.get(SectionType.EXPERIENCE) == null) {
             ArrayList<Company> al = new ArrayList<>();
@@ -91,7 +97,9 @@ public class Resume {
         section.put(SectionType.EXPERIENCE, sectionExperience);
     }
 
-    public void setSectionEducation(String dataStart, String dataEnd, String name, String website, String title) {
+    public void setSectionEducation(int monthDataStart, int yearDataStart, int monthDataEnd, int yearDataEnd, String name, String website, String title) {
+        LocalDate dataStart = DateUtil.of(yearDataStart, Month.of (monthDataStart));
+        LocalDate dataEnd = DateUtil.of(yearDataEnd,Month.of(monthDataEnd));
         CompanySection sectionEducation;
         if (section.get(SectionType.EDUCATION) == null) {
             ArrayList<Company> al = new ArrayList<>();
