@@ -54,70 +54,76 @@ public class Resume {
     }
 
     public void setSectionAchievement(String achievementData) {
-        ListSection sectionAchievement;
-        if (section.get(SectionType.ACHIEVEMENT) == null) {
-            ArrayList<String> al = new ArrayList<>();
-            al.add(achievementData);
-            sectionAchievement = new ListSection(new ArrayList<>(al));
-        } else {
-            sectionAchievement = (ListSection) section.get(SectionType.ACHIEVEMENT);
-            sectionAchievement.getSectionData()
-                    .add(achievementData);
-        }
-        section.put(SectionType.ACHIEVEMENT, sectionAchievement);
+
+        setSectionList(SectionType.ACHIEVEMENT, achievementData);
     }
 
     public void setSectionQualification(String qualificationData) {
-        ListSection sectionQualification;
-        if (section.get(SectionType.QUALIFICATIONS) == null) {
+
+        setSectionList(SectionType.QUALIFICATIONS, qualificationData);
+    }
+
+    private void setSectionList(SectionType type, String data) {
+
+        if (section.get(type) == null) {
             ArrayList<String> al = new ArrayList<>();
-            al.add(qualificationData);
-            sectionQualification = new ListSection(al);
+            al.add(data);
+            ListSection sectionList = new ListSection(new ArrayList<>(al));
+            section.put(type, sectionList);
         } else {
-            sectionQualification = (ListSection) section.get(SectionType.ACHIEVEMENT);
-            sectionQualification.getSectionData()
-                    .add(qualificationData);
+            ListSection sectionList = (ListSection) section.get(type);
+            sectionList.getSectionData()
+                    .add(data);
         }
-        section.put(SectionType.QUALIFICATIONS, sectionQualification);
     }
 
-    public void setSectionExperience(int monthDataStart, int yearDataStart, int monthDataEnd, int yearDataEnd, String name, String website, String title, String description) {
-        LocalDate dataStart = DateUtil.of(yearDataStart, Month.of (monthDataStart));
-        LocalDate dataEnd = DateUtil.of(yearDataEnd,Month.of(monthDataEnd));
-        CompanySection sectionExperience;
-        if (section.get(SectionType.EXPERIENCE) == null) {
-            ArrayList<Company> al = new ArrayList<>();
-            al.add(new Company(dataStart, dataEnd, title, description, name, website));
-            sectionExperience = new CompanySection(al);
-        } else {
-            sectionExperience = (CompanySection) section.get(SectionType.EXPERIENCE);
-            sectionExperience.getSectionData()
-                    .add(new Company(dataStart, dataEnd, title, description, name, website));
-        }
-        section.put(SectionType.EXPERIENCE, sectionExperience);
+    public void setSectionExperience(int monthDataStart, int yearDataStart, int monthDataEnd, int yearDataEnd,
+                                     String name, String website, String title, String description) {
+
+        setSectionCompany(SectionType.EXPERIENCE, monthDataStart, yearDataStart, monthDataEnd, yearDataEnd,
+                name, website, title, description);
     }
 
-    public void setSectionEducation(int monthDataStart, int yearDataStart, int monthDataEnd, int yearDataEnd, String name, String website, String title) {
-        LocalDate dataStart = DateUtil.of(yearDataStart, Month.of (monthDataStart));
-        LocalDate dataEnd = DateUtil.of(yearDataEnd,Month.of(monthDataEnd));
-        CompanySection sectionEducation;
-        if (section.get(SectionType.EDUCATION) == null) {
-            ArrayList<Company> al = new ArrayList<>();
-            al.add(new Company(dataStart, dataEnd, title, "", name, website));
-            sectionEducation = new CompanySection(al);
-        } else {
-            sectionEducation = (CompanySection) section.get(SectionType.EDUCATION);
-            sectionEducation.getSectionData()
-                    .add(new Company(dataStart, dataEnd, title, "", name, website));
+    public void setSectionEducation(int monthDataStart, int yearDataStart, int monthDataEnd, int yearDataEnd,
+                                    String name, String website, String title) {
+
+        setSectionCompany(SectionType.EDUCATION, monthDataStart, yearDataStart, monthDataEnd, yearDataEnd,
+                name, website, title, "");
+    }
+
+    private void setSectionCompany(SectionType type, int monthDataStart, int yearDataStart, int monthDataEnd, int yearDataEnd,
+                                   String name, String website, String title, String description) {
+        end:
+        {
+            LocalDate dataStart = DateUtil.of(yearDataStart, Month.of(monthDataStart));
+            LocalDate dataEnd = DateUtil.of(yearDataEnd, Month.of(monthDataEnd));
+            if (section.get(type) == null) {
+                List<Company> al = new ArrayList<>();
+                Company temp = new Company(name, website);
+                temp.setPeriod(dataStart, dataEnd, title, description);
+                al.add(temp);
+                CompanySection sectionExperience = new CompanySection(al);
+                section.put(type, sectionExperience);
+            } else {
+                CompanySection sectionExperience = (CompanySection) section.get(type);
+                for (Company temp : sectionExperience.getSectionData()) {
+                    if (temp.getName().equals(name)) {
+                        temp.setPeriod(dataStart, dataEnd, title, description);
+                        break end;
+                    }
+                }
+                Company temp = new Company(name, website);
+                temp.setPeriod(dataStart, dataEnd, title, description);
+                sectionExperience.getSectionData().add(temp);
+            }
         }
-        section.put(SectionType.EDUCATION, sectionEducation);
     }
 
     public Map<SectionType, AbstractSection> getSection() {
         return new HashMap<>(section);
     }
 
-    //переделать
+    //нужна проверка uuid на уникальность в местах хранения Resume
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

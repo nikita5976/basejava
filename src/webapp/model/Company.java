@@ -1,39 +1,33 @@
 package webapp.model;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class Company {
-    private final LocalDate dateStart;
-    private final LocalDate dateEnd;
-    private final String title;
-    private final String description;
-    Link link;
+    private final Link link;
+   private final List<Period> period = new ArrayList<>();
 
-    Company(LocalDate dataStart, LocalDate dataEnd, String title, String description, String name, String website) {
+    Company( String name, String website) {
+        Objects.requireNonNull(name, "name must not be null");
+        link = new Link(name, website);
+    }
+
+    public void setPeriod (LocalDate dataStart, LocalDate dataEnd, String title, String description) {
         Objects.requireNonNull(dataStart, "dataStart must not be null");
         Objects.requireNonNull(dataEnd, "dataEnd must not be null");
         Objects.requireNonNull(title, "title must not be null");
-        Objects.requireNonNull(name, "name must not be null");
-
-        link = new Link(name, website);
-        this.dateStart = dataStart;
-        this.dateEnd = dataEnd;
-        this.title = title;
-        this.description = description;
+        period.add(new Period(dataStart, dataEnd, title, description));
     }
 
-    public String getName() {
-        return link.name;
-    }
-
-    public String getWebsite() {
-        return link.website;
+    public String getName () {
+        return link.getName();
     }
 
     @Override
     public String toString() {
-        return dateStart + " - " + dateEnd + " -  \n" + link.toString() + " -  \n" + title + " -  \n" + description;
+        return  "\n" + link + "\n" + period;
     }
 
     @Override
@@ -41,24 +35,25 @@ public class Company {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Company company = (Company) o;
-        return link.equals(company.link) && title.equals(company.title) && description.equals(company.description);
+        return link.equals(company.link) && period.equals(company.period);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(title + description) + link.hashCode();
+        return period.hashCode() + link.hashCode();
     }
 
 
-    public static class Link {
+    private static class Link {
         private final String name;
         private final String website;
 
-        public Link(String name, String website) {
+        private Link(String name, String website) {
             Objects.requireNonNull(name, "name must not be null");
             this.name = name;
             this.website = website;
         }
+
 
         public String getName() {
             return name;
@@ -88,6 +83,39 @@ public class Company {
             // разобраться
             //result = 31 * result + (url != null ? url.hashCode() : 0);
             return result;
+        }
+    }
+
+    public static class Period {
+        private final LocalDate dateStart;
+        private final LocalDate dateEnd;
+        private final String title;
+        private final String description;
+
+        private Period(LocalDate dateStart, LocalDate dateEnd, String title, String description) {
+            this.dateStart = dateStart;
+            this.dateEnd = dateEnd;
+            this.title = title;
+            this.description = description;
+        }
+
+        @Override
+        public String toString() {
+            return dateStart + " - " + dateEnd + "\n" + title + "\n" + description;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Period period = (Period) o;
+            return title.equals(period.title) && description.equals(period.description)
+                    && dateStart.equals(period.dateStart) && dateEnd.equals(period.dateEnd);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(title + description + dateStart + dateEnd);
         }
     }
 }
