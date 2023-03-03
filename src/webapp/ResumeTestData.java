@@ -1,20 +1,41 @@
 package webapp;
 
-import webapp.model.*;
+import webapp.model.AbstractSection;
+import webapp.model.ContactType;
+import webapp.model.Resume;
+import webapp.model.SectionType;
 
 import java.util.Map;
 
 public class ResumeTestData {
-    private final static Resume testResume = new Resume("Григорий Кислин");
+
+
+    public static Resume createResume (String uuid, String fullName) {
+        Resume resume = new Resume(uuid, fullName);
+
+        fillingContactTestResume(resume);
+        filingPersonalTestResume(resume);
+        filingObjectiveTestResume(resume);
+        filingAchievementTestResume(resume);
+        filingQualificationsTestResume(resume);
+        filingExperienceTestResume(resume);
+        filingEducationTestResume(resume);
+
+        return resume;
+    }
 
     public static void main(String[] args) {
-        fillingContactTestResume();
-        filingPersonalTestResume();
-        filingObjectiveTestResume();
-        filingAchievementTestResume();
-        filingQualificationsTestResume();
-        filingExperienceTestResume();
-        filingEducationTestResume();
+
+        Resume testResume = new Resume("Григорий Кислин");
+
+        fillingContactTestResume(testResume);
+        filingPersonalTestResume(testResume);
+        filingObjectiveTestResume(testResume);
+        filingAchievementTestResume(testResume);
+        filingQualificationsTestResume(testResume);
+        filingExperienceTestResume(testResume);
+        filingEducationTestResume(testResume);
+
         Map<SectionType, AbstractSection> sectionMap = testResume.getSection();
 
         System.out.println(testResume.getFullName());
@@ -31,8 +52,9 @@ public class ResumeTestData {
         }
     }
 
+
     // заполнение
-    private static void fillingContactTestResume() {
+    private static void fillingContactTestResume(Resume testResume) {
         testResume.setContact(ContactType.TELEPHONE, "+7(921) 855-0482");
         testResume.setContact(ContactType.SKYPE, "skype:grigory.kislin");
         testResume.setContact(ContactType.EMAIL, "gkislin@yandex.ru");
@@ -42,19 +64,19 @@ public class ResumeTestData {
         testResume.setContact(ContactType.HOMEPAGE, "http://gkislin.ru/");
     }
 
-    private static void filingPersonalTestResume() {
+    private static void filingPersonalTestResume(Resume testResume) {
         String personalData = "Аналитический склад ума, сильная логика, креативность, инициативность." +
                 " Пурист кода и архитектуры.";
         testResume.setSectionPersonal(personalData);
     }
 
-    private static void filingObjectiveTestResume() {
+    private static void filingObjectiveTestResume(Resume testResume) {
         String objectiveData = "Ведущий стажировок и корпоративного обучения " +
                 "по Java Web и Enterprise технологиям";
         testResume.setSectionObjective(objectiveData);
     }
 
-    private static void filingAchievementTestResume() {
+    private static void filingAchievementTestResume(Resume testResume) {
         String achievementData1 = "Организация команды и успешная реализация " +
                 "Java проектов для сторонних заказчиков: приложения автопарк на " +
                 "стеке Spring Cloud/микросервисы, система мониторинга показателей " +
@@ -84,7 +106,7 @@ public class ResumeTestData {
         testResume.setSectionAchievement(achievementData7);
     }
 
-    private static void filingQualificationsTestResume() {
+    private static void filingQualificationsTestResume(Resume testResume) {
         String qualificationsData1 = "EE AS: GlassFish (v2.1, v3), OC4J, JBoss, Tomcat, Jetty, WebLogic, WSO2";
         testResume.setSectionQualification(qualificationsData1);
         String qualificationsData2 = "Version control: Subversion, Git, Mercury, ClearCase, Perforce";
@@ -120,7 +142,7 @@ public class ResumeTestData {
         testResume.setSectionQualification(qualificationsData14);
     }
 
-    private static void filingExperienceTestResume() {
+    private static void filingExperienceTestResume(Resume testResume) {
         testResume.setSectionExperience(10,2013, 2,2023, "Java Online Projects", "http://javaops.ru/",
                 "Автор проекта.", "Создание, организация и проведение Java онлайн проектов и стажировок.");
 
@@ -161,7 +183,7 @@ public class ResumeTestData {
                         "станции Alcatel 1000 S12 (CHILL, ASM).");
     }
 
-    private static void filingEducationTestResume() {
+    private static void filingEducationTestResume(Resume testResume) {
 
         testResume.setSectionEducation(3,2013, 5,2013, "Coursera", "https://www.coursera.org/course/progfun",
                 "Functional Programming Principles in Scala' by Martin Odersky");
@@ -187,21 +209,3 @@ public class ResumeTestData {
                 "Закончил с отличием");
     }
 }
-/*  заметка на память
-System.out.println("----------------------------------------------");
-        System.out.println(SectionType.QUALIFICATIONS.getTitle());
-        ListSection qualificationsList = (ListSection) sectionMap.get(SectionType.QUALIFICATIONS);
-        for (String qualification : qualificationsList.getSectionData()) {
-            System.out.println(qualification);
-
-System.out.println("----------------------------------------------");
-        System.out.println(SectionType.EDUCATION.getTitle());
-        CompanySection companySection2 = (CompanySection) sectionMap.get(SectionType.EDUCATION);
-        for (CompanySection.Company a : companySection2.getSectionData()) {
-            for (Periods p : a.getPeriods()) {
-                System.out.println(p.getDateStart() + " - " + p.getDateEnd());
-            }
-            System.out.println(a.getName() + "  " + a.getWebsite());
-            System.out.println(a.getPosition());
-        }
- */

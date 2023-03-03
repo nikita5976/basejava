@@ -1,33 +1,34 @@
 package webapp.model;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class Company {
+public class Company implements Serializable {
     private final Link link;
-   private final List<Period> period = new ArrayList<>();
+    private final List<Period> period = new ArrayList<>();
 
-    Company( String name, String website) {
+    Company(String name, String website) {
         Objects.requireNonNull(name, "name must not be null");
         link = new Link(name, website);
     }
 
-    public void setPeriod (LocalDate dataStart, LocalDate dataEnd, String title, String description) {
+    public void setPeriod(LocalDate dataStart, LocalDate dataEnd, String title, String description) {
         Objects.requireNonNull(dataStart, "dataStart must not be null");
         Objects.requireNonNull(dataEnd, "dataEnd must not be null");
         Objects.requireNonNull(title, "title must not be null");
         period.add(new Period(dataStart, dataEnd, title, description));
     }
 
-    public String getName () {
+    public String getName() {
         return link.getName();
     }
 
     @Override
     public String toString() {
-        return  "\n" + link + "\n" + period;
+        return "\n" + link + "\n" + period;
     }
 
     @Override
@@ -44,7 +45,7 @@ public class Company {
     }
 
 
-    private static class Link {
+    private static class Link implements Serializable {
         private final String name;
         private final String website;
 
@@ -86,7 +87,7 @@ public class Company {
         }
     }
 
-    public static class Period {
+    public static class Period implements Serializable {
         private final LocalDate dateStart;
         private final LocalDate dateEnd;
         private final String title;
