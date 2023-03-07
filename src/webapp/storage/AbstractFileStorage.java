@@ -1,143 +1,106 @@
 package webapp.storage;
 
+import webapp.exception.StorageException;
 import webapp.model.Resume;
 
-import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.Objects;
 
-public class AbstractFileStorage extends AbstractStorage<Path> {
-    private final static String DIR_USER = "C:\\test";//System.getProperty("user.dir")
-    private final static String DIR_SAVE = DIR_USER + "\\resume";
-    private final static Path DIR = Paths.get(DIR_SAVE);
+public abstract class AbstractFileStorage extends AbstractStorage<File> {
+    private File directory;
 
-    @Override
-    protected void doSave(Resume r, Path searchKey) {
-
-        if (!Files.isDirectory(DIR)) {
-            try {
-                Files.createDirectory(DIR);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+    protected AbstractFileStorage(File directory) {
+        Objects.requireNonNull(directory, "directory must not be null");
+        if (!directory.isDirectory()) {
+            throw new IllegalArgumentException(directory.getAbsolutePath() + " is not directory");
         }
-
-        byte[] byteResume = convertObjectToBytes(r);
-
-        try {
-            Files.write(searchKey, byteResume);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        if (!directory.canRead() || !directory.canWrite()) {
+            throw new IllegalArgumentException(directory.getAbsolutePath() + " is not readable/writable");
         }
-    }
-
-    @Override
-    protected Resume doGet(Path searchKey) {
-        byte[] bytesResume;
-        try {
-            bytesResume = Files.readAllBytes(searchKey);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        return (Resume) convertBytesToObject(bytesResume);
-    }
-
-    @Override
-    protected void doDelete(Path searchKey) {
-        try {
-            Files.delete(searchKey);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    protected void doUpdate(Path searchKey, Resume r) {
-        doSave(r, searchKey);
-    }
-
-    @Override
-    protected boolean isExist(Path searchKey) {
-        return Files.exists(searchKey);
-    }
-
-    @Override
-    protected Path getSearchKey(String uuid) {
-        String fileName = DIR_SAVE + "\\" + uuid;
-        return Paths.get(fileName);
-    }
-
-    @Override
-    protected List<Resume> getAll() {
-        List<Resume> resumeList = new ArrayList<>();
-        for (Path path : getListPath()) {
-            resumeList.add(doGet(path));
-        }
-        return resumeList;
+        this.directory = directory;
     }
 
     @Override
     public void clear() {
-        if (Files.exists(DIR)) {
-            try (Stream<Path> walk = Files.walk(DIR)) {
-                walk
-                        .sorted(Comparator.reverseOrder())
-                        .forEach(path -> {
-                            try {
-                                Files.delete(path);
-                            } catch (IOException e) {
-                                throw new RuntimeException(e);
-                            }
-                        });
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+        File[] list = directory.listFiles();
+        if (list != null) {
+            for (int i = list.length; --i >= 0; ) {
+                doDelete(list[i]);
             }
         }
     }
 
     @Override
     public int size() {
-        if (!Files.exists(DIR)) {
+        File[] list = directory.listFiles();
+        if (list == null) {
             return 0;
         }
-        return getListPath().size();
+        return list.length;
     }
 
-    private byte[] convertObjectToBytes(Object resume) {
-        ByteArrayOutputStream boas = new ByteArrayOutputStream();
-        try (ObjectOutputStream ois = new ObjectOutputStream(boas)) {
-            ois.writeObject(resume);
-            return boas.toByteArray();
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
-        }
-        throw new RuntimeException();
+    @Override
+    protected File getSearchKey(String uuid) {
+        return new File(directory, uuid);
     }
 
-    private Object convertBytesToObject(byte[] bytesResume) {
-        InputStream is = new ByteArrayInputStream(bytesResume);
-        try (ObjectInputStream ois = new ObjectInputStream(is)) {
-            return ois.readObject();
-        } catch (IOException | ClassNotFoundException ioe) {
-            ioe.printStackTrace();
-        }
-        throw new RuntimeException();
-    }
-
-    private List<Path> getListPath() {
-        List<Path> pathResumes;
-        try (Stream<Path> walk = Files.walk(DIR)) {
-            pathResumes = walk.filter(Files::isRegularFile)
-                    .collect(Collectors.toList());
+    @Override
+    protected void doUpdate(Resume r, File file) {
+        try {
+            doWrite(r, file);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new StorageException("IO error", file.getName(), e);
         }
-        return pathResumes;
+    }
+
+    @Override
+    protected boolean isExist(File file) {
+        return file.exists();
+    }
+
+    @Override
+    protected void doSave(Resume r, File file) {
+        try {
+            file.createNewFile();
+            doWrite(r, file);
+        } catch (IOException e) {
+            throw new StorageException("IO error", file.getName(), e);
+        }
+    }
+
+    protected abstract void doWrite(Resume r, File file) throws IOException;
+
+    protected abstract Resume doRead(File file) throws IOException;
+
+    @Override
+    protected Resume doGet(File file) {
+        Resume r;
+        try {
+            r = doRead(file);
+        } catch (IOException e) {
+            throw new StorageException("IO error", file.getName(), e);
+        }
+        return r;
+    }
+
+    @Override
+    protected void doDelete(File file) {
+        file.delete();
+    }
+
+    @Override
+    protected List<Resume> doCopyAll() {
+        File[] list = directory.listFiles();
+        List<Resume> resumeList = new ArrayList<>();
+        if (list != null) {
+            for (int i = list.length; --i >= 0; ) {
+                resumeList.add(doGet(list[i]));
+            }
+        }
+        return resumeList;
     }
 }
+

@@ -25,7 +25,7 @@ public class FullNameMapStorage extends AbstractStorage <String>{
     }
 
     @Override
-    protected void doUpdate(String searchKey, Resume r) {
+    protected void doUpdate(Resume r, String searchKey) {
         storage.put(searchKey, r);
     }
 
@@ -56,7 +56,7 @@ public class FullNameMapStorage extends AbstractStorage <String>{
     }
 
     @Override
-    protected List<Resume> getAll() {
+    protected List<Resume> doCopyAll() {
         return new ArrayList<>(storage.values());
     }
 

@@ -36,7 +36,7 @@ public abstract class AbstractArrayStorage extends AbstractStorage <Integer> {
     }
 
     @Override
-    public final List<Resume> getAll() {
+    public final List<Resume> doCopyAll() {
         ArrayList<Resume> all = new ArrayList<>();
         for (int i = 0; i < size; i++) {
             all.add(storage[i]);
@@ -50,7 +50,7 @@ public abstract class AbstractArrayStorage extends AbstractStorage <Integer> {
     }
 
     @Override
-    public final void doUpdate(Integer searchKey, Resume r) {
+    public final void doUpdate(Resume r, Integer searchKey) {
         storage[searchKey] = r;
         System.out.println("\n резюме " + r.getUuid() + " обновлено");
     }
