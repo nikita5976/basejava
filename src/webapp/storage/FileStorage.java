@@ -50,6 +50,5 @@ public class FileStorage extends AbstractFileStorage {
         }
         throw new RuntimeException();
     }
-
 }
 
