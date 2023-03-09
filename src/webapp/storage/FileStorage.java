@@ -38,7 +38,7 @@ public class FileStorage extends AbstractFileStorage {
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
-        throw new RuntimeException();
+        throw new RuntimeException("не создался ois");
     }
 
     private Object convertBytesToObject(byte[] bytesResume) {
@@ -48,7 +48,7 @@ public class FileStorage extends AbstractFileStorage {
         } catch (IOException | ClassNotFoundException ioe) {
             ioe.printStackTrace();
         }
-        throw new RuntimeException();
+        throw new RuntimeException("не создался ois");
     }
 }
 

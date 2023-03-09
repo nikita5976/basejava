@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Objects;
 
 public abstract class AbstractFileStorage extends AbstractStorage<File> {
-    private File directory;
+    private final File directory;
 
     protected AbstractFileStorage(File directory) {
         Objects.requireNonNull(directory, "directory must not be null");
@@ -30,6 +30,8 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
             for (int i = list.length; --i >= 0; ) {
                 doDelete(list[i]);
             }
+        } else {
+            throw new StorageException("directory error", directory.getAbsolutePath());
         }
     }
 
@@ -37,7 +39,7 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
     public int size() {
         File[] list = directory.listFiles();
         if (list == null) {
-            return 0;
+            throw new StorageException("directory error", directory.getAbsolutePath());
         }
         return list.length;
     }
@@ -88,7 +90,9 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
 
     @Override
     protected void doDelete(File file) {
-        file.delete();
+        if (!file.delete()) {
+         throw new StorageException("directory error", directory.getAbsolutePath());
+        }
     }
 
     @Override
@@ -99,6 +103,8 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
             for (int i = list.length; --i >= 0; ) {
                 resumeList.add(doGet(list[i]));
             }
+        } else {
+            throw new StorageException("directory error", directory.getAbsolutePath());
         }
         return resumeList;
     }
