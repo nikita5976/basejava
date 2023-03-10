@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import static webapp.util.DateUtil.NOW;
 
 public class Company implements Serializable {
     private final Link link;
@@ -96,6 +97,14 @@ public class Company implements Serializable {
         private Period(LocalDate dateStart, LocalDate dateEnd, String title, String description) {
             this.dateStart = dateStart;
             this.dateEnd = dateEnd;
+            this.title = title;
+            this.description = description;
+        }
+
+        // Пока не использую. Применить когда  будет понятно с вводом данных.
+        private Period(LocalDate dateStart, String title, String description) {
+            this.dateStart = dateStart;
+            this.dateEnd = NOW;
             this.title = title;
             this.description = description;
         }

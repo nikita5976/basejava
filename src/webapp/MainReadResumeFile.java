@@ -1,5 +1,7 @@
 package webapp;
 
+// чтение из файла и вывод в консоль
+
 import webapp.model.AbstractSection;
 import webapp.model.ContactType;
 import webapp.model.Resume;
@@ -23,7 +25,7 @@ public class MainReadResumeFile {
 
         File file = new File(String.valueOf(paths.get(0)));
         Resume testResume = doRead(file);
-        
+
 
         Map<SectionType, AbstractSection> sectionMap = testResume.getSection();
 

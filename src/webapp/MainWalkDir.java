@@ -1,5 +1,6 @@
 package webapp;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -16,11 +17,33 @@ public class MainWalkDir {
 
         Path path = Paths.get(dir);
         List<Path> paths = listFiles(path);
-        paths.forEach(System.out::println);
+        //paths.forEach(System.out::println);
 
         Path path1 = Paths.get(dir);
         List<Path> paths1 = findByFileExtension(path1, ".xml");
-        paths1.forEach(System.out::println);
+        //paths1.forEach(System.out::println);
+
+        System.out.println("---------------------рекурсия-------------------");
+
+        printDirectoryDeeply(new File(dir),"");
+    }
+
+    // рекурсивный обход файлов
+
+    public static void printDirectoryDeeply(File dir, String indent) {
+
+        File[] files = dir.listFiles();
+
+        if (files != null) {
+            for (File file : files) {
+                if (file.isFile()) {
+                    System.out.println(indent  + "File: " + file.getName());
+                } else if (file.isDirectory()) {
+                    System.out.println(indent + "Directory: " + file.getName());
+                    printDirectoryDeeply(file, indent+"      ");
+                }
+            }
+        }
     }
 
     // вывод файлов
