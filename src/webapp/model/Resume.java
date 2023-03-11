@@ -7,7 +7,8 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.util.*;
 
-public class Resume implements Serializable {
+public class Resume implements  Comparable<Resume>, Serializable {
+   private static final long  serialVersionUID = 1L;
     private String uuid;
     private String fullName;
     private final Map<ContactType, String> contacts = new EnumMap<>(ContactType.class);
@@ -141,5 +142,11 @@ public class Resume implements Serializable {
     @Override
     public String toString() {
         return fullName + " uuid " + uuid;
+    }
+
+    @Override
+    public int compareTo(Resume o) {
+        int cmp = fullName.compareTo(o.fullName);
+        return cmp != 0 ? cmp : uuid.compareTo(o.uuid);
     }
 }

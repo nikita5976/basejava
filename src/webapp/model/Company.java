@@ -8,6 +8,7 @@ import java.util.Objects;
 import static webapp.util.DateUtil.NOW;
 
 public class Company implements Serializable {
+    private static final long  serialVersionUID = 1L;
     private final Link link;
     private final List<Period> period = new ArrayList<>();
 
@@ -47,6 +48,7 @@ public class Company implements Serializable {
 
 
     private static class Link implements Serializable {
+        private static final long  serialVersionUID = 1L;
         private final String name;
         private final String website;
 
@@ -89,6 +91,7 @@ public class Company implements Serializable {
     }
 
     public static class Period implements Serializable {
+        private static final long  serialVersionUID = 1L;
         private final LocalDate dateStart;
         private final LocalDate dateEnd;
         private final String title;
