@@ -8,18 +8,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public abstract class AbstractFileStorage extends AbstractStorage<File> {
+public abstract class AbstractFileStorage extends AbstractStorage <File> implements StrategyStorage<File> {
     private final File directory;
 
-    protected AbstractFileStorage(File directory) {
+    protected AbstractFileStorage(String directory) {
+        File tempDirectory = new File(directory);
         Objects.requireNonNull(directory, "directory must not be null");
-        if (!directory.isDirectory()) {
-            throw new IllegalArgumentException(directory.getAbsolutePath() + " is not directory");
+        if (!tempDirectory.isDirectory()) {
+            throw new IllegalArgumentException(tempDirectory.getAbsolutePath() + " is not directory");
         }
-        if (!directory.canRead() || !directory.canWrite()) {
-            throw new IllegalArgumentException(directory.getAbsolutePath() + " is not readable/writable");
+        if (!tempDirectory.canRead() || !tempDirectory.canWrite()) {
+            throw new IllegalArgumentException(tempDirectory.getAbsolutePath() + " is not readable/writable");
         }
-        this.directory = directory;
+        this.directory = tempDirectory;
     }
 
     @Override
@@ -44,12 +45,12 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
     }
 
     @Override
-    protected File getSearchKey(String uuid) {
+    public File getSearchKey(String uuid) {
         return new File(directory, uuid);
     }
 
     @Override
-    protected void doUpdate(Resume r, File file) {
+    public void doUpdate(Resume r, File file) {
         try {
             doWrite(r, new BufferedOutputStream ( new FileOutputStream(file)));
         } catch (IOException e) {
@@ -58,12 +59,12 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
     }
 
     @Override
-    protected boolean isExist(File file) {
+    public boolean isExist(File file) {
         return file.exists();
     }
 
     @Override
-    protected void doSave(Resume r, File file) {
+    public void doSave(Resume r, File file) {
         try {
             file.createNewFile();
             doUpdate(r, file);
@@ -73,7 +74,7 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
     }
 
     @Override
-    protected Resume doGet(File file) {
+    public Resume doGet(File file) {
 
         try {
             return doRead(new BufferedInputStream (new FileInputStream(file)));
@@ -84,14 +85,14 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
     }
 
     @Override
-    protected void doDelete(File file) {
+    public void doDelete(File file) {
         if (!file.delete()) {
          throw new StorageException("directory error", file.getAbsolutePath());
         }
     }
 
     @Override
-    protected List<Resume> doCopyAll() {
+    public List<Resume> doCopyAll() {
         File[] list = directory.listFiles();
         List<Resume> resumeList = new ArrayList<>();
         if (list != null) {

@@ -12,7 +12,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public abstract class AbstractPathStorage extends AbstractStorage<Path> {
+public abstract class AbstractPathStorage extends AbstractStorage<Path> implements StrategyStorage <Path>{
     private final Path directory;
 
     protected AbstractPathStorage(String dir) {
@@ -43,12 +43,12 @@ public abstract class AbstractPathStorage extends AbstractStorage<Path> {
     }
 
     @Override
-    protected Path getSearchKey(String uuid) {
+    public Path getSearchKey(String uuid) {
         return Paths.get(directory.toString(), uuid);
     }
 
     @Override
-    protected void doUpdate(Resume resume, Path path) {
+    public void doUpdate(Resume resume, Path path) {
         ByteArrayOutputStream boas = new ByteArrayOutputStream();
         try (ObjectOutputStream ois = new ObjectOutputStream(boas)) {
             ois.writeObject(resume);
@@ -59,12 +59,12 @@ public abstract class AbstractPathStorage extends AbstractStorage<Path> {
     }
 
     @Override
-    protected boolean isExist(Path path) {
+    public boolean isExist(Path path) {
         return Files.exists(path);
     }
 
     @Override
-    protected void doSave(Resume r, Path path) {
+    public void doSave(Resume r, Path path) {
         try {
             Files.createFile(path);
             doUpdate(r, path);
@@ -74,7 +74,7 @@ public abstract class AbstractPathStorage extends AbstractStorage<Path> {
     }
 
     @Override
-    protected Resume doGet(Path path) {
+    public Resume doGet(Path path) {
         Resume resume;
             try (ObjectInputStream ois = new ObjectInputStream(doRead(path))) {
                 resume = (Resume) ois.readObject();
@@ -85,7 +85,7 @@ public abstract class AbstractPathStorage extends AbstractStorage<Path> {
     }
 
     @Override
-    protected void doDelete(Path path) {
+    public void doDelete(Path path) {
        try {
            Files.delete(path);
        } catch (IOException e){
@@ -94,7 +94,7 @@ public abstract class AbstractPathStorage extends AbstractStorage<Path> {
     }
 
     @Override
-    protected List<Resume> doCopyAll() {
+    public List<Resume> doCopyAll() {
         List<Resume> resumeList;
         try (Stream <Path> stream = Files.list(directory)) {
              resumeList = stream

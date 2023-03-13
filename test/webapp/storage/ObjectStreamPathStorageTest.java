@@ -1,14 +1,16 @@
 package webapp.storage;
 
+import java.io.File;
+
 public class ObjectStreamPathStorageTest extends AbstractStorageTest {
-   private static final String DIR = STORAGE_DIR.getAbsolutePath();
 
     static {
-        if (!STORAGE_DIR.exists()) {
-            STORAGE_DIR.mkdirs();
+        File file = new File(STORAGE_DIR);
+        if (!file.exists()) {
+            file.mkdirs();
         }
     }
     public ObjectStreamPathStorageTest() {
-        super(new ObjectStreamPathStorage(DIR));
+        super(new ObjectStreamPathStorage(STORAGE_DIR));
     }
 }

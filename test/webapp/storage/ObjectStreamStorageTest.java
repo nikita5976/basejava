@@ -1,10 +1,13 @@
 package webapp.storage;
 
+import java.io.File;
+
 public class ObjectStreamStorageTest extends AbstractStorageTest {
 
     static {
-        if (!STORAGE_DIR.exists()) {
-            STORAGE_DIR.mkdirs();
+        File file = new File(STORAGE_DIR);
+        if (!file.exists()) {
+            file.mkdirs();
         }
     }
 
