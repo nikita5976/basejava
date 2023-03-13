@@ -18,7 +18,8 @@ public abstract class AbstractPathStorage extends AbstractStorage<Path> {
     protected AbstractPathStorage(String dir) {
         directory = Paths.get(dir);
         Objects.requireNonNull(directory, "directory must not be null");
-        if (!Files.isDirectory(directory) ||!Files.isWritable(directory)) {
+        if (Files.isDirectory(directory) ||Files.isWritable(directory))  {
+        } else {
             throw new IllegalArgumentException(dir + " is not directory or is not writable");
         }
     }
@@ -51,7 +52,7 @@ public abstract class AbstractPathStorage extends AbstractStorage<Path> {
         ByteArrayOutputStream boas = new ByteArrayOutputStream();
         try (ObjectOutputStream ois = new ObjectOutputStream(boas)) {
             ois.writeObject(resume);
-            doWrite(boas.toByteArray(), path);
+            doWrite(boas, path);
         } catch (IOException e) {
             throw new StorageException("Error write", path.toString(), e);
         }
@@ -75,18 +76,11 @@ public abstract class AbstractPathStorage extends AbstractStorage<Path> {
     @Override
     protected Resume doGet(Path path) {
         Resume resume;
-
-        try {
-            InputStream is = new ByteArrayInputStream(doRead(path));
-
-            try (ObjectInputStream ois = new ObjectInputStream(is)) {
+            try (ObjectInputStream ois = new ObjectInputStream(doRead(path))) {
                 resume = (Resume) ois.readObject();
             } catch (IOException | ClassNotFoundException e) {
                 throw new StorageException("IO error", path.toString(), e);
             }
-        } catch (IOException e) {
-            throw new StorageException("IO error doRead", path.toString(), e);
-        }
         return resume;
     }
 
@@ -112,7 +106,7 @@ public abstract class AbstractPathStorage extends AbstractStorage<Path> {
         return resumeList;
     }
 
-    protected abstract void doWrite(byte[] bytesResume, Path path) throws IOException;
+    protected abstract void doWrite(ByteArrayOutputStream baos, Path path) throws IOException;
 
-    protected abstract byte[] doRead(Path path) throws IOException;
+    protected abstract InputStream doRead(Path path) throws IOException;
 }

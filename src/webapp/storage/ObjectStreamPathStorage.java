@@ -1,8 +1,9 @@
 package webapp.storage;
 
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.stream.Stream;
 
 public class ObjectStreamPathStorage extends AbstractPathStorage{
 
@@ -11,12 +12,12 @@ public class ObjectStreamPathStorage extends AbstractPathStorage{
     }
 
     @Override
-    protected void doWrite(byte[] bytesResume, Path path) throws IOException {
-        Files.write(path, bytesResume);
+    protected void doWrite(ByteArrayOutputStream baos, Path path) throws IOException {
+        Files.write(path, baos.toByteArray());
     }
 
     @Override
-    protected byte[] doRead(Path path) throws IOException {
-        return Files.readAllBytes( path);
+    protected InputStream  doRead(Path path) throws IOException {
+        return new ByteArrayInputStream( Files.readAllBytes( path));
     }
 }
