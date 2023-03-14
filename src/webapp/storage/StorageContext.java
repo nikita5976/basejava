@@ -38,7 +38,7 @@ public class StorageContext<SK> extends AbstractStorage<SK> {
 
     @Override
     protected SK getSearchKey(String uuid) {
-        return (SK) strategy.getSearchKey(uuid);
+        return   strategy.getSearchKey(uuid);
     }
 
     @Override
