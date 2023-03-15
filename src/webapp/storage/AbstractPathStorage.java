@@ -26,25 +26,17 @@ public abstract class AbstractPathStorage extends AbstractStorage<Path> implemen
 
     @Override
     public void clear() {
-        try (Stream<Path> stream = Files.list(directory)) {
-            stream.forEach(this::doDelete);
-        } catch (IOException e) {
-            throw new StorageException("Path delete error", null);
-        }
+            getStreamPath().forEach(this::doDelete);
     }
 
     @Override
     public int size() {
-        try (Stream<Path> stream = Files.list(directory)) {
-            return (int) stream.count();
-        } catch (IOException e) {
-            throw new StorageException("Directory read error", null, e);
-        }
+            return  (int) getStreamPath().count();
     }
 
     @Override
     public Path getSearchKey(String uuid) {
-        return Paths.get(directory.toString(), uuid);
+        return directory.resolve(uuid);
     }
 
     @Override
@@ -54,7 +46,7 @@ public abstract class AbstractPathStorage extends AbstractStorage<Path> implemen
             ois.writeObject(resume);
             doWrite(boas, path);
         } catch (IOException e) {
-            throw new StorageException("Error write", path.toString(), e);
+            throw new StorageException("write to file error", path.toString(), e);
         }
     }
 
@@ -67,21 +59,19 @@ public abstract class AbstractPathStorage extends AbstractStorage<Path> implemen
     public void doSave(Resume r, Path path) {
         try {
             Files.createFile(path);
-            doUpdate(r, path);
         } catch (IOException e) {
-            throw new StorageException("IO error", path.toString(), e);
+            throw new StorageException("create new file error", path.toString(), e);
         }
+        doUpdate(r, path);
     }
 
     @Override
     public Resume doGet(Path path) {
-        Resume resume;
             try (ObjectInputStream ois = new ObjectInputStream(doRead(path))) {
-                resume = (Resume) ois.readObject();
+                return  (Resume) ois.readObject();
             } catch (IOException | ClassNotFoundException e) {
-                throw new StorageException("IO error", path.toString(), e);
+                throw new StorageException("read file error", path.toString(), e);
             }
-        return resume;
     }
 
     @Override
@@ -95,15 +85,17 @@ public abstract class AbstractPathStorage extends AbstractStorage<Path> implemen
 
     @Override
     public List<Resume> doCopyAll() {
-        List<Resume> resumeList;
-        try (Stream <Path> stream = Files.list(directory)) {
-             resumeList = stream
+            return  getStreamPath()
                     .map(this::doGet)
                     .collect(Collectors.toList());
+    }
+
+    protected Stream<Path> getStreamPath(){
+        try {
+            return Files.list(directory);
         } catch (IOException e) {
-           throw new StorageException("Files.list IO error", directory.toString(), e );
+            throw new StorageException("Directory read error", null, e);
         }
-        return resumeList;
     }
 
     protected abstract void doWrite(ByteArrayOutputStream baos, Path path) throws IOException;
