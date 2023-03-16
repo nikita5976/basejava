@@ -2,13 +2,14 @@ package webapp.storage;
 
 import webapp.exception.StorageException;
 import webapp.model.Resume;
+import webapp.storage.strategy.MethodsSerialization;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public abstract class AbstractFileStorage extends AbstractStorage<File> implements StrategyStorage<File> {
+public abstract class AbstractFileStorage extends AbstractStorage<File> implements  MethodsSerialization <File> {
     private final File directory;
 
     protected AbstractFileStorage(String directory) {
@@ -97,8 +98,8 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> implemen
         return list;
     }
 
-    protected abstract void doWrite(Resume r, OutputStream os) throws IOException;
+    public abstract void doWrite(Resume r, OutputStream os) throws IOException;
 
-    protected abstract Resume doRead(InputStream is) throws IOException;
+    public abstract Resume doRead(InputStream is) throws IOException;
 }
 

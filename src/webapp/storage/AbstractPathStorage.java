@@ -2,6 +2,7 @@ package webapp.storage;
 
 import webapp.exception.StorageException;
 import webapp.model.Resume;
+import webapp.storage.strategy.MethodsSerialization;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -12,13 +13,13 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public abstract class AbstractPathStorage extends AbstractStorage<Path> implements StrategyStorage <Path>{
+public abstract class AbstractPathStorage extends AbstractStorage<Path> implements  MethodsSerialization <Path> {
     private final Path directory;
 
     protected AbstractPathStorage(String dir) {
         directory = Paths.get(dir);
         Objects.requireNonNull(directory, "directory must not be null");
-        if (Files.isDirectory(directory) ||Files.isWritable(directory))  {
+        if (Files.isDirectory(directory) || Files.isWritable(directory)) {
         } else {
             throw new IllegalArgumentException(dir + " is not directory or is not writable");
         }
@@ -26,12 +27,12 @@ public abstract class AbstractPathStorage extends AbstractStorage<Path> implemen
 
     @Override
     public void clear() {
-            getStreamPath().forEach(this::doDelete);
+        getStreamPath().forEach(this::doDelete);
     }
 
     @Override
     public int size() {
-            return  (int) getStreamPath().count();
+        return (int) getStreamPath().count();
     }
 
     @Override
@@ -41,10 +42,8 @@ public abstract class AbstractPathStorage extends AbstractStorage<Path> implemen
 
     @Override
     public void doUpdate(Resume resume, Path path) {
-        ByteArrayOutputStream boas = new ByteArrayOutputStream();
-        try (ObjectOutputStream ois = new ObjectOutputStream(boas)) {
-            ois.writeObject(resume);
-            doWrite(boas, path);
+        try {
+            doWrite(resume, path);
         } catch (IOException e) {
             throw new StorageException("write to file error", path.toString(), e);
         }
@@ -67,30 +66,32 @@ public abstract class AbstractPathStorage extends AbstractStorage<Path> implemen
 
     @Override
     public Resume doGet(Path path) {
-            try (ObjectInputStream ois = new ObjectInputStream(doRead(path))) {
-                return  (Resume) ois.readObject();
-            } catch (IOException | ClassNotFoundException e) {
-                throw new StorageException("read file error", path.toString(), e);
-            }
+        try {
+            byte[] resumeBytes = Files.readAllBytes(path);
+            ByteArrayInputStream baio = new ByteArrayInputStream(resumeBytes);
+            return doRead(baio);
+        } catch (IOException e) {
+            throw new StorageException("read file error", path.toString(), e);
+        }
     }
 
     @Override
     public void doDelete(Path path) {
-       try {
-           Files.delete(path);
-       } catch (IOException e){
-            throw new StorageException("delete error", path.toString(),e);
+        try {
+            Files.delete(path);
+        } catch (IOException e) {
+            throw new StorageException("delete error", path.toString(), e);
         }
     }
 
     @Override
     public List<Resume> doCopyAll() {
-            return  getStreamPath()
-                    .map(this::doGet)
-                    .collect(Collectors.toList());
+        return getStreamPath()
+                .map(this::doGet)
+                .collect(Collectors.toList());
     }
 
-    protected Stream<Path> getStreamPath(){
+    protected Stream<Path> getStreamPath() {
         try {
             return Files.list(directory);
         } catch (IOException e) {
@@ -98,7 +99,7 @@ public abstract class AbstractPathStorage extends AbstractStorage<Path> implemen
         }
     }
 
-    protected abstract void doWrite(ByteArrayOutputStream baos, Path path) throws IOException;
+    public abstract void doWrite(Resume resume, Path path) throws IOException;
 
-    protected abstract InputStream doRead(Path path) throws IOException;
+    public abstract Resume doRead(InputStream is) throws IOException;
 }

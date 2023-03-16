@@ -1,23 +1,32 @@
 package webapp.storage;
 
+import webapp.exception.StorageException;
+import webapp.model.Resume;
+
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.stream.Stream;
 
 public class ObjectStreamPathStorage extends AbstractPathStorage{
 
-    protected ObjectStreamPathStorage (String directory){
+    public ObjectStreamPathStorage (String directory){
         super(directory);
     }
 
     @Override
-    protected void doWrite(ByteArrayOutputStream baos, Path path) throws IOException {
-        Files.write(path, baos.toByteArray());
+    public void doWrite(Resume resume, Path path) throws IOException {
+        ByteArrayOutputStream boas = new ByteArrayOutputStream();
+        ObjectOutputStream ois = new ObjectOutputStream(boas);
+            ois.writeObject(resume);
+            Files.write(path, boas.toByteArray());
     }
 
     @Override
-    protected InputStream  doRead(Path path) throws IOException {
-        return new ByteArrayInputStream( Files.readAllBytes( path));
+    public Resume doRead(InputStream bais) throws IOException {
+        try (ObjectInputStream ois = new ObjectInputStream(bais)) {
+            return (Resume) ois.readObject();
+        } catch (ClassNotFoundException e) {
+            throw new StorageException(" Resume Class is not", null, e);
+        }
     }
 }
