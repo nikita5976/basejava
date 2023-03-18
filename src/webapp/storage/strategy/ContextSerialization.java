@@ -3,10 +3,20 @@ package webapp.storage.strategy;
 import webapp.model.Resume;
 import webapp.storage.AbstractStorage;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.List;
 
-public class ContextSerialization<SK, OS, IS> extends AbstractStorage<SK> implements MethodsSerialization<SK> {
+public class ContextSerialization<SK> extends AbstractStorage<SK> implements MethodsSerialization<SK> {
     private MethodsSerialization<SK> context;
+
+    public ContextSerialization(){}
+
+    public ContextSerialization ( ChoiceStorage choiceStorage, String directory){
+        ChoiceSerialization choiceSerialization = new ChoiceSerialization(choiceStorage, directory );
+        this.context = choiceSerialization.context;
+    }
 
     public void setContext(MethodsSerialization<SK> context) {
         this.context = context;
@@ -57,4 +67,16 @@ public class ContextSerialization<SK, OS, IS> extends AbstractStorage<SK> implem
     public int size() {
         return context.size();
     }
+
+    @Override
+    public void doWrite(Resume r, OutputStream os) throws IOException {
+        context.doWrite(r, os);
+    }
+
+    @Override
+    public Resume doRead(InputStream is) throws IOException {
+        return context.doRead(is);
+    }
+
+
 }
