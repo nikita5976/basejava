@@ -1,6 +1,6 @@
 package webapp.storage.strategy;
 
-public enum ChoiceStorage {
+public enum WaysStorage {
     FILE,
     PATCH
 }

@@ -1,7 +1,7 @@
 package webapp.storage;
 
-import webapp.storage.strategy.ChoiceStorage;
-import webapp.storage.strategy.ContextSerialization;
+import webapp.storage.strategy.WaysStorage;
+import webapp.storage.strategy.ContextObjectStreamStorage;
 
 import java.io.File;
 
@@ -14,6 +14,6 @@ public class ChoiceSerializationTest extends AbstractStorageTest {
     }
 
     public ChoiceSerializationTest() {
-        super(new ContextSerialization<>(ChoiceStorage.FILE, STORAGE_DIR));
+        super(new ContextObjectStreamStorage<>(WaysStorage.PATCH, STORAGE_DIR));
     }
 }

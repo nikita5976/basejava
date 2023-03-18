@@ -7,7 +7,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 
-public interface MethodsSerialization <SK>   {
+public interface MethodsObjectStreamStorage<SK>   {
 
 
     void doSave(Resume r, SK searchKey);

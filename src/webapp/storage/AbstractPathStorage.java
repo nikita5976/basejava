@@ -2,7 +2,7 @@ package webapp.storage;
 
 import webapp.exception.StorageException;
 import webapp.model.Resume;
-import webapp.storage.strategy.MethodsSerialization;
+import webapp.storage.strategy.MethodsObjectStreamStorage;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -13,7 +13,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public abstract class AbstractPathStorage extends AbstractStorage<Path> implements MethodsSerialization<Path> {
+public abstract class AbstractPathStorage extends AbstractStorage<Path> implements MethodsObjectStreamStorage<Path> {
     private final Path directory;
 
     protected AbstractPathStorage(String dir) {

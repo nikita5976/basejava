@@ -7,9 +7,9 @@ import java.io.File;
 import java.nio.file.Path;
 
 public class ChoiceSerialization  {
-    public ContextSerialization context = new ContextSerialization<>();
+    public ContextObjectStreamStorage context = new ContextObjectStreamStorage<>();
 
-    public ChoiceSerialization(ChoiceStorage choice, String StorageDir) {
+    public ChoiceSerialization(WaysStorage choice, String StorageDir) {
         switch (choice) {
             case FILE:
                 this.context.setContext(new <File>ObjectStreamStorage(StorageDir));

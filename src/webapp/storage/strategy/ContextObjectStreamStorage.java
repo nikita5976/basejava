@@ -8,17 +8,17 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 
-public class ContextSerialization<SK> extends AbstractStorage<SK> implements MethodsSerialization<SK> {
-    private MethodsSerialization<SK> context;
+public class ContextObjectStreamStorage<SK> extends AbstractStorage<SK> implements MethodsObjectStreamStorage<SK> {
+    private MethodsObjectStreamStorage<SK> context;
 
-    public ContextSerialization(){}
+    public ContextObjectStreamStorage(){}
 
-    public ContextSerialization ( ChoiceStorage choiceStorage, String directory){
-        ChoiceSerialization choiceSerialization = new ChoiceSerialization(choiceStorage, directory );
+    public ContextObjectStreamStorage(WaysStorage waysStorage, String directory){
+        ChoiceSerialization choiceSerialization = new ChoiceSerialization(waysStorage, directory );
         this.context = choiceSerialization.context;
     }
 
-    public void setContext(MethodsSerialization<SK> context) {
+    public void setContext(MethodsObjectStreamStorage<SK> context) {
         this.context = context;
     }
 
