@@ -13,7 +13,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public abstract class AbstractPathStorage extends AbstractStorage<Path> implements  MethodsSerialization <Path> {
+public abstract class AbstractPathStorage extends AbstractStorage<Path> implements MethodsSerialization<Path> {
     private final Path directory;
 
     protected AbstractPathStorage(String dir) {
@@ -42,8 +42,8 @@ public abstract class AbstractPathStorage extends AbstractStorage<Path> implemen
 
     @Override
     public void doUpdate(Resume resume, Path path) {
-        try {
-            doWrite(resume, path);
+        try (OutputStream os = Files.newOutputStream(path)) {
+            doWrite(resume, os);
         } catch (IOException e) {
             throw new StorageException("write to file error", path.toString(), e);
         }
@@ -66,10 +66,9 @@ public abstract class AbstractPathStorage extends AbstractStorage<Path> implemen
 
     @Override
     public Resume doGet(Path path) {
-        try {
-            byte[] resumeBytes = Files.readAllBytes(path);
-            ByteArrayInputStream baio = new ByteArrayInputStream(resumeBytes);
-            return doRead(baio);
+
+        try (InputStream is = Files.newInputStream(path)) {
+            return doRead(is);
         } catch (IOException e) {
             throw new StorageException("read file error", path.toString(), e);
         }
@@ -99,7 +98,7 @@ public abstract class AbstractPathStorage extends AbstractStorage<Path> implemen
         }
     }
 
-    public abstract void doWrite(Resume resume, Path path) throws IOException;
+    public abstract void doWrite(Resume resume, OutputStream os) throws IOException;
 
     public abstract Resume doRead(InputStream is) throws IOException;
 }
