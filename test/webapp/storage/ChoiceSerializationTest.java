@@ -14,6 +14,6 @@ public class ChoiceSerializationTest extends AbstractStorageTest {
     }
 
     public ChoiceSerializationTest() {
-        super(new ContextObjectStreamStorage<>(WaysStorage.PATCH, STORAGE_DIR));
+        super(new ContextObjectStreamStorage<>(WaysStorage.FILE, STORAGE_DIR));
     }
 }

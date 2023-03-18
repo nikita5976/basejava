@@ -2,10 +2,12 @@ package webapp.storage;
 
 import webapp.exception.StorageException;
 import webapp.model.Resume;
+import webapp.storage.strategy.MethodsObjectStreamStorage;
 
 import java.io.*;
+import java.nio.file.Path;
 
-public class ObjectStreamPathStorage extends AbstractPathStorage{
+public class ObjectStreamPathStorage extends AbstractPathStorage implements MethodsObjectStreamStorage<Path> {
 
     public ObjectStreamPathStorage (String directory){
         super(directory);
