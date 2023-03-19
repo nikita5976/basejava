@@ -2,6 +2,8 @@ package webapp.storage;
 
 import webapp.exception.StorageException;
 import webapp.model.Resume;
+import webapp.storage.strategy.FileStorage;
+import webapp.storage.strategy.ObjectStreamSerializer;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -12,7 +14,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public abstract class AbstractPathStorage extends AbstractStorage<Path>  {
+public  class AbstractPathStorage extends AbstractStorage<Path>  {
     private final Path directory;
 
     protected AbstractPathStorage(String dir) {
@@ -97,7 +99,11 @@ public abstract class AbstractPathStorage extends AbstractStorage<Path>  {
         }
     }
 
-    public abstract void doWrite(Resume resume, OutputStream os) throws IOException;
+    public void doWrite(Resume resume, OutputStream os) throws IOException {
+        new FileStorage(new ObjectStreamSerializer(), "C:\\test\\resume").doWrite(resume, os);
+    }
 
-    public abstract Resume doRead(InputStream is) throws IOException;
+    public Resume doRead(InputStream is) throws IOException {
+        return new FileStorage(new ObjectStreamSerializer(),"C:\\test\\resume").doRead(is);
+    }
 }
