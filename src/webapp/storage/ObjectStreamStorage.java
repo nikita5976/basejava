@@ -2,12 +2,13 @@ package webapp.storage;
 
 import webapp.exception.StorageException;
 import webapp.model.Resume;
-import webapp.storage.strategy.MethodsObjectStreamStorage;
+import webapp.storage.strategy.StrategySerializable;
 
 import java.io.*;
 
-public class ObjectStreamStorage extends AbstractFileStorage implements MethodsObjectStreamStorage <File> {
-    public ObjectStreamStorage(String directory) {
+public class ObjectStreamStorage extends AbstractFileStorage implements StrategySerializable {
+
+    public ObjectStreamStorage (String directory){
         super(directory);
     }
 

@@ -1,20 +1,17 @@
-package webapp.storage;
+package webapp.storage.strategy;
 
 import webapp.exception.StorageException;
 import webapp.model.Resume;
 
 import java.io.*;
 
-public class ObjectStreamPathStorage extends AbstractPathStorage  {
-
-    public ObjectStreamPathStorage (String directory){
-        super(directory);
-    }
+public class ObjectStreamSerializer implements StrategySerializable{
 
     @Override
-    public void doWrite (Resume resume, OutputStream os) throws IOException {
-        ObjectOutputStream ois = new ObjectOutputStream(os);
-            ois.writeObject(resume);
+    public void doWrite(Resume r, OutputStream os) throws IOException {
+        try (ObjectOutputStream oos = new ObjectOutputStream(os)) {
+            oos.writeObject(r);
+        }
     }
 
     @Override
