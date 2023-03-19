@@ -5,7 +5,7 @@ import webapp.storage.strategy.ObjectStreamSerializer;
 
 import java.io.File;
 
-public class FileStoregeSerializableTest extends AbstractStorageTest{
+public class FileStorageSerializableTest extends AbstractStorageTest{
 
     static {
         File file = new File(STORAGE_DIR);
@@ -14,7 +14,7 @@ public class FileStoregeSerializableTest extends AbstractStorageTest{
         }
     }
 
-    public FileStoregeSerializableTest() {
+    public FileStorageSerializableTest() {
         super(new FileStorage(new ObjectStreamSerializer(), STORAGE_DIR));
     }
 }
