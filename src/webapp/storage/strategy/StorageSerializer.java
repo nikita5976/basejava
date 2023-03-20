@@ -7,7 +7,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 
-public interface StrategySerializable {
+public interface StorageSerializer {
 
      void doWrite(Resume r, OutputStream os) throws IOException;
 

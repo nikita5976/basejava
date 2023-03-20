@@ -2,10 +2,11 @@ package webapp.storage;
 
 import webapp.exception.StorageException;
 import webapp.model.Resume;
-import webapp.storage.strategy.FileStorage;
-import webapp.storage.strategy.ObjectStreamSerializer;
+import webapp.storage.strategy.StorageSerializer;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -14,11 +15,13 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public  class AbstractPathStorage extends AbstractStorage<Path>  {
+public  class PathStorage extends AbstractStorage<Path>  {
     private final Path directory;
+    private final StorageSerializer serializer;
 
-    protected AbstractPathStorage(String dir) {
+    protected PathStorage(String dir, StorageSerializer serializer) {
         directory = Paths.get(dir);
+            this.serializer = serializer;
         Objects.requireNonNull(directory, "directory must not be null");
         if (Files.isDirectory(directory) || Files.isWritable(directory)) {
         } else {
@@ -100,10 +103,10 @@ public  class AbstractPathStorage extends AbstractStorage<Path>  {
     }
 
     public void doWrite(Resume resume, OutputStream os) throws IOException {
-        new FileStorage(new ObjectStreamSerializer(), "C:\\test\\resume").doWrite(resume, os);
+       serializer.doWrite(resume, os);
     }
 
     public Resume doRead(InputStream is) throws IOException {
-        return new FileStorage(new ObjectStreamSerializer(),"C:\\test\\resume").doRead(is);
+        return serializer.doRead(is);
     }
 }

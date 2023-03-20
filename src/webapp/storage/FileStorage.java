@@ -2,16 +2,19 @@ package webapp.storage;
 
 import webapp.exception.StorageException;
 import webapp.model.Resume;
+import webapp.storage.strategy.StorageSerializer;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public abstract class AbstractFileStorage extends AbstractStorage<File> {
+public class FileStorage extends AbstractStorage<File> {
     private final File directory;
+    private final StorageSerializer serializer;
 
-    protected AbstractFileStorage(String directory) {
+    protected FileStorage(String directory, StorageSerializer serializer) {
+        this.serializer = serializer;
         File tempDirectory = new File(directory);
         Objects.requireNonNull(directory, "directory must not be null");
         if (!tempDirectory.isDirectory()) {
@@ -97,8 +100,12 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
         return list;
     }
 
-    public abstract void doWrite(Resume r, OutputStream os) throws IOException;
+    private void doWrite(Resume resume, OutputStream os) throws IOException {
+        serializer.doWrite(resume, os);
+    }
 
-    public abstract Resume doRead(InputStream is) throws IOException;
+    private Resume doRead(InputStream is) throws IOException {
+        return serializer.doRead(is);
+    }
 }
 
