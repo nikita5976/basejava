@@ -1,7 +1,6 @@
-package webapp.storage;
+package webapp.storage.strategy;
 
 import webapp.model.*;
-import webapp.storage.strategy.StorageSerializer;
 import webapp.util.XmlParser;
 
 import java.io.*;

@@ -1,5 +1,7 @@
 package webapp.storage;
 
+import webapp.storage.strategy.XmlStreamSerializer;
+
 import java.io.File;
 
 public class XmlPathStorageTest extends AbstractStorageTest {

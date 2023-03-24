@@ -8,7 +8,9 @@ import java.util.Objects;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CompanySection extends AbstractSection {
     private static final long  serialVersionUID = 1L;
-    private final List<Company> companySection;
+    private  List<Company> companySection;
+
+    public CompanySection () {}
 
     protected CompanySection(List<Company> companySection) {
         this.companySection = companySection;

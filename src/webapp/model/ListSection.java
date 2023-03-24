@@ -8,7 +8,9 @@ import java.util.Objects;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ListSection extends AbstractSection {
     private static final long  serialVersionUID = 1L;
-    private final List<String> sectionData;
+    private  List<String> sectionData;
+
+    public ListSection() {}
 
     protected ListSection(List<String> sectionData) {
         Objects.requireNonNull(sectionData, "sectionData in ListSection must not be null");

@@ -1,8 +1,10 @@
 package webapp.model;
 
+import webapp.util.LocalDateAdapter;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -14,8 +16,10 @@ import static webapp.util.DateUtil.NOW;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Company implements Serializable {
     private static final long serialVersionUID = 1L;
-    private final Link link;
+    private  Link link;
     private final List<Period> period = new ArrayList<>();
+
+    Company() {}
 
     Company(String name, String website) {
         Objects.requireNonNull(name, "name must not be null");
@@ -54,8 +58,10 @@ public class Company implements Serializable {
     @XmlAccessorType(XmlAccessType.FIELD)
     public static class Link implements Serializable {
         private static final long serialVersionUID = 1L;
-        private final String name;
-        private final String website;
+        private String name;
+        private String website;
+
+        public Link () {}
 
         private Link(String name, String website) {
             Objects.requireNonNull(name, "name must not be null");
@@ -98,10 +104,16 @@ public class Company implements Serializable {
     @XmlAccessorType(XmlAccessType.FIELD)
     public static class Period implements Serializable {
         private static final long serialVersionUID = 1L;
-        private final LocalDate dateStart;
-        private final LocalDate dateEnd;
-        private final String title;
-        private final String description;
+
+        @XmlJavaTypeAdapter(LocalDateAdapter.class)
+        private LocalDate dateStart;
+
+        @XmlJavaTypeAdapter(LocalDateAdapter.class)
+        private LocalDate dateEnd;
+        private String title;
+        private String description;
+
+        public Period () {}
 
         private Period(LocalDate dateStart, LocalDate dateEnd, String title, String description) {
             this.dateStart = dateStart;

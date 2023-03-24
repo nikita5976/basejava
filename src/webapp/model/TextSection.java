@@ -7,7 +7,9 @@ import java.util.Objects;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TextSection extends AbstractSection {
     private static final long  serialVersionUID = 1L;
-    private final String sectionData;
+    private String sectionData;
+
+    public TextSection(){}
 
     protected TextSection(String sectionData) {
         Objects.requireNonNull(sectionData, "sectionData  TextSection must not be null");
