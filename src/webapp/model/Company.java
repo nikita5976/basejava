@@ -1,14 +1,19 @@
 package webapp.model;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
 import static webapp.util.DateUtil.NOW;
 
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Company implements Serializable {
-    private static final long  serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
     private final Link link;
     private final List<Period> period = new ArrayList<>();
 
@@ -46,9 +51,9 @@ public class Company implements Serializable {
         return period.hashCode() + link.hashCode();
     }
 
-
-    private static class Link implements Serializable {
-        private static final long  serialVersionUID = 1L;
+    @XmlAccessorType(XmlAccessType.FIELD)
+    public static class Link implements Serializable {
+        private static final long serialVersionUID = 1L;
         private final String name;
         private final String website;
 
@@ -90,8 +95,9 @@ public class Company implements Serializable {
         }
     }
 
+    @XmlAccessorType(XmlAccessType.FIELD)
     public static class Period implements Serializable {
-        private static final long  serialVersionUID = 1L;
+        private static final long serialVersionUID = 1L;
         private final LocalDate dateStart;
         private final LocalDate dateEnd;
         private final String title;

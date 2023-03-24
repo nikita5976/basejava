@@ -27,7 +27,7 @@ public class MainReadResumeFile {
         Resume testResume = doRead(file);
 
 
-        Map<SectionType, AbstractSection> sectionMap = testResume.getSection();
+        Map<SectionType, AbstractSection> sectionMap = testResume.getSections();
 
         System.out.println(testResume.getFullName());
         System.out.println("----------------------------------------------");

@@ -36,7 +36,7 @@ public class ResumeTestData {
         filingExperienceTestResume(testResume);
         filingEducationTestResume(testResume);
 
-        Map<SectionType, AbstractSection> sectionMap = testResume.getSection();
+        Map<SectionType, AbstractSection> sectionMap = testResume.getSections();
 
         System.out.println(testResume.getFullName());
         System.out.println("----------------------------------------------");

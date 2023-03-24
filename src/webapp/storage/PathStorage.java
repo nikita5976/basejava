@@ -15,13 +15,13 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public  class PathStorage extends AbstractStorage<Path>  {
+public class PathStorage extends AbstractStorage<Path> {
     private final Path directory;
     private final StorageSerializer serializer;
 
     protected PathStorage(String dir, StorageSerializer serializer) {
         directory = Paths.get(dir);
-            this.serializer = serializer;
+        this.serializer = serializer;
         Objects.requireNonNull(directory, "directory must not be null");
         if (Files.isDirectory(directory) || Files.isWritable(directory)) {
         } else {
@@ -103,7 +103,7 @@ public  class PathStorage extends AbstractStorage<Path>  {
     }
 
     public void doWrite(Resume resume, OutputStream os) throws IOException {
-       serializer.doWrite(resume, os);
+        serializer.doWrite(resume, os);
     }
 
     public Resume doRead(InputStream is) throws IOException {

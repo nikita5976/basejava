@@ -2,17 +2,22 @@ package webapp.model;
 
 import webapp.util.DateUtil;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.*;
 
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Resume implements  Comparable<Resume>, Serializable {
    private static final long  serialVersionUID = 1L;
     private String uuid;
     private String fullName;
     private final Map<ContactType, String> contacts = new EnumMap<>(ContactType.class);
-    protected final Map<SectionType, AbstractSection> section = new EnumMap<>(SectionType.class);
+    protected final Map<SectionType, AbstractSection> sections = new EnumMap<>(SectionType.class);
 
     public Resume() {
     }
@@ -47,12 +52,12 @@ public class Resume implements  Comparable<Resume>, Serializable {
 
     public void setSectionObjective(String objectiveData) {
         TextSection sectionObjective = new TextSection(objectiveData);
-        section.put(SectionType.OBJECTIVE, sectionObjective);
+        sections.put(SectionType.OBJECTIVE, sectionObjective);
     }
 
     public void setSectionPersonal(String personalData) {
         TextSection sectionPersonal = new TextSection(personalData);
-        section.put(SectionType.PERSONAL, sectionPersonal);
+        sections.put(SectionType.PERSONAL, sectionPersonal);
     }
 
     public void setSectionAchievement(String achievementData) {
@@ -67,13 +72,13 @@ public class Resume implements  Comparable<Resume>, Serializable {
 
     private void setSectionList(SectionType type, String data) {
 
-        if (section.get(type) == null) {
+        if (sections.get(type) == null) {
             ArrayList<String> al = new ArrayList<>();
             al.add(data);
             ListSection sectionList = new ListSection(new ArrayList<>(al));
-            section.put(type, sectionList);
+            sections.put(type, sectionList);
         } else {
-            ListSection sectionList = (ListSection) section.get(type);
+            ListSection sectionList = (ListSection) sections.get(type);
             sectionList.getSectionData()
                     .add(data);
         }
@@ -99,15 +104,15 @@ public class Resume implements  Comparable<Resume>, Serializable {
         {
             LocalDate dataStart = DateUtil.of(yearDataStart, Month.of(monthDataStart));
             LocalDate dataEnd = DateUtil.of(yearDataEnd, Month.of(monthDataEnd));
-            if (section.get(type) == null) {
+            if (sections.get(type) == null) {
                 List<Company> al = new ArrayList<>();
                 Company temp = new Company(name, website);
                 temp.setPeriod(dataStart, dataEnd, title, description);
                 al.add(temp);
                 CompanySection sectionExperience = new CompanySection(al);
-                section.put(type, sectionExperience);
+                sections.put(type, sectionExperience);
             } else {
-                CompanySection sectionExperience = (CompanySection) section.get(type);
+                CompanySection sectionExperience = (CompanySection) sections.get(type);
                 for (Company temp : sectionExperience.getSectionData()) {
                     if (temp.getName().equals(name)) {
                         temp.setPeriod(dataStart, dataEnd, title, description);
@@ -121,8 +126,8 @@ public class Resume implements  Comparable<Resume>, Serializable {
         }
     }
 
-    public Map<SectionType, AbstractSection> getSection() {
-        return new HashMap<>(section);
+    public Map<SectionType, AbstractSection> getSections() {
+        return new HashMap<>(sections);
     }
 
     //нужна проверка uuid на уникальность в местах хранения Resume
@@ -131,7 +136,10 @@ public class Resume implements  Comparable<Resume>, Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Resume resume = (Resume) o;
-        return uuid.equals(resume.uuid);
+        return Objects.equals(uuid, resume.uuid) &&
+                Objects.equals(fullName, resume.fullName) &&
+                Objects.equals(contacts, resume.contacts) &&
+                Objects.equals(sections, resume.sections);
     }
 
     @Override
