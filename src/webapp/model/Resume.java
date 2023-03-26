@@ -12,8 +12,8 @@ import java.util.*;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Resume implements  Comparable<Resume>, Serializable {
-   private static final long  serialVersionUID = 1L;
+public class Resume implements Comparable<Resume>, Serializable {
+    private static final long serialVersionUID = 1L;
     private String uuid;
     private String fullName;
     private final Map<ContactType, String> contacts = new EnumMap<>(ContactType.class);
@@ -41,8 +41,15 @@ public class Resume implements  Comparable<Resume>, Serializable {
         return fullName;
     }
 
+    public Map<SectionType, AbstractSection> getSections() {
+        return new HashMap<>(sections);
+    }
 
-    public void setContact(ContactType contactType, String content) {
+    public Map<ContactType, String> getContacts() {
+        return contacts;
+    }
+
+    public void addContact(ContactType contactType, String content) {
         contacts.put(contactType, content);
     }
 
@@ -50,12 +57,12 @@ public class Resume implements  Comparable<Resume>, Serializable {
         return contacts.get(contactType);
     }
 
-    public Map<ContactType, String> getContacts () {
-        return contacts;
+    public void addSection(SectionType type, AbstractSection section) {
+        sections.put(type, section);
     }
 
-    public Map<SectionType, AbstractSection> getSection () {
-        return sections;
+    public  <T extends AbstractSection> T  getSection (SectionType type) {
+        return  (T) sections.get(type) ;
     }
 
     public void setSectionObjective(String objectiveData) {
@@ -115,7 +122,7 @@ public class Resume implements  Comparable<Resume>, Serializable {
             if (sections.get(type) == null) {
                 List<Company> al = new ArrayList<>();
                 Company temp = new Company(name, website);
-                temp.setPeriod(dataStart, dataEnd, title, description);
+                temp.addPeriod(dataStart, dataEnd, title, description);
                 al.add(temp);
                 CompanySection sectionExperience = new CompanySection(al);
                 sections.put(type, sectionExperience);
@@ -123,22 +130,17 @@ public class Resume implements  Comparable<Resume>, Serializable {
                 CompanySection sectionExperience = (CompanySection) sections.get(type);
                 for (Company temp : sectionExperience.getSectionData()) {
                     if (temp.getName().equals(name)) {
-                        temp.setPeriod(dataStart, dataEnd, title, description);
+                        temp.addPeriod(dataStart, dataEnd, title, description);
                         break end;
                     }
                 }
                 Company temp = new Company(name, website);
-                temp.setPeriod(dataStart, dataEnd, title, description);
+                temp.addPeriod(dataStart, dataEnd, title, description);
                 sectionExperience.getSectionData().add(temp);
             }
         }
     }
 
-    public Map<SectionType, AbstractSection> getSections() {
-        return new HashMap<>(sections);
-    }
-
-    //нужна проверка uuid на уникальность в местах хранения Resume
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

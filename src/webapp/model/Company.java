@@ -26,7 +26,7 @@ public class Company implements Serializable {
         link = new Link(name, website);
     }
 
-    public void setPeriod(LocalDate dataStart, LocalDate dataEnd, String title, String description) {
+    public void addPeriod(LocalDate dataStart, LocalDate dataEnd, String title, String description) {
         Objects.requireNonNull(dataStart, "dataStart must not be null");
         Objects.requireNonNull(dataEnd, "dataEnd must not be null");
         Objects.requireNonNull(title, "title must not be null");
@@ -35,6 +35,14 @@ public class Company implements Serializable {
 
     public String getName() {
         return link.getName();
+    }
+
+    public String getWebsite() {
+        return link.getWebsite();
+    }
+
+    public List <Period> getPeriod () {
+        return period;
     }
 
     @Override
@@ -107,7 +115,6 @@ public class Company implements Serializable {
 
         @XmlJavaTypeAdapter(LocalDateAdapter.class)
         private LocalDate dateStart;
-
         @XmlJavaTypeAdapter(LocalDateAdapter.class)
         private LocalDate dateEnd;
         private String title;
@@ -122,12 +129,28 @@ public class Company implements Serializable {
             this.description = description;
         }
 
-        // Пока не использую. Применить когда  будет понятно с вводом данных.
+        // Пока не использую. Применить когда  будет понятно с вводом данных. назначение - ввод текущего места
         private Period(LocalDate dateStart, String title, String description) {
             this.dateStart = dateStart;
             this.dateEnd = NOW;
             this.title = title;
             this.description = description;
+        }
+
+        public LocalDate getDateStart () {
+            return dateStart;
+        }
+
+        public LocalDate getDateEnd() {
+            return dateEnd;
+        }
+
+        public String getTitle () {
+            return title;
+        }
+
+        public String getDescription() {
+            return description;
         }
 
         @Override
