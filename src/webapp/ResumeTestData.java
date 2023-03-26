@@ -145,6 +145,8 @@ public class ResumeTestData {
     private static void filingExperienceTestResume(Resume testResume) {
         testResume.setSectionExperience(10,2013, 2,2023, "Java Online Projects", "http://javaops.ru/",
                 "Автор проекта.", "Создание, организация и проведение Java онлайн проектов и стажировок.");
+      //  testResume.setSectionExperience(10,2013, 2,2023, "Java Online Projects", null,
+      //          "Автор проекта.", "Создание, организация и проведение Java онлайн проектов и стажировок.");
 
         testResume.setSectionExperience(10,2014, 1,2016, "Wrike", "https://www.wrike.com/",
                 "Старший разработчик (backend)",
