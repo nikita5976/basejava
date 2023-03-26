@@ -8,8 +8,9 @@ import java.io.Reader;
 import java.io.Writer;
 
 public class JsonParser {
-    private static Gson GSON = new GsonBuilder()
+    private final static Gson GSON = new GsonBuilder()
             .registerTypeAdapter(AbstractSection.class, new JsonSectionAdapter())
+            .setPrettyPrinting()
             .create();
 
     public static <T> T read(Reader reader, Class<T> clazz) {
@@ -21,3 +22,10 @@ public class JsonParser {
     }
 
 }
+
+/*
+@SerializedName("age")
+private int dwarfAge;
+Мы получим на выходе свойство с именем «age» вместо «dwarfAge».
+ */
+

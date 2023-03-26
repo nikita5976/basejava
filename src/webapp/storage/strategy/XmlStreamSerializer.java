@@ -6,8 +6,8 @@ import webapp.util.XmlParser;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 
-public class XmlStreamSerializer implements StorageSerializer {
-    private XmlParser xmlParser;
+public class XmlStreamSerializer implements StreamSerializer {
+    private final XmlParser xmlParser;
 
     public XmlStreamSerializer() {
         xmlParser = new XmlParser(

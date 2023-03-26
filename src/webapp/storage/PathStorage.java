@@ -2,7 +2,7 @@ package webapp.storage;
 
 import webapp.exception.StorageException;
 import webapp.model.Resume;
-import webapp.storage.strategy.StorageSerializer;
+import webapp.storage.strategy.StreamSerializer;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,9 +17,9 @@ import java.util.stream.Stream;
 
 public class PathStorage extends AbstractStorage<Path> {
     private final Path directory;
-    private final StorageSerializer serializer;
+    private final StreamSerializer serializer;
 
-    protected PathStorage(String dir, StorageSerializer serializer) {
+    protected PathStorage(String dir, StreamSerializer serializer) {
         directory = Paths.get(dir);
         this.serializer = serializer;
         Objects.requireNonNull(directory, "directory must not be null");

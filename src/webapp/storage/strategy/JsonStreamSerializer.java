@@ -6,7 +6,7 @@ import webapp.util.JsonParser;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 
-public class JsonStreamSerializer implements StorageSerializer {
+public class JsonStreamSerializer implements StreamSerializer {
 
     @Override
     public void doWrite(Resume r, OutputStream os) throws IOException {

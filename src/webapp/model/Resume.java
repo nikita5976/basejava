@@ -50,6 +50,14 @@ public class Resume implements  Comparable<Resume>, Serializable {
         return contacts.get(contactType);
     }
 
+    public Map<ContactType, String> getContacts () {
+        return contacts;
+    }
+
+    public Map<SectionType, AbstractSection> getSection () {
+        return sections;
+    }
+
     public void setSectionObjective(String objectiveData) {
         TextSection sectionObjective = new TextSection(objectiveData);
         sections.put(SectionType.OBJECTIVE, sectionObjective);

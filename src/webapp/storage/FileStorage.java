@@ -2,7 +2,7 @@ package webapp.storage;
 
 import webapp.exception.StorageException;
 import webapp.model.Resume;
-import webapp.storage.strategy.StorageSerializer;
+import webapp.storage.strategy.StreamSerializer;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -11,9 +11,9 @@ import java.util.Objects;
 
 public class FileStorage extends AbstractStorage<File> {
     private final File directory;
-    private final StorageSerializer serializer;
+    private final StreamSerializer serializer;
 
-    protected FileStorage(String directory, StorageSerializer serializer) {
+    protected FileStorage(String directory, StreamSerializer serializer) {
         this.serializer = serializer;
         File tempDirectory = new File(directory);
         Objects.requireNonNull(directory, "directory must not be null");

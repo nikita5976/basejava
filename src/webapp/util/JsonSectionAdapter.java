@@ -32,3 +32,10 @@ public class JsonSectionAdapter <T> implements JsonSerializer<T>, JsonDeserializ
         return retValue;
     }
 }
+
+/*
+T src — собственно, сериализуемый объект;
+Type type — тип сериализуемого объекта;
+JsonSerializationContext context — контекст сериализации; интерфейс JsonSerializationContext также является функциональным и содержит 1 метод, тоже serialize(); его стоит использовать для обработки непримитивных данных, входящих в сериализуемый объект (и мы это сделаем чуть ниже); контекст наследует все настройки (в т.ч. зарегистрированные сериализаторы и т.п.) исходного Gson-объекта.
+
+ */
