@@ -16,18 +16,32 @@ public class DataStreamSerializer implements StreamSerializer {
             dos.writeUTF(resume.getFullName());
             Map<ContactType, String> contacts = resume.getContacts();
             dos.writeInt(contacts.size());
+
+            contacts.entrySet().forEach(contact -> {
+                try {
+                    dos.writeUTF(contact.getKey().name());
+                    dos.writeUTF(contact.getValue());
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+
+            /* старый  вариант
             for (Map.Entry<ContactType, String> entry : contacts.entrySet()) {
                 dos.writeUTF(entry.getKey().name());
                 dos.writeUTF(entry.getValue());
             }
+             */
             writeTextSection(dos, SectionType.PERSONAL, resume);
             writeTextSection(dos, SectionType.OBJECTIVE, resume);
             writeListSection(dos, SectionType.ACHIEVEMENT, resume);
             writeListSection(dos, SectionType.QUALIFICATIONS, resume);
-            writeCompanySection(dos, SectionType.EXPERIENCE, resume );
+            writeCompanySection(dos, SectionType.EXPERIENCE, resume);
             writeCompanySection(dos, SectionType.EDUCATION, resume);
         }
     }
+
+
 
     @Override
     public Resume doRead(InputStream is) throws IOException {
@@ -43,15 +57,15 @@ public class DataStreamSerializer implements StreamSerializer {
             readTextSection(dis, SectionType.OBJECTIVE, resume);
             readListSection(dis, SectionType.ACHIEVEMENT, resume);
             readListSection(dis, SectionType.QUALIFICATIONS, resume);
-            readCompanySection(dis, SectionType.EXPERIENCE, resume );
+            readCompanySection(dis, SectionType.EXPERIENCE, resume);
             readCompanySection(dis, SectionType.EDUCATION, resume);
             return resume;
         }
     }
 
-    private void writeTextSection (DataOutputStream dos, SectionType type, Resume resume) throws IOException {
-    TextSection textSection = resume.getSection(type);
-        if (textSection == null){
+    private void writeTextSection(DataOutputStream dos, SectionType type, Resume resume) throws IOException {
+        TextSection textSection = resume.getSection(type);
+        if (textSection == null) {
             dos.writeBoolean(false);
             return;
         } else dos.writeBoolean(true);
@@ -59,9 +73,9 @@ public class DataStreamSerializer implements StreamSerializer {
         dos.writeUTF(dataTextSection);
     }
 
-    private void readTextSection (DataInputStream dis, SectionType type, Resume resume) throws IOException {
+    private void readTextSection(DataInputStream dis, SectionType type, Resume resume) throws IOException {
         if (dis.readBoolean()) {
-        } else  return;
+        } else return;
         switch (type) {
             case PERSONAL:
                 resume.setSectionPersonal(dis.readUTF());
@@ -73,7 +87,7 @@ public class DataStreamSerializer implements StreamSerializer {
 
     private void writeListSection(DataOutputStream dos, SectionType type, Resume resume) throws IOException {
         ListSection listSection = (ListSection) resume.getSection(type);
-        if (listSection == null){
+        if (listSection == null) {
             dos.writeBoolean(false);
             return;
         } else dos.writeBoolean(true);
@@ -86,7 +100,7 @@ public class DataStreamSerializer implements StreamSerializer {
 
     private void readListSection(DataInputStream dis, SectionType type, Resume resume) throws IOException {
         if (dis.readBoolean()) {
-        } else  return;
+        } else return;
         int size = dis.readInt();
         switch (type) {
             case ACHIEVEMENT:
@@ -107,7 +121,7 @@ public class DataStreamSerializer implements StreamSerializer {
         if (companySection == null) {
             dos.writeBoolean(false);
             return;
-        } else  dos.writeBoolean(true);
+        } else dos.writeBoolean(true);
         List<Company> companyList = companySection.getSectionData();
         int sizeCompanyList = companyList.size();
         dos.writeInt(sizeCompanyList);
@@ -130,7 +144,7 @@ public class DataStreamSerializer implements StreamSerializer {
 
     private void readCompanySection(DataInputStream dis, SectionType type, Resume resume) throws IOException {
         if (dis.readBoolean()) {
-        } else  return;
+        } else return;
         int sizeCompanyList = dis.readInt();
         for (int i = 0; i < sizeCompanyList; i++) {
             String companyName = dis.readUTF();
@@ -163,7 +177,7 @@ public class DataStreamSerializer implements StreamSerializer {
         }
     }
 
-    private void writeDate (DataOutputStream dos, LocalDate date) throws IOException {
+    private void writeDate(DataOutputStream dos, LocalDate date) throws IOException {
         dos.writeInt(date.getMonth().getValue());
         dos.writeInt(date.getYear());
     }
