@@ -4,6 +4,7 @@ import webapp.model.*;
 
 import java.io.*;
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -17,10 +18,10 @@ public class DataStreamSerializer implements StreamSerializer {
             Map<ContactType, String> contacts = resume.getContacts();
             dos.writeInt(contacts.size());
 
-            contacts.entrySet().forEach(contact -> {
+            contacts.forEach((key, value) -> {
                 try {
-                    dos.writeUTF(contact.getKey().name());
-                    dos.writeUTF(contact.getValue());
+                    dos.writeUTF(key.name());
+                    dos.writeUTF(value);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -41,7 +42,11 @@ public class DataStreamSerializer implements StreamSerializer {
         }
     }
 
-
+    private void writeWithException(Collection<String> collection, DataOutputStream dos, DataWriter dw)  throws IOException {
+        for (String s : collection) {
+            dw.writer(dos, s);
+        }
+    }
 
     @Override
     public Resume doRead(InputStream is) throws IOException {
