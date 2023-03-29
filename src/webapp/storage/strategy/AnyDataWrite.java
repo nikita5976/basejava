@@ -2,10 +2,13 @@ package webapp.storage.strategy;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.Collection;
 
-public class AnyDataWrite implements DataWriter{
-    @Override
-    public void writer(DataOutputStream dos, String element) throws IOException {
-        dos.writeUTF(element);
+public class AnyDataWrite  {
+    public void anyWriter(DataOutputStream dos, Collection<String> collection) throws IOException {
+        for (String element : collection) {
+            dos.writeUTF(element);
+        }
     }
 }
+

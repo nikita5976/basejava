@@ -4,11 +4,13 @@ import webapp.model.*;
 
 import java.io.*;
 import java.time.LocalDate;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 public class DataStreamSerializer implements StreamSerializer {
+
+    AnyDataWrite adw = new AnyDataWrite();
+    DataWriter dw = adw ::anyWriter;
 
     @Override
     public void doWrite(Resume resume, OutputStream os) throws IOException {
@@ -42,11 +44,6 @@ public class DataStreamSerializer implements StreamSerializer {
         }
     }
 
-    private void writeWithException(Collection<String> collection, DataOutputStream dos, DataWriter dw)  throws IOException {
-        for (String s : collection) {
-            dw.writer(dos, s);
-        }
-    }
 
     @Override
     public Resume doRead(InputStream is) throws IOException {
@@ -67,6 +64,8 @@ public class DataStreamSerializer implements StreamSerializer {
             return resume;
         }
     }
+
+
 
     private void writeTextSection(DataOutputStream dos, SectionType type, Resume resume) throws IOException {
         TextSection textSection = resume.getSection(type);
@@ -98,9 +97,14 @@ public class DataStreamSerializer implements StreamSerializer {
         } else dos.writeBoolean(true);
         List<String> dataListSection = listSection.getSectionData();
         dos.writeInt(dataListSection.size());
-        for (String data : dataListSection) {
+
+        dw.writer(dos, dataListSection); //вариант 1
+
+       /*  старый вариант
+       for (String data : dataListSection) {
             dos.writeUTF(data);
         }
+        */
     }
 
     private void readListSection(DataInputStream dis, SectionType type, Resume resume) throws IOException {
