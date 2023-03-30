@@ -1,5 +1,6 @@
 package webapp.storage.strategy;
 
+import webapp.exception.StorageException;
 import webapp.model.*;
 
 import java.io.*;
@@ -34,12 +35,40 @@ public class DataStreamSerializer implements StreamSerializer {
                 dos.writeUTF(entry.getValue());
             }
              */
+            /*
             writeTextSection(dos, SectionType.PERSONAL, resume);
             writeTextSection(dos, SectionType.OBJECTIVE, resume);
             writeListSection(dos, SectionType.ACHIEVEMENT, resume);
             writeListSection(dos, SectionType.QUALIFICATIONS, resume);
             writeCompanySection(dos, SectionType.EXPERIENCE, resume);
             writeCompanySection(dos, SectionType.EDUCATION, resume);
+
+             */
+
+            Map<SectionType, AbstractSection> section = resume.getSections();
+            dos.writeInt(section.size());
+            for (Map.Entry<SectionType, AbstractSection> entry : section.entrySet()) {
+                dos.writeUTF(entry.getKey().name());
+                switch (entry.getKey()) {
+                    case OBJECTIVE:
+                        writeTextSection(dos, SectionType.OBJECTIVE, resume);
+                        break;
+                    case PERSONAL:
+                        writeTextSection(dos, SectionType.PERSONAL, resume);
+                        break;
+                    case ACHIEVEMENT:
+                        writeListSection(dos, SectionType.ACHIEVEMENT, resume);
+                        break;
+                    case QUALIFICATIONS:
+                        writeListSection(dos, SectionType.QUALIFICATIONS, resume);
+                        break;
+                    case EXPERIENCE:
+                        writeCompanySection(dos, SectionType.EXPERIENCE, resume);
+                        break;
+                    case EDUCATION:
+                        writeCompanySection(dos, SectionType.EDUCATION, resume);
+                }
+            }
         }
     }
 
@@ -50,16 +79,35 @@ public class DataStreamSerializer implements StreamSerializer {
             String uuid = dis.readUTF();
             String fullName = dis.readUTF();
             Resume resume = new Resume(uuid, fullName);
-            int size = dis.readInt();
-            for (int i = 0; i < size; i++) {
+            int sizeContacts = dis.readInt();
+            for (int i = 0; i < sizeContacts; i++) {
                 resume.addContact(ContactType.valueOf(dis.readUTF()), dis.readUTF());
             }
-            readTextSection(dis, SectionType.PERSONAL, resume);
-            readTextSection(dis, SectionType.OBJECTIVE, resume);
-            readListSection(dis, SectionType.ACHIEVEMENT, resume);
-            readListSection(dis, SectionType.QUALIFICATIONS, resume);
-            readCompanySection(dis, SectionType.EXPERIENCE, resume);
-            readCompanySection(dis, SectionType.EDUCATION, resume);
+            int sizeSections = dis.readInt();
+            for (int i = 0; i < sizeSections; i++) {
+                String sectionType = dis.readUTF();
+                switch (sectionType) {
+                    case "PERSONAL" :
+                        readTextSection(dis, SectionType.PERSONAL, resume);
+                        break;
+                    case "OBJECTIVE":
+                        readTextSection(dis, SectionType.OBJECTIVE, resume);
+                        break;
+                    case "ACHIEVEMENT":
+                        readListSection(dis, SectionType.ACHIEVEMENT, resume);
+                        break;
+                    case "QUALIFICATIONS":
+                        readListSection(dis, SectionType.QUALIFICATIONS, resume);
+                        break;
+                    case "EXPERIENCE":
+                        readCompanySection(dis, SectionType.EXPERIENCE, resume);
+                        break;
+                    case "EDUCATION":
+                        readCompanySection(dis, SectionType.EDUCATION, resume);
+                        break;
+                    default: throw new StorageException("Error deSerializer name sections DataStreamSerializer ", uuid);
+                }
+            }
             return resume;
         }
     }
@@ -95,16 +143,10 @@ public class DataStreamSerializer implements StreamSerializer {
         } else dos.writeBoolean(true);
         List<String> dataListSection = listSection.getSectionData();
         dos.writeInt(dataListSection.size());
-
-        anyWriter(dos, dataListSection);
-
-
-
-       /*  старый вариант
-       for (String data : dataListSection) {
+        for (String data : dataListSection) {
             dos.writeUTF(data);
         }
-        */
+
     }
 
     private void readListSection(DataInputStream dis, SectionType type, Resume resume) throws IOException {
@@ -198,14 +240,16 @@ public class DataStreamSerializer implements StreamSerializer {
     }
 
     @FunctionalInterface
-     interface DataWriter  <T> {
-        void writer(DataOutputStream dos, T collection ) throws IOException ;
+    interface DataWriter<T> {
+        void writer(DataOutputStream dos, T collection) throws IOException;
     }
-    public void anyWriter(DataOutputStream dos, Collection<String> collection) throws IOException {
+
+    void anyWriter(DataOutputStream dos, Collection<String> collection) throws IOException {
 
         for (String element : collection) {
             dos.writeUTF(element);
         }
     }
+
 
 }
