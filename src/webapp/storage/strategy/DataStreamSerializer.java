@@ -95,13 +95,10 @@ public class DataStreamSerializer implements StreamSerializer {
         } else dos.writeBoolean(true);
         List<String> dataListSection = listSection.getSectionData();
         dos.writeInt(dataListSection.size());
-        // вариант 2
-        DataWriter dw = (dos1, collection) -> {
-            for (String element : collection) {
-                dos1.writeUTF(element);
-            }
-        };
-        dw.writer(dos, dataListSection);
+
+        anyWriter(dos, dataListSection);
+
+
 
        /*  старый вариант
        for (String data : dataListSection) {
@@ -201,8 +198,14 @@ public class DataStreamSerializer implements StreamSerializer {
     }
 
     @FunctionalInterface
-    public interface DataWriter {
-        void writer(DataOutputStream dos, Collection<String> collection) throws IOException;
+     interface DataWriter  <T> {
+        void writer(DataOutputStream dos, T collection ) throws IOException ;
+    }
+    public void anyWriter(DataOutputStream dos, Collection<String> collection) throws IOException {
+
+        for (String element : collection) {
+            dos.writeUTF(element);
+        }
     }
 
 }
