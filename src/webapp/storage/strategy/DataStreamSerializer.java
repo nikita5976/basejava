@@ -1,6 +1,6 @@
+
 package webapp.storage.strategy;
 
-import webapp.exception.StorageException;
 import webapp.model.*;
 
 import java.io.*;
@@ -8,9 +8,9 @@ import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class DataStreamSerializer implements StreamSerializer {
-
 
     @Override
     public void doWrite(Resume resume, OutputStream os) throws IOException {
@@ -29,49 +29,48 @@ public class DataStreamSerializer implements StreamSerializer {
                 }
             });
 
-            /* старый  вариант
-            for (Map.Entry<ContactType, String> entry : contacts.entrySet()) {
-                dos.writeUTF(entry.getKey().name());
-                dos.writeUTF(entry.getValue());
-            }
-             */
-            /*
-            writeTextSection(dos, SectionType.PERSONAL, resume);
-            writeTextSection(dos, SectionType.OBJECTIVE, resume);
-            writeListSection(dos, SectionType.ACHIEVEMENT, resume);
-            writeListSection(dos, SectionType.QUALIFICATIONS, resume);
-            writeCompanySection(dos, SectionType.EXPERIENCE, resume);
-            writeCompanySection(dos, SectionType.EDUCATION, resume);
-
-             */
-
             Map<SectionType, AbstractSection> section = resume.getSections();
             dos.writeInt(section.size());
+
+
             for (Map.Entry<SectionType, AbstractSection> entry : section.entrySet()) {
-                dos.writeUTF(entry.getKey().name());
-                switch (entry.getKey()) {
-                    case OBJECTIVE:
-                        writeTextSection(dos, SectionType.OBJECTIVE, resume);
+                SectionType type = entry.getKey();
+                AbstractSection sections = entry.getValue();
+                dos.writeUTF(type.name());
+
+                switch (type) {
+                    case OBJECTIVE, PERSONAL:
+                        dos.writeUTF(((TextSection) sections).getSectionData());
                         break;
-                    case PERSONAL:
-                        writeTextSection(dos, SectionType.PERSONAL, resume);
+                    case ACHIEVEMENT, QUALIFICATIONS:
+                        List<String> dataListSection = ((ListSection) sections).getSectionData();
+                        dos.writeInt(dataListSection.size());
+                        for (String data : dataListSection) {
+                            dos.writeUTF(data);
+                        }
                         break;
-                    case ACHIEVEMENT:
-                        writeListSection(dos, SectionType.ACHIEVEMENT, resume);
-                        break;
-                    case QUALIFICATIONS:
-                        writeListSection(dos, SectionType.QUALIFICATIONS, resume);
-                        break;
-                    case EXPERIENCE:
-                        writeCompanySection(dos, SectionType.EXPERIENCE, resume);
-                        break;
-                    case EDUCATION:
-                        writeCompanySection(dos, SectionType.EDUCATION, resume);
+                    case EXPERIENCE, EDUCATION:
+                        List<Company> companyList = ((CompanySection) sections).getSectionData();
+                        dos.writeInt(companyList.size());
+                        for (Company company : companyList) {
+                            dos.writeUTF(company.getName());
+                            setFlagDoesNotExistString(dos, company.getWebsite());
+                            List<Company.Period> periodList = company.getPeriod();
+                            dos.writeInt(periodList.size());
+                            for (Company.Period period : periodList) {
+                                writeDate(dos, period.getDateStart());
+                                writeDate(dos, period.getDateEnd());
+                                dos.writeUTF(period.getTitle());
+                                if (type.equals(SectionType.EXPERIENCE)) {
+                                    String description = period.getDescription();
+                                    dos.writeUTF(Objects.requireNonNullElse(description, "null"));
+                                }
+                            }
+                        }
                 }
             }
         }
     }
-
 
     @Override
     public Resume doRead(InputStream is) throws IOException {
@@ -84,147 +83,59 @@ public class DataStreamSerializer implements StreamSerializer {
                 resume.addContact(ContactType.valueOf(dis.readUTF()), dis.readUTF());
             }
             int sizeSections = dis.readInt();
-            for (int i = 0; i < sizeSections; i++) {
+            for (int j = 0; j < sizeSections; j++) {
                 String sectionType = dis.readUTF();
                 switch (sectionType) {
-                    case "PERSONAL" :
-                        readTextSection(dis, SectionType.PERSONAL, resume);
+                    case "PERSONAL":
+                        resume.setSectionPersonal(dis.readUTF());
                         break;
                     case "OBJECTIVE":
-                        readTextSection(dis, SectionType.OBJECTIVE, resume);
+                        resume.setSectionObjective(dis.readUTF());
                         break;
                     case "ACHIEVEMENT":
-                        readListSection(dis, SectionType.ACHIEVEMENT, resume);
+                        int sizeAch = dis.readInt();
+                        for (int i = 0; i < sizeAch; i++) {
+                            resume.setSectionAchievement(dis.readUTF());
+                        }
                         break;
                     case "QUALIFICATIONS":
-                        readListSection(dis, SectionType.QUALIFICATIONS, resume);
+                        int size = dis.readInt();
+                        for (int i = 0; i < size; i++) {
+                            resume.setSectionQualification(dis.readUTF());
+                        }
                         break;
-                    case "EXPERIENCE":
-                        readCompanySection(dis, SectionType.EXPERIENCE, resume);
+                    case "EXPERIENCE","EDUCATION":
+                        int sizeCompanyList = dis.readInt();
+                        for (int i = 0; i < sizeCompanyList; i++) {
+                            String companyName = dis.readUTF();
+                            String companyWebsite = dis.readUTF();
+                            if (companyWebsite.equals("null")) {
+                                companyWebsite = null;
+                            }
+                            int sizePeriodList = dis.readInt();
+                            for (int ji = 0; ji < sizePeriodList; ji++) {
+                                int monthDataStart = dis.readInt();
+                                int yearDataStart = dis.readInt();
+                                int monthDataEnd = dis.readInt();
+                                int yearDataEnd = dis.readInt();
+                                String companyTitle = dis.readUTF();
+                                if (sectionType.equals("EXPERIENCE")) {
+                                    String companyDescription = dis.readUTF();
+                                    if (companyDescription.equals("null")) {
+                                        companyDescription = null;
+                                    }
+                                    resume.setSectionExperience(monthDataStart, yearDataStart, monthDataEnd,
+                                            yearDataEnd, companyName, companyWebsite, companyTitle, companyDescription);
+                                } else {
+                                    resume.setSectionEducation(monthDataStart, yearDataStart, monthDataEnd,
+                                            yearDataEnd, companyName, companyWebsite, companyTitle);
+                                }
+                            }
+                        }
                         break;
-                    case "EDUCATION":
-                        readCompanySection(dis, SectionType.EDUCATION, resume);
-                        break;
-                    default: throw new StorageException("Error deSerializer name sections DataStreamSerializer ", uuid);
                 }
             }
             return resume;
-        }
-    }
-
-
-    private void writeTextSection(DataOutputStream dos, SectionType type, Resume resume) throws IOException {
-        TextSection textSection = resume.getSection(type);
-        if (textSection == null) {
-            dos.writeBoolean(false);
-            return;
-        } else dos.writeBoolean(true);
-        String dataTextSection = textSection.getSectionData();
-        dos.writeUTF(dataTextSection);
-    }
-
-    private void readTextSection(DataInputStream dis, SectionType type, Resume resume) throws IOException {
-        if (dis.readBoolean()) {
-        } else return;
-        switch (type) {
-            case PERSONAL:
-                resume.setSectionPersonal(dis.readUTF());
-                return;
-            case OBJECTIVE:
-                resume.setSectionObjective(dis.readUTF());
-        }
-    }
-
-    private void writeListSection(DataOutputStream dos, SectionType type, Resume resume) throws IOException {
-        ListSection listSection = (ListSection) resume.getSection(type);
-        if (listSection == null) {
-            dos.writeBoolean(false);
-            return;
-        } else dos.writeBoolean(true);
-        List<String> dataListSection = listSection.getSectionData();
-        dos.writeInt(dataListSection.size());
-        for (String data : dataListSection) {
-            dos.writeUTF(data);
-        }
-
-    }
-
-    private void readListSection(DataInputStream dis, SectionType type, Resume resume) throws IOException {
-        if (dis.readBoolean()) {
-        } else return;
-        int size = dis.readInt();
-        switch (type) {
-            case ACHIEVEMENT:
-                for (int i = 0; i < size; i++) {
-                    resume.setSectionAchievement(dis.readUTF());
-                }
-                break;
-            case QUALIFICATIONS:
-                for (int i = 0; i < size; i++) {
-                    resume.setSectionQualification(dis.readUTF());
-                }
-                break;
-        }
-    }
-
-    private void writeCompanySection(DataOutputStream dos, SectionType type, Resume resume) throws IOException {
-        CompanySection companySection = resume.getSection(type);
-        if (companySection == null) {
-            dos.writeBoolean(false);
-            return;
-        } else dos.writeBoolean(true);
-        List<Company> companyList = companySection.getSectionData();
-        int sizeCompanyList = companyList.size();
-        dos.writeInt(sizeCompanyList);
-        for (Company company : companyList) {
-            dos.writeUTF(company.getName());
-            setFlagDoesNotExistString(dos, company.getWebsite());
-            List<Company.Period> periodList = company.getPeriod();
-            int sizePeriodList = periodList.size();
-            dos.writeInt(sizePeriodList);
-            for (Company.Period period : periodList) {
-                writeDate(dos, period.getDateStart());
-                writeDate(dos, period.getDateEnd());
-                dos.writeUTF(period.getTitle());
-                if (type.equals(SectionType.EXPERIENCE)) {
-                    setFlagDoesNotExistString(dos, period.getDescription());
-                }
-            }
-        }
-    }
-
-    private void readCompanySection(DataInputStream dis, SectionType type, Resume resume) throws IOException {
-        if (dis.readBoolean()) {
-        } else return;
-        int sizeCompanyList = dis.readInt();
-        for (int i = 0; i < sizeCompanyList; i++) {
-            String companyName = dis.readUTF();
-            String companyWebsite = dis.readUTF();
-            if (companyWebsite.equals("null")) {
-                companyWebsite = null;
-            }
-            int sizePeriodList = dis.readInt();
-            for (int j = 0; j < sizePeriodList; j++) {
-                int monthDataStart = dis.readInt();
-                int yearDataStart = dis.readInt();
-                int monthDataEnd = dis.readInt();
-                int yearDataEnd = dis.readInt();
-                String companyTitle = dis.readUTF();
-                switch (type) {
-                    case EXPERIENCE:
-                        String companyDescription = dis.readUTF();
-                        if (companyDescription.equals("null")) {
-                            companyDescription = null;
-                        }
-                        resume.setSectionExperience(monthDataStart, yearDataStart, monthDataEnd,
-                                yearDataEnd, companyName, companyWebsite, companyTitle, companyDescription);
-                        break;
-                    case EDUCATION:
-                        resume.setSectionEducation(monthDataStart, yearDataStart, monthDataEnd,
-                                yearDataEnd, companyName, companyWebsite, companyTitle);
-                        break;
-                }
-            }
         }
     }
 
@@ -250,6 +161,6 @@ public class DataStreamSerializer implements StreamSerializer {
             dos.writeUTF(element);
         }
     }
-
-
 }
+
+

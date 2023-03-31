@@ -1,3 +1,4 @@
+
 package webapp.storage;
 
 import webapp.storage.strategy.DataStreamSerializer;
@@ -17,3 +18,5 @@ public class DataPathStorageTest extends AbstractStorageTest {
         super(new PathStorage(STORAGE_DIR, new DataStreamSerializer()));
     }
 }
+
+
