@@ -39,17 +39,15 @@ public class DataStreamSerializer implements StreamSerializer {
                 dos.writeUTF(type.name());
 
                 switch (type) {
-                    case OBJECTIVE, PERSONAL:
-                        dos.writeUTF(((TextSection) sections).getSectionData());
-                        break;
-                    case ACHIEVEMENT, QUALIFICATIONS:
+                    case OBJECTIVE, PERSONAL -> dos.writeUTF(((TextSection) sections).getSectionData());
+                    case ACHIEVEMENT, QUALIFICATIONS -> {
                         List<String> dataListSection = ((ListSection) sections).getSectionData();
                         dos.writeInt(dataListSection.size());
                         for (String data : dataListSection) {
                             dos.writeUTF(data);
                         }
-                        break;
-                    case EXPERIENCE, EDUCATION:
+                    }
+                    case EXPERIENCE, EDUCATION -> {
                         List<Company> companyList = ((CompanySection) sections).getSectionData();
                         dos.writeInt(companyList.size());
                         for (Company company : companyList) {
@@ -67,6 +65,7 @@ public class DataStreamSerializer implements StreamSerializer {
                                 }
                             }
                         }
+                    }
                 }
             }
         }
@@ -86,25 +85,21 @@ public class DataStreamSerializer implements StreamSerializer {
             for (int j = 0; j < sizeSections; j++) {
                 String sectionType = dis.readUTF();
                 switch (sectionType) {
-                    case "PERSONAL":
-                        resume.setSectionPersonal(dis.readUTF());
-                        break;
-                    case "OBJECTIVE":
-                        resume.setSectionObjective(dis.readUTF());
-                        break;
-                    case "ACHIEVEMENT":
+                    case "PERSONAL" -> resume.setSectionPersonal(dis.readUTF());
+                    case "OBJECTIVE" -> resume.setSectionObjective(dis.readUTF());
+                    case "ACHIEVEMENT" -> {
                         int sizeAch = dis.readInt();
                         for (int i = 0; i < sizeAch; i++) {
                             resume.setSectionAchievement(dis.readUTF());
                         }
-                        break;
-                    case "QUALIFICATIONS":
+                    }
+                    case "QUALIFICATIONS" -> {
                         int size = dis.readInt();
                         for (int i = 0; i < size; i++) {
                             resume.setSectionQualification(dis.readUTF());
                         }
-                        break;
-                    case "EXPERIENCE","EDUCATION":
+                    }
+                    case "EXPERIENCE", "EDUCATION" -> {
                         int sizeCompanyList = dis.readInt();
                         for (int i = 0; i < sizeCompanyList; i++) {
                             String companyName = dis.readUTF();
@@ -132,7 +127,7 @@ public class DataStreamSerializer implements StreamSerializer {
                                 }
                             }
                         }
-                        break;
+                    }
                 }
             }
             return resume;
@@ -145,9 +140,7 @@ public class DataStreamSerializer implements StreamSerializer {
     }
 
     private void setFlagDoesNotExistString(DataOutputStream dos, String string) throws IOException {
-        if (string == null) {
-            dos.writeUTF("null");
-        } else dos.writeUTF(string);
+        dos.writeUTF(Objects.requireNonNullElse(string, "null"));
     }
 
     @FunctionalInterface
