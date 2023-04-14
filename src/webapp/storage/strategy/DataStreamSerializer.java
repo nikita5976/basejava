@@ -41,11 +41,13 @@ public class DataStreamSerializer implements StreamSerializer {
                 switch (type) {
                     case OBJECTIVE, PERSONAL -> dos.writeUTF(((TextSection) sections).getSectionData());
                     case ACHIEVEMENT, QUALIFICATIONS -> {
-                        List<String> dataListSection = ((ListSection) sections).getSectionData();
+                        writeWithException(dos, ((ListSection) sections).getSectionData(), dos::writeUTF);
+                       /* List<String> dataListSection = ((ListSection) sections).getSectionData();
                         dos.writeInt(dataListSection.size());
                         for (String data : dataListSection) {
                             dos.writeUTF(data);
                         }
+                        */
                     }
                     case EXPERIENCE, EDUCATION -> {
                         List<Company> companyList = ((CompanySection) sections).getSectionData();
@@ -145,15 +147,18 @@ public class DataStreamSerializer implements StreamSerializer {
 
     @FunctionalInterface
     interface DataWriter<T> {
-        void writer(DataOutputStream dos, T collection) throws IOException;
+        void write( T t) throws IOException;
     }
 
-    void anyWriter(DataOutputStream dos, Collection<String> collection) throws IOException {
+   public <T> void writeWithException(DataOutputStream dos, Collection<T> collection, DataWriter<T> writer) throws IOException {
 
-        for (String element : collection) {
-            dos.writeUTF(element);
-        }
+       dos.writeInt(collection.size());
+       for (T t : collection) {
+           writer.write(t);
+       }
     }
 }
+
+
 
 
