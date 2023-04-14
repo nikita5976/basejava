@@ -6,7 +6,6 @@ import webapp.model.*;
 import java.io.*;
 import java.time.LocalDate;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -40,33 +39,21 @@ public class DataStreamSerializer implements StreamSerializer {
 
                 switch (type) {
                     case OBJECTIVE, PERSONAL -> dos.writeUTF(((TextSection) sections).getSectionData());
-                    case ACHIEVEMENT, QUALIFICATIONS -> {
-                        writeWithException(dos, ((ListSection) sections).getSectionData(), dos::writeUTF);
-                       /* List<String> dataListSection = ((ListSection) sections).getSectionData();
-                        dos.writeInt(dataListSection.size());
-                        for (String data : dataListSection) {
-                            dos.writeUTF(data);
-                        }
-                        */
-                    }
+                    case ACHIEVEMENT, QUALIFICATIONS -> writeWithException(dos, ((ListSection) sections).getSectionData(), dos::writeUTF);
                     case EXPERIENCE, EDUCATION -> {
-                        List<Company> companyList = ((CompanySection) sections).getSectionData();
-                        dos.writeInt(companyList.size());
-                        for (Company company : companyList) {
-                            dos.writeUTF(company.getName());
-                            setFlagDoesNotExistString(dos, company.getWebsite());
-                            List<Company.Period> periodList = company.getPeriod();
-                            dos.writeInt(periodList.size());
-                            for (Company.Period period : periodList) {
-                                writeDate(dos, period.getDateStart());
-                                writeDate(dos, period.getDateEnd());
-                                dos.writeUTF(period.getTitle());
+                        writeWithException(dos, ((CompanySection) sections).getSectionData(), dataCompany -> {
+                            dos.writeUTF(dataCompany.getName());
+                            setFlagDoesNotExistString(dos, dataCompany.getWebsite());
+                            writeWithException(dos,  dataCompany.getPeriod(), dataPeriod  -> {
+                                writeDate(dos, dataPeriod.getDateStart());
+                                writeDate(dos, dataPeriod.getDateEnd());
+                                dos.writeUTF(dataPeriod.getTitle());
                                 if (type.equals(SectionType.EXPERIENCE)) {
-                                    String description = period.getDescription();
+                                    String description = dataPeriod.getDescription();
                                     dos.writeUTF(Objects.requireNonNullElse(description, "null"));
                                 }
-                            }
-                        }
+                            });
+                        });
                     }
                 }
             }
