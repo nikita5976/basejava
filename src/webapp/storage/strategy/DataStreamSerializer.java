@@ -16,35 +16,29 @@ public class DataStreamSerializer implements StreamSerializer {
         try (DataOutputStream dos = new DataOutputStream(os)) {
             dos.writeUTF(resume.getUuid());
             dos.writeUTF(resume.getFullName());
-            Map<ContactType, String> contacts = resume.getContacts();
-            dos.writeInt(contacts.size());
 
-            contacts.forEach((key, value) -> {
-                try {
-                    dos.writeUTF(key.name());
-                    dos.writeUTF(value);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
+            Map<ContactType, String> contacts = resume.getContacts();
+            writeWithException(dos, contacts.entrySet(), mapContact -> {
+                dos.writeUTF(mapContact.getKey().toString());
+                dos.writeUTF(mapContact.getValue());
             });
 
             Map<SectionType, AbstractSection> section = resume.getSections();
-            dos.writeInt(section.size());
 
-
-            for (Map.Entry<SectionType, AbstractSection> entry : section.entrySet()) {
-                SectionType type = entry.getKey();
-                AbstractSection sections = entry.getValue();
+            writeWithException(dos, section.entrySet(), mapSection -> {
+                SectionType type = mapSection.getKey();
+                AbstractSection sections = mapSection.getValue();
                 dos.writeUTF(type.name());
 
                 switch (type) {
                     case OBJECTIVE, PERSONAL -> dos.writeUTF(((TextSection) sections).getSectionData());
-                    case ACHIEVEMENT, QUALIFICATIONS -> writeWithException(dos, ((ListSection) sections).getSectionData(), dos::writeUTF);
+                    case ACHIEVEMENT, QUALIFICATIONS ->
+                            writeWithException(dos, ((ListSection) sections).getSectionData(), dos::writeUTF);
                     case EXPERIENCE, EDUCATION -> {
                         writeWithException(dos, ((CompanySection) sections).getSectionData(), dataCompany -> {
                             dos.writeUTF(dataCompany.getName());
                             setFlagDoesNotExistString(dos, dataCompany.getWebsite());
-                            writeWithException(dos,  dataCompany.getPeriod(), dataPeriod  -> {
+                            writeWithException(dos, dataCompany.getPeriod(), dataPeriod -> {
                                 writeDate(dos, dataPeriod.getDateStart());
                                 writeDate(dos, dataPeriod.getDateEnd());
                                 dos.writeUTF(dataPeriod.getTitle());
@@ -56,9 +50,10 @@ public class DataStreamSerializer implements StreamSerializer {
                         });
                     }
                 }
-            }
+            });
         }
     }
+
 
     @Override
     public Resume doRead(InputStream is) throws IOException {
@@ -134,15 +129,15 @@ public class DataStreamSerializer implements StreamSerializer {
 
     @FunctionalInterface
     interface DataWriter<T> {
-        void write( T t) throws IOException;
+        void write(T t) throws IOException;
     }
 
-   public <T> void writeWithException(DataOutputStream dos, Collection<T> collection, DataWriter<T> writer) throws IOException {
+    public <T> void writeWithException(DataOutputStream dos, Collection<T> collection, DataWriter<T> writer) throws IOException {
 
-       dos.writeInt(collection.size());
-       for (T t : collection) {
-           writer.write(t);
-       }
+        dos.writeInt(collection.size());
+        for (T t : collection) {
+            writer.write(t);
+        }
     }
 }
 
