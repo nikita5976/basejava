@@ -24,7 +24,6 @@ public class DataStreamSerializer implements StreamSerializer {
             });
 
             Map<SectionType, AbstractSection> section = resume.getSections();
-
             writeWithException(dos, section.entrySet(), mapSection -> {
                 SectionType type = mapSection.getKey();
                 AbstractSection sections = mapSection.getValue();
@@ -61,38 +60,25 @@ public class DataStreamSerializer implements StreamSerializer {
             String uuid = dis.readUTF();
             String fullName = dis.readUTF();
             Resume resume = new Resume(uuid, fullName);
-            int sizeContacts = dis.readInt();
-            for (int i = 0; i < sizeContacts; i++) {
-                resume.addContact(ContactType.valueOf(dis.readUTF()), dis.readUTF());
-            }
+
+            readWithException(dis, resume, res -> res.addContact(ContactType.valueOf(dis.readUTF()), dis.readUTF()));
             int sizeSections = dis.readInt();
             for (int j = 0; j < sizeSections; j++) {
                 String sectionType = dis.readUTF();
                 switch (sectionType) {
                     case "PERSONAL" -> resume.setSectionPersonal(dis.readUTF());
                     case "OBJECTIVE" -> resume.setSectionObjective(dis.readUTF());
-                    case "ACHIEVEMENT" -> {
-                        int sizeAch = dis.readInt();
-                        for (int i = 0; i < sizeAch; i++) {
-                            resume.setSectionAchievement(dis.readUTF());
-                        }
-                    }
-                    case "QUALIFICATIONS" -> {
-                        int size = dis.readInt();
-                        for (int i = 0; i < size; i++) {
-                            resume.setSectionQualification(dis.readUTF());
-                        }
-                    }
-                    case "EXPERIENCE", "EDUCATION" -> {
-                        int sizeCompanyList = dis.readInt();
-                        for (int i = 0; i < sizeCompanyList; i++) {
+                    case "ACHIEVEMENT" -> readWithException(dis, resume, res -> res.setSectionAchievement(dis.readUTF()));
+                    case "QUALIFICATIONS" ->readWithException(dis, resume, res -> res.setSectionQualification(dis.readUTF()));
+                    case "EXPERIENCE", "EDUCATION" ->
+                        readWithException(dis, resume, res1-> {
                             String companyName = dis.readUTF();
-                            String companyWebsite = dis.readUTF();
-                            if (companyWebsite.equals("null")) {
+                            String companyWebsite;
+                            String tempCompanyWebsite = dis.readUTF();
+                            if (tempCompanyWebsite.equals("null")) {
                                 companyWebsite = null;
-                            }
-                            int sizePeriodList = dis.readInt();
-                            for (int ji = 0; ji < sizePeriodList; ji++) {
+                            } else companyWebsite = tempCompanyWebsite;
+                            readWithException(dis, resume, res2-> {
                                 int monthDataStart = dis.readInt();
                                 int yearDataStart = dis.readInt();
                                 int monthDataEnd = dis.readInt();
@@ -109,9 +95,8 @@ public class DataStreamSerializer implements StreamSerializer {
                                     resume.setSectionEducation(monthDataStart, yearDataStart, monthDataEnd,
                                             yearDataEnd, companyName, companyWebsite, companyTitle);
                                 }
-                            }
-                        }
-                    }
+                            });
+                        });
                 }
             }
             return resume;
@@ -137,6 +122,17 @@ public class DataStreamSerializer implements StreamSerializer {
         dos.writeInt(collection.size());
         for (T t : collection) {
             writer.write(t);
+        }
+    }
+
+    @FunctionalInterface
+    interface DataReader {
+        void read (Resume resume) throws IOException;
+    }
+    public <T> void readWithException(DataInputStream dis, Resume resume, DataReader reader) throws IOException {
+        int size = dis.readInt();
+        for (int i = 0; i<size; i++){
+            reader.read(resume);
         }
     }
 }
