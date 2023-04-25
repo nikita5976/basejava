@@ -132,7 +132,7 @@ public class DataStreamSerializer implements StreamSerializer {
         void read(Resume resume) throws IOException;
     }
 
-    public <T> void readWithException(DataInputStream dis, Resume resume, DataReader reader) throws IOException {
+    public void readWithException(DataInputStream dis, Resume resume, DataReader reader) throws IOException {
         int size = dis.readInt();
         for (int i = 0; i < size; i++) {
             reader.read(resume);
