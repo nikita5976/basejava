@@ -62,23 +62,24 @@ public class DataStreamSerializer implements StreamSerializer {
             Resume resume = new Resume(uuid, fullName);
 
             readWithException(dis, resume, res -> res.addContact(ContactType.valueOf(dis.readUTF()), dis.readUTF()));
-            int sizeSections = dis.readInt();
-            for (int j = 0; j < sizeSections; j++) {
+            readWithException(dis, resume, res -> {
                 String sectionType = dis.readUTF();
                 switch (sectionType) {
                     case "PERSONAL" -> resume.setSectionPersonal(dis.readUTF());
                     case "OBJECTIVE" -> resume.setSectionObjective(dis.readUTF());
-                    case "ACHIEVEMENT" -> readWithException(dis, resume, res -> res.setSectionAchievement(dis.readUTF()));
-                    case "QUALIFICATIONS" ->readWithException(dis, resume, res -> res.setSectionQualification(dis.readUTF()));
-                    case "EXPERIENCE", "EDUCATION" ->
-                        readWithException(dis, resume, res1-> {
+                    case "ACHIEVEMENT" ->
+                            readWithException(dis, resume, res3 -> res.setSectionAchievement(dis.readUTF()));
+                    case "QUALIFICATIONS" ->
+                            readWithException(dis, resume, res3 -> res.setSectionQualification(dis.readUTF()));
+                    case "EXPERIENCE", "EDUCATION" -> {
+                        readWithException(dis, resume, res1 -> {
                             String companyName = dis.readUTF();
                             String companyWebsite;
                             String tempCompanyWebsite = dis.readUTF();
                             if (tempCompanyWebsite.equals("null")) {
                                 companyWebsite = null;
                             } else companyWebsite = tempCompanyWebsite;
-                            readWithException(dis, resume, res2-> {
+                            readWithException(dis, resume, res2 -> {
                                 int monthDataStart = dis.readInt();
                                 int yearDataStart = dis.readInt();
                                 int monthDataEnd = dis.readInt();
@@ -97,8 +98,9 @@ public class DataStreamSerializer implements StreamSerializer {
                                 }
                             });
                         });
+                    }
                 }
-            }
+            });
             return resume;
         }
     }
@@ -127,11 +129,12 @@ public class DataStreamSerializer implements StreamSerializer {
 
     @FunctionalInterface
     interface DataReader {
-        void read (Resume resume) throws IOException;
+        void read(Resume resume) throws IOException;
     }
+
     public <T> void readWithException(DataInputStream dis, Resume resume, DataReader reader) throws IOException {
         int size = dis.readInt();
-        for (int i = 0; i<size; i++){
+        for (int i = 0; i < size; i++) {
             reader.read(resume);
         }
     }
