@@ -75,21 +75,19 @@ public class DataStreamSerializer implements StreamSerializer {
                             String tempCompanyWebsite = dis.readUTF();
                             String companyWebsite = (tempCompanyWebsite.equals("null")) ? null : tempCompanyWebsite;
                             readWithException(dis, resume, res2 -> {
-                                int monthDataStart = dis.readInt();
-                                int yearDataStart = dis.readInt();
-                                int monthDataEnd = dis.readInt();
-                                int yearDataEnd = dis.readInt();
+                                int[] date = new int[4];
+                                readeDate(dis, date);
                                 String companyTitle = dis.readUTF();
                                 String companyDescription = dis.readUTF();
                                 if (companyDescription.equals("null")) {
                                     companyDescription = null;
                                 }
                                 if (sectionType.equals("EXPERIENCE")) {
-                                    resume.setSectionExperience(monthDataStart, yearDataStart, monthDataEnd,
-                                            yearDataEnd, companyName, companyWebsite, companyTitle, companyDescription);
+                                    resume.setSectionExperience(date[0], date[1], date[2],
+                                            date[3], companyName, companyWebsite, companyTitle, companyDescription);
                                 } else {
-                                    resume.setSectionEducation(monthDataStart, yearDataStart, monthDataEnd,
-                                            yearDataEnd, companyName, companyWebsite, companyTitle);
+                                    resume.setSectionEducation(date[0], date[1], date[2],
+                                            date[3], companyName, companyWebsite, companyTitle);
                                 }
                             });
                         });
@@ -103,6 +101,12 @@ public class DataStreamSerializer implements StreamSerializer {
     private void writeDate(DataOutputStream dos, LocalDate date) throws IOException {
         dos.writeInt(date.getMonth().getValue());
         dos.writeInt(date.getYear());
+    }
+
+    private void readeDate(DataInputStream dis, int[] data) throws IOException {
+        for (int i=0;  i< data.length; i++){
+            data[i] = dis.readInt();
+        }
     }
 
     private void setFlagDoesNotExistString(DataOutputStream dos, String string) throws IOException {
