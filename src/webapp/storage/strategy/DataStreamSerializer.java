@@ -41,10 +41,8 @@ public class DataStreamSerializer implements StreamSerializer {
                                 writeDate(dos, dataPeriod.getDateStart());
                                 writeDate(dos, dataPeriod.getDateEnd());
                                 dos.writeUTF(dataPeriod.getTitle());
-                                if (type.equals(SectionType.EXPERIENCE)) {
-                                    String description = dataPeriod.getDescription();
-                                    dos.writeUTF(Objects.requireNonNullElse(description, "null"));
-                                }
+                                String description = dataPeriod.getDescription();
+                                dos.writeUTF(Objects.requireNonNullElse(description, "null"));
                             });
                         });
                     }
@@ -74,22 +72,19 @@ public class DataStreamSerializer implements StreamSerializer {
                     case "EXPERIENCE", "EDUCATION" -> {
                         readWithException(dis, resume, res1 -> {
                             String companyName = dis.readUTF();
-                            String companyWebsite;
                             String tempCompanyWebsite = dis.readUTF();
-                            if (tempCompanyWebsite.equals("null")) {
-                                companyWebsite = null;
-                            } else companyWebsite = tempCompanyWebsite;
+                            String companyWebsite = (tempCompanyWebsite.equals("null")) ? null : tempCompanyWebsite;
                             readWithException(dis, resume, res2 -> {
                                 int monthDataStart = dis.readInt();
                                 int yearDataStart = dis.readInt();
                                 int monthDataEnd = dis.readInt();
                                 int yearDataEnd = dis.readInt();
                                 String companyTitle = dis.readUTF();
+                                String companyDescription = dis.readUTF();
+                                if (companyDescription.equals("null")) {
+                                    companyDescription = null;
+                                }
                                 if (sectionType.equals("EXPERIENCE")) {
-                                    String companyDescription = dis.readUTF();
-                                    if (companyDescription.equals("null")) {
-                                        companyDescription = null;
-                                    }
                                     resume.setSectionExperience(monthDataStart, yearDataStart, monthDataEnd,
                                             yearDataEnd, companyName, companyWebsite, companyTitle, companyDescription);
                                 } else {
