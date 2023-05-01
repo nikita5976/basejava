@@ -24,9 +24,14 @@ public class MainDeadLock {
        Runnable oneR = () -> {
            synchronized (mdl1){
                System.out.println("два потока и deadlock"+mdl2);
-               Thread.yield();
+               try {
+                   Thread.sleep(200);
+               } catch (InterruptedException exception) {
+                   System.out.println(exception);
+               }
+//               Thread.yield();
                synchronized (mdl2) {
-                   System.out.println(mdl2);
+                   System.out.println("stop usage "+mdl2);
                }
            }
        };
@@ -34,9 +39,14 @@ public class MainDeadLock {
        Runnable twoR = ()-> {
            synchronized (mdl2){
                System.out.println("два потока и deadlock"+mdl1);
-               Thread.yield();
+               try {
+                   Thread.sleep(200);
+               } catch (InterruptedException exception) {
+                   System.out.println(exception);
+               }
+ //              Thread.yield();
                synchronized (mdl1) {
-                   System.out.println(mdl1);
+                   System.out.println("stop usage "+mdl1);
                }
            }
        };
