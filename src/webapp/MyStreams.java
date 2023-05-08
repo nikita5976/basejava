@@ -37,20 +37,14 @@ public class MyStreams {
         return Arrays.stream(values)
                 .distinct()
                 .sorted()
-                .reduce(0, (a, b) -> {
-                    a = a * 10 + b;
-                    return a;
-                });
+                .reduce(0, (sum, b) -> sum * 10 + b);
     }
 
     private static List<Integer> oddOrEven(List<Integer> integers) {
         Supplier<Stream<Integer>> streamSupplier = integers::stream;
 
         final boolean evenSum = streamSupplier.get()
-                .reduce(0, (sum, v) -> {
-                    sum = sum + v;
-                    return sum;
-                }) % 2 == 0;
+                .reduce(0, Integer::sum) % 2 == 0;
 
         return streamSupplier.get()
                 .filter(integer -> evenSum == (integer % 2 != 0))
