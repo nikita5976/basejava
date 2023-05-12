@@ -46,6 +46,7 @@ public class MyStreams {
         final boolean evenSum = streamSupplier.get()
                 .reduce(0, Integer::sum) % 2 == 0;
 
+
         return streamSupplier.get()
                 .filter(integer -> evenSum == (integer % 2 != 0))
                 .toList();
