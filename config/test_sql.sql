@@ -1,4 +1,4 @@
- CREATE TABLE courses(
+ CREATE TABLE courses (
  c_no text PRIMARY KEY,
  title text,
 hours integer
