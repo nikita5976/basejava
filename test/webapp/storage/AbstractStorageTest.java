@@ -2,6 +2,7 @@ package webapp.storage;
 
 import org.junit.Before;
 import org.junit.Test;
+import webapp.Config;
 import webapp.ResumeTestData;
 import webapp.exception.ExistStorageException;
 import webapp.exception.NotExistStorageException;
@@ -14,7 +15,7 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 
 public abstract class AbstractStorageTest {
-    protected static final String STORAGE_DIR = "C:\\test\\resume";
+    protected static final String STORAGE_DIR = Config.get().getStorageDir();
     protected final Storage storage;
 
     protected static final String UUID_1 = "uuid1";
