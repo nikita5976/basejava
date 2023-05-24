@@ -304,3 +304,13 @@ ALTER TABLE order_details
   ADD quantity integer;
 
 DROP TABLE order_details;
+
+ UPDATE resume
+ SET full_name = ?,
+ WHERE uuid = ?;
+
+drop table resume cascade ;
+
+ SELECT COUNT(*) FROM имя_таблицы WHERE условие;
+
+ SELECT COUNT(*) FROM resume ;
