@@ -2,7 +2,8 @@ package webapp.storage;
 
 import webapp.Config;
 
-public class SqlTest extends AbstractStorageTest{
+public class SqlStorageTest extends AbstractStorageTest{
+
 
     static final String dbUrl ;
     static final String dbUser ;
@@ -14,7 +15,7 @@ public class SqlTest extends AbstractStorageTest{
         dbPassword = Config.get().getDbPassword();
     }
 
-    public SqlTest() {
+    public SqlStorageTest() {
         super(new SqlStorage(dbUrl, dbUser, dbPassword));
     }
 }

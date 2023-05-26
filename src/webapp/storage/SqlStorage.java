@@ -1,7 +1,5 @@
 package webapp.storage;
 
-import org.postgresql.util.PSQLException;
-import webapp.exception.ExistStorageException;
 import webapp.exception.NotExistStorageException;
 import webapp.model.Resume;
 import webapp.sql.ConnectionFactory;
@@ -61,14 +59,10 @@ public class SqlStorage implements Storage {
     @Override
     public void save(Resume r) {
         final String saveSQL = "INSERT INTO resume (uuid, full_name) VALUES (?,?)";
-        sqlHelper.usePreparedStatement(saveSQL, ps -> {
-            try {
-                ps.setString(1, r.getUuid());
-                ps.setString(2, r.getFullName());
-                ps.execute();
-            } catch (PSQLException e) { //есть сомнения может выбросится не только если повтор
-                throw new ExistStorageException(r.getUuid(), e);
-            }
+        sqlHelper.<Void>usePreparedStatement(saveSQL, ps -> {
+            ps.setString(1, r.getUuid());
+            ps.setString(2, r.getFullName());
+            ps.execute();
             return null;
         });
     }
@@ -88,7 +82,7 @@ public class SqlStorage implements Storage {
 
     @Override
     public List<Resume> getAllSorted() {
-        final String getAllSortedSQL = "SELECT * FROM resume;";
+        final String getAllSortedSQL = "SELECT * FROM resume r ORDER BY full_name,uuid";
         List<Resume> listResume = new ArrayList<>();
         return sqlHelper.usePreparedStatement(getAllSortedSQL, ps -> {
             ResultSet rs = ps.executeQuery();

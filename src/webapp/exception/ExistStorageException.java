@@ -5,8 +5,8 @@ public class ExistStorageException extends StorageException {
         super("\n Резюме " + uuid + " уже существует", uuid);
     }
 
-    public ExistStorageException (String uuid, Exception e){
-        super("\n Резюме " + uuid + "возможно уже существует", e);
+    public ExistStorageException (Exception e){
+        super("\n Резюме уже существует", e);
 
     }
 }
