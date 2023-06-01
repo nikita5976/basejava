@@ -5,18 +5,20 @@ import webapp.model.ContactType;
 import webapp.model.Resume;
 import webapp.sql.ConnectionFactory;
 import webapp.sql.SqlHelper;
+import webapp.sql.SqlWriter;
 
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class SqlStorage implements Storage {
 
     public final ConnectionFactory connectionFactory;
     SqlHelper sqlHelper;
+
+
 
     public SqlStorage(String dbUrl, String dbUser, String dbPassword) {
         connectionFactory = () -> DriverManager.getConnection(dbUrl, dbUser, dbPassword);
@@ -59,29 +61,12 @@ public class SqlStorage implements Storage {
     public void update(Resume r) {
         final String updateSQL = "UPDATE resume SET full_name = ? WHERE uuid = ?;";
         final String updateContactSQL = "UPDATE contact SET  value =? WHERE resume_uuid = ?  AND type =?";
-        sqlHelper.transactionalExecute(conn -> {
-            try (PreparedStatement ps = conn.prepareStatement(updateSQL)) {
-                ps.setString(2, r.getUuid());
-                ps.setString(1, r.getFullName());
-                int rs = ps.executeUpdate();
-                if (rs == 0) {
-                    throw new NotExistStorageException(r.getUuid());
-                }
+
+        SqlWriter.sqlWriter(updateSQL, updateContactSQL, sqlHelper, r, ps -> {
+            int rs = ps.executeUpdate();
+            if (rs == 0) {
+                throw new NotExistStorageException(r.getUuid());
             }
-
-            try (PreparedStatement ps = conn.prepareStatement(updateContactSQL)) {
-                for (Map.Entry<ContactType, String> e : r.getContacts().entrySet()) {
-                    ps.setString(2, r.getUuid());
-                    ps.setString(3, e.getKey().name());
-                    ps.setString(1, e.getValue());
-                    ps.addBatch();
-
-                }
-
-                ps.executeBatch();
-
-            }
-
             return null;
         });
     }
@@ -90,24 +75,8 @@ public class SqlStorage implements Storage {
     public void save(Resume r) {
         final String saveSQL = "INSERT INTO resume (full_name, uuid) VALUES (?,?)";
         final String saveContactSQL = "INSERT INTO contact (value, resume_uuid, type) VALUES (?,?,?)";
-        sqlHelper.transactionalExecute(conn -> {
-            try (PreparedStatement ps = conn.prepareStatement(saveSQL)) {
-                ps.setString(2, r.getUuid());
-                ps.setString(1, r.getFullName());
-                ps.execute();
-            }
 
-            try (PreparedStatement ps = conn.prepareStatement(saveContactSQL)) {
-                for (Map.Entry<ContactType, String> e : r.getContacts().entrySet()) {
-                    ps.setString(2, r.getUuid());
-                    ps.setString(3, e.getKey().name());
-                    ps.setString(1, e.getValue());
-                    ps.addBatch();
-                }
-                ps.executeBatch();
-            }
-            return null;
-        });
+        SqlWriter.sqlWriter(saveSQL, saveContactSQL, sqlHelper, r, PreparedStatement::execute);
     }
 
 
@@ -157,4 +126,5 @@ public class SqlStorage implements Storage {
             return rs.next() ? rs.getInt(1) : 0;
         });
     }
+
 }
