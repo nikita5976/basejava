@@ -58,7 +58,7 @@ public class SqlStorage implements Storage {
     @Override
     public void update(Resume r) {
         final String updateSQL = "UPDATE resume SET full_name = ? WHERE uuid = ?;";
-        final String updateContactSQL = "UPDATE contact SET type =?, value =? WHERE resume_uuid = ? AND (type =? OR type =null)";
+        final String updateContactSQL = "UPDATE contact SET  value =? WHERE resume_uuid = ?  AND type =?";
         sqlHelper.transactionalExecute(conn -> {
             try (PreparedStatement ps = conn.prepareStatement(updateSQL)) {
                 ps.setString(2, r.getUuid());
@@ -71,11 +71,11 @@ public class SqlStorage implements Storage {
 
             try (PreparedStatement ps = conn.prepareStatement(updateContactSQL)) {
                 for (Map.Entry<ContactType, String> e : r.getContacts().entrySet()) {
-                    ps.setString(4, e.getKey().name());
-                    ps.setString(3, r.getUuid());
-                    ps.setString(1, e.getKey().name());
-                    ps.setString(2, e.getValue());
-                    ps.executeUpdate();
+                    ps.setString(2, r.getUuid());
+                    ps.setString(3, e.getKey().name());
+                    ps.setString(1, e.getValue());
+                    ps.addBatch();
+
                 }
 
                 ps.executeBatch();
@@ -89,7 +89,7 @@ public class SqlStorage implements Storage {
     @Override
     public void save(Resume r) {
         final String saveSQL = "INSERT INTO resume (full_name, uuid) VALUES (?,?)";
-        final String saveContactSQL = "INSERT INTO contact (type, value, resume_uuid) VALUES (?,?,?)";
+        final String saveContactSQL = "INSERT INTO contact (value, resume_uuid, type) VALUES (?,?,?)";
         sqlHelper.transactionalExecute(conn -> {
             try (PreparedStatement ps = conn.prepareStatement(saveSQL)) {
                 ps.setString(2, r.getUuid());
@@ -99,9 +99,9 @@ public class SqlStorage implements Storage {
 
             try (PreparedStatement ps = conn.prepareStatement(saveContactSQL)) {
                 for (Map.Entry<ContactType, String> e : r.getContacts().entrySet()) {
-                    ps.setString(3, r.getUuid());
-                    ps.setString(1, e.getKey().name());
-                    ps.setString(2, e.getValue());
+                    ps.setString(2, r.getUuid());
+                    ps.setString(3, e.getKey().name());
+                    ps.setString(1, e.getValue());
                     ps.addBatch();
                 }
                 ps.executeBatch();
