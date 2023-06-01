@@ -13,7 +13,7 @@ public class ResumeTestData {
     public static Resume createResume (String uuid, String fullName) {
         Resume resume = new Resume(uuid, fullName);
 
-     //   fillingContactTestResume(resume);
+        fillingContactTestResume(resume);
      //   filingPersonalTestResume(resume);
      //   filingObjectiveTestResume(resume);
      //   filingAchievementTestResume(resume);
