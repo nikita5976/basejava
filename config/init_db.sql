@@ -1,9 +1,9 @@
 drop table contact;
-drop table resume;
+drop TABLE resume;
 
 CREATE TABLE resume
 (
-    uuid      VARCHAR PRIMARY KEY NOT NULL,
+    uuid      VARCHAR PRIMARY KEY ,
     full_name TEXT                NOT NULL
 );
 
@@ -15,4 +15,4 @@ CREATE TABLE contact
     value       TEXT    NOT NULL
 );
 CREATE UNIQUE INDEX contact_uuid_type_index
-    ON contact (resume_uuid, type);
+    ON contact (resume_uuid, type)

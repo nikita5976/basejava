@@ -19,7 +19,6 @@ public class SqlStorage implements Storage {
     SqlHelper sqlHelper;
 
 
-
     public SqlStorage(String dbUrl, String dbUser, String dbPassword) {
         connectionFactory = () -> DriverManager.getConnection(dbUrl, dbUser, dbPassword);
         this.sqlHelper = new SqlHelper(connectionFactory);
@@ -60,9 +59,9 @@ public class SqlStorage implements Storage {
     @Override
     public void update(Resume r) {
         final String updateSQL = "UPDATE resume SET full_name = ? WHERE uuid = ?;";
-        final String updateContactSQL = "UPDATE contact SET  value =? WHERE resume_uuid = ?  AND type =?";
-
-        SqlWriter.sqlWriter(updateSQL, updateContactSQL, sqlHelper, r, ps -> {
+        final String updateContactSQL = "UPDATE contact SET  value =? WHERE resume_uuid = ?  AND type =? ";
+        final String insertUpdateContactSQL = "INSERT INTO contact (value, resume_uuid, type) VALUES (?,?,?)";
+        SqlWriter.sqlWriter(updateSQL, updateContactSQL , sqlHelper, r, ps -> {
             int rs = ps.executeUpdate();
             if (rs == 0) {
                 throw new NotExistStorageException(r.getUuid());
@@ -95,7 +94,7 @@ public class SqlStorage implements Storage {
 
     @Override
     public List<Resume> getAllSorted() {
-        final String getAllSortedSQL = "SELECT * FROM resume r;";
+        final String getAllSortedSQL = "SELECT * FROM resume r ORDER BY uuid;";
         List<Resume> listResume = new ArrayList<>();
         return sqlHelper.usePreparedStatement(getAllSortedSQL, ps -> {
             ResultSet rs = ps.executeQuery();

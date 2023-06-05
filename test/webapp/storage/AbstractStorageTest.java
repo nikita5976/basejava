@@ -9,7 +9,6 @@ import webapp.exception.NotExistStorageException;
 import webapp.model.Resume;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -40,8 +39,8 @@ public abstract class AbstractStorageTest {
     @Before
     public void setUp() {
         storage.clear();
-        storage.save(RESUME_1);
         storage.save(RESUME_2);
+        storage.save(RESUME_1);
         storage.save(RESUME_3);
     }
 
@@ -94,7 +93,7 @@ public abstract class AbstractStorageTest {
         expected.add(ResumeTestData.createResume(UUID_2, FULL_NAME_2));
         expected.add(ResumeTestData.createResume(UUID_3, FULL_NAME_3));
         List<Resume> getAll = storage.getAllSorted();
-        getAll.sort(Comparator.comparing(Resume::getUuid));
+        //getAll.sort(Comparator.comparing(Resume::getUuid));
         assertEquals(expected, getAll);
         assertSize(getAll.size());
     }
