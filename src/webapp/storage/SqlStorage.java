@@ -59,16 +59,20 @@ public class SqlStorage implements Storage {
     @Override
     public void update(Resume r) {
         final String updateSQL = "UPDATE resume SET full_name = ? WHERE uuid = ?;";
-        final String updateContactSQL = "UPDATE contact SET  value =? WHERE resume_uuid = ?  AND type =? ";
         final String insertUpdateContactSQL = "INSERT INTO contact (value, resume_uuid, type) VALUES (?,?,?)";
-        SqlWriter.sqlWriter(updateSQL, updateContactSQL , sqlHelper, r, ps -> {
+
+        SqlWriter.sqlWriter(updateSQL, insertUpdateContactSQL , sqlHelper, r, ps -> {
             int rs = ps.executeUpdate();
             if (rs == 0) {
                 throw new NotExistStorageException(r.getUuid());
+            } else {
+                deleteContact(r.getUuid());
             }
             return null;
         });
     }
+
+
 
     @Override
     public void save(Resume r) {
@@ -123,6 +127,14 @@ public class SqlStorage implements Storage {
         return sqlHelper.usePreparedStatement(sizeSQL, ps -> {
             ResultSet rs = ps.executeQuery();
             return rs.next() ? rs.getInt(1) : 0;
+        });
+    }
+
+    private void deleteContact (String uuid){
+        sqlHelper.usePreparedStatement("DELETE FROM contact  WHERE resume_uuid = ?", ps -> {
+            ps.setString(1, uuid);
+            ps.execute();
+            return null;
         });
     }
 
