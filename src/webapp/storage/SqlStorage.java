@@ -2,6 +2,7 @@ package webapp.storage;
 
 import webapp.exception.NotExistStorageException;
 import webapp.model.ContactType;
+import webapp.model.ListSection;
 import webapp.model.Resume;
 import webapp.model.SectionType;
 import webapp.sql.ConnectionFactory;
@@ -31,7 +32,15 @@ public class SqlStorage implements Storage {
     @Override
     public void clear() {
         String clearSQL = "DELETE FROM resume";
+        String idRestart = "ALTER SEQUENCE contact_id_seq RESTART WITH 1;" +
+                           "UPDATE contact SET id=nextval('contact_id_seq');" +
+                           "ALTER SEQUENCE text_section_id_seq RESTART WITH 1;" +
+                           "UPDATE text_section SET id=nextval('contact_id_seq');" +
+                           "ALTER SEQUENCE list_section_id_seq RESTART WITH 1;" +
+                           "UPDATE list_section SET id=nextval('contact_id_seq');";
         sqlHelper.usePreparedStatement(clearSQL);
+        sqlHelper.usePreparedStatement(idRestart);
+
     }
 
     @Override
@@ -58,9 +67,11 @@ public class SqlStorage implements Storage {
             sqlHelper.usePreparedStatement(getTextSectionSQL, psText -> {
                 psText.setString(1, uuid);
                 ResultSet rsText = psText.executeQuery();
-                String personal = rsText.getString("personal");
-                if (personal != null) {
-                    resume.setSectionPersonal(personal);
+                if (rsText.next()) {
+                    String personal = rsText.getString("personal");
+                    if (personal != null) {
+                        resume.setSectionPersonal(personal);
+                    }
                 }
                 String objective = rsText.getString("objective");
                 if (objective != null) {
@@ -72,6 +83,7 @@ public class SqlStorage implements Storage {
             sqlHelper.usePreparedStatement(getListSectionSQL, psList -> {
                 psList.setString(1, uuid);
                 ResultSet rsList = psList.executeQuery();
+                rsList.next();
                 String achievementText = rsList.getString("achievement");
                 String qualificationText = rsList.getString("qualification");
                 if (achievementText != null) {
@@ -87,12 +99,12 @@ public class SqlStorage implements Storage {
         });
     }
 
-    @Override//переделать на save
+    @Override
     public void update(Resume r) {
-        final String updateSQL = "UPDATE resume SET full_name = ? WHERE uuid = ?;";
-        final String insertUpdateContactSQL = "INSERT INTO contact (value, resume_uuid, type) VALUES (?,?,?)";
 
         sqlHelper.usePreparedStatement("UPDATE resume SET full_name = ? WHERE uuid = ?", ps -> {
+            ps.setString(1, r.getFullName());
+            ps.setString(2, r.getUuid());
             int rs = ps.executeUpdate();
             if (rs == 0) {
                 throw new NotExistStorageException(r.getUuid());
@@ -154,22 +166,28 @@ public class SqlStorage implements Storage {
     }
 
     private void deleteContactAndSection(String uuid) {
-        String[] tables = {"contact", "text_section", "list_section"};
-        for (String table : tables) {
-            sqlHelper.usePreparedStatement("DELETE FROM ?  WHERE resume_uuid = ?", ps -> {
-                ps.setString(1, table);
-                ps.setString(2, uuid);
-                ps.execute();
-                return null;
-            });
-        }
+        sqlHelper.usePreparedStatement("DELETE FROM contact  WHERE resume_uuid = ?", ps -> {
+            ps.setString(1, uuid);
+            ps.execute();
+            return null;
+        });
+        sqlHelper.usePreparedStatement("DELETE FROM text_section  WHERE resume_uuid = ?", ps -> {
+            ps.setString(1, uuid);
+            ps.execute();
+            return null;
+        });
+        sqlHelper.usePreparedStatement("DELETE FROM list_section  WHERE resume_uuid = ?", ps -> {
+            ps.setString(1, uuid);
+            ps.execute();
+            return null;
+        });
     }
 
     private String listToText(List<String> list) {
         StringBuilder sb = new StringBuilder();
         for (String text : list) {
-            sb.append("\n");
             sb.append(text);
+            sb.append("\n");
         }
         return sb.toString();
     }
@@ -179,7 +197,7 @@ public class SqlStorage implements Storage {
         for (String string : strings) {
             switch (type) {
                 case ACHIEVEMENT -> r.setSectionAchievement(string);
-                case OBJECTIVE -> r.setSectionObjective(string);
+                case QUALIFICATIONS -> r.setSectionQualification(string);
             }
         }
     }
@@ -201,16 +219,18 @@ public class SqlStorage implements Storage {
                 ps.execute();
             }
 
-            List<String> listAchievement = r.getSection(SectionType.ACHIEVEMENT);
+            ListSection listSectionAchievement = r.getSection(SectionType.ACHIEVEMENT);
             String achievement;
-            if (listAchievement != null) {
+            if (listSectionAchievement != null) {
+                List<String> listAchievement = listSectionAchievement.getSectionData();
                 achievement = listToText(listAchievement);
             } else {
                 achievement = null;
             }
-            List<String> listQualification = r.getSection(SectionType.QUALIFICATIONS);
+            ListSection listSectionQualification = r.getSection(SectionType.QUALIFICATIONS);
             String qualification;
-            if (listQualification != null) {
+            if (listSectionQualification != null) {
+                List<String> listQualification = listSectionQualification.getSectionData();
                 qualification = listToText(listQualification);
             } else {
                 qualification = null;
