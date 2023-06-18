@@ -1,16 +1,6 @@
-drop TABLE company_section_education;
-drop TABLE company_section_experience;
-drop TABLE linc;
-drop TABLE list_section_qualification;
-drop TABLE list_section_achievement;
-drop TABLE text_section;
-drop TABLE contact;
-drop TABLE resume;
-
-
-CREATE TABLE public.resume
+CREATE table public.resume
 (
-    uuid      varchar PRIMARY KEY NOT NULL,
+    uuid     varchar PRIMARY KEY NOT NULL,
     full_name TEXT                NOT NULL
 );
 
@@ -21,6 +11,7 @@ CREATE TABLE public.contact
     type        TEXT    not null,
     value       TEXT    not null
 );
+
 CREATE UNIQUE INDEX contact_uuid_type_index
     ON contact (resume_uuid, type);
 
@@ -35,25 +26,18 @@ CREATE TABLE public.text_section
 
 
 
-CREATE TABLE public.list_section_achievement
+CREATE TABLE public.list_section
 (
     id          serial  NOT NULL,
     resume_uuid varchar NOT NULL REFERENCES resume (uuid) ON DELETE CASCADE,
-    achievement integer
+    achievement text,
+    qualification text
 );
-create unique index list_section_achievement_uuid_achievement_index
-    on list_section_achievement (resume_uuid, achievement);
 
 
 
-CREATE TABLE public.list_section_qualification
-(
-    id            serial  NOT NULL,
-    resume_uuid   varchar NOT NULL REFERENCES resume (uuid) ON DELETE CASCADE,
-    qualification integer
-);
-create unique index list_section_qualification_uuid_qualification_index
-    on list_section_qualification (resume_uuid, qualification);
+
+
 
 
 CREATE TABLE public.linc
