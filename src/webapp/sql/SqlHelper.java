@@ -26,13 +26,21 @@ public class SqlHelper {
         }
     }
 
-    public <T> void transactionalExecute(SqlTransaction<T> sqlTransaction) {
+    public <T> T usePreparedStatement(Connection conn, String sqlAction, ABlockOfCode<T> aBlockOfCode ) {
+        try (PreparedStatement ps = conn.prepareStatement(sqlAction)) {
+            return aBlockOfCode.execute(ps);
+        } catch (SQLException e) {
+            throw ExceptionUtil.convertException(e);
+        }
+    }
+
+    public <T> T transactionalExecute(SqlTransaction<T> sqlTransaction) {
         try (Connection conn = connectionFactory.getConnection()) {
             try {
                 conn.setAutoCommit(false);
                 T res = sqlTransaction.execute(conn);
                 conn.commit();
-              //  return res;
+                return res;
             } catch (SQLException e) {
                 conn.rollback();
                 throw ExceptionUtil.convertException(e);
@@ -41,5 +49,4 @@ public class SqlHelper {
             throw new StorageException(e);
         }
     }
-
 }

@@ -1,4 +1,4 @@
-package webapp;
+package util;
 
 import webapp.model.AbstractSection;
 import webapp.model.ContactType;

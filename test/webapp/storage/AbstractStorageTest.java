@@ -3,7 +3,7 @@ package webapp.storage;
 import org.junit.Before;
 import org.junit.Test;
 import webapp.Config;
-import webapp.ResumeTestData;
+import util.ResumeTestData;
 import webapp.exception.ExistStorageException;
 import webapp.exception.NotExistStorageException;
 import webapp.model.Resume;
