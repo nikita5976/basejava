@@ -33,3 +33,11 @@ CREATE TABLE public.list_section
     achievement text,
     qualification text
 );
+
+CREATE TABLE public.company_section
+(
+    id          serial  NOT NULL,
+    resume_uuid varchar NOT NULL REFERENCES resume (uuid) ON DELETE CASCADE,
+    education text,
+    experience text
+);
