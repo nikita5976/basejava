@@ -5,6 +5,14 @@
          version="3.1">
 
     <servlet>
+        <servlet-name>resumeServletOld</servlet-name>
+        <servlet-class>web.ResumeServletOld</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>resumeServletOld</servlet-name>
+        <url-pattern>/resumeold</url-pattern>
+    </servlet-mapping>
+    <servlet>
         <servlet-name>resumeServlet</servlet-name>
         <servlet-class>web.ResumeServlet</servlet-class>
     </servlet>
@@ -12,5 +20,6 @@
         <servlet-name>resumeServlet</servlet-name>
         <url-pattern>/resume</url-pattern>
     </servlet-mapping>
+
 
 </web-app>
