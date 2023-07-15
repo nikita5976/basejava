@@ -1,12 +1,10 @@
 package webapp.storage;
 
 import webapp.exception.NotExistStorageException;
-import webapp.model.ContactType;
-import webapp.model.ListSection;
-import webapp.model.Resume;
-import webapp.model.SectionType;
+import webapp.model.*;
 import webapp.sql.ConnectionFactory;
 import webapp.sql.SqlHelper;
+import webapp.util.JsonParser;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -36,7 +34,9 @@ public class SqlStorage implements Storage {
                 "ALTER SEQUENCE text_section_id_seq RESTART WITH 1;" +
                 "UPDATE text_section SET id=nextval('contact_id_seq');" +
                 "ALTER SEQUENCE list_section_id_seq RESTART WITH 1;" +
-                "UPDATE list_section SET id=nextval('contact_id_seq');";
+                "UPDATE list_section SET id=nextval('contact_id_seq');" +
+                "ALTER SEQUENCE company_section_id_seq RESTART WITH 1;" +
+                "UPDATE company_section SET id=nextval('contact_id_seq');";
         sqlHelper.usePreparedStatement(clearSQL);
         sqlHelper.usePreparedStatement(idRestart);
 
@@ -47,6 +47,7 @@ public class SqlStorage implements Storage {
         String getSQL = "SELECT * FROM resume r LEFT JOIN contact c ON r.uuid = c.resume_uuid WHERE r.uuid =? ";
         String getTextSectionSQL = "SELECT * FROM text_section ts WHERE ts.resume_uuid =? ";
         String getListSectionSQL = "SELECT * FROM list_section ls WHERE ls.resume_uuid =? ";
+        String getCompanySectionSQL = "SELECT * FROM company_section ls WHERE ls.resume_uuid =? ";
         return sqlHelper.transactionalExecute(conn -> sqlHelper.usePreparedStatement(conn, getSQL, ps -> {
             ps.setString(1, uuid);
             ResultSet rs = ps.executeQuery();
@@ -57,6 +58,7 @@ public class SqlStorage implements Storage {
             addContact(rs, resume);
             addTextSection(conn, getTextSectionSQL, resume, uuid);
             addListSection(conn, getListSectionSQL, resume, uuid);
+            addCompanySection(conn, getCompanySectionSQL, resume, uuid);
             return resume;
         }));
     }
@@ -75,9 +77,11 @@ public class SqlStorage implements Storage {
                     deleteAttributes(uuid, "DELETE FROM contact  WHERE resume_uuid = ?");
                     deleteAttributes(uuid, "DELETE FROM text_section  WHERE resume_uuid = ?");
                     deleteAttributes(uuid, "DELETE FROM list_section  WHERE resume_uuid = ?");
+                    deleteAttributes(uuid, "DELETE FROM company_section  WHERE resume_uuid = ?");
                     writerContact(conn, r);
                     writerTextSection(conn, r);
                     writerListSection(conn, r);
+                    writerCompanySection(conn, r);
                 }
                 return null;
             });
@@ -98,6 +102,7 @@ public class SqlStorage implements Storage {
             writerContact(conn, r);
             writerTextSection(conn, r);
             writerListSection(conn, r);
+            writerCompanySection(conn, r);
             return null;
         });
     }
@@ -187,6 +192,25 @@ public class SqlStorage implements Storage {
         });
     }
 
+    private void addCompanySection(Connection conn, String getCompanySectionSQL, Resume resume, String uuid) {
+        sqlHelper.usePreparedStatement(conn, getCompanySectionSQL, psCompany -> {
+            psCompany.setString(1, uuid);
+            ResultSet rsCompany = psCompany.executeQuery();
+            rsCompany.next();
+            String jsonEducation = rsCompany.getString("education");
+            String jsonExperience = rsCompany.getString("experience");
+            if (jsonEducation != null) {
+                CompanySection education = JsonParser.read(jsonEducation, CompanySection.class);
+                resume.addSection(SectionType.EDUCATION, education);
+            }
+            if (jsonExperience != null) {
+                CompanySection experience = JsonParser.read(jsonExperience, CompanySection.class);
+                resume.addSection(SectionType.EXPERIENCE, experience);
+            }
+            return null;
+        });
+    }
+
     private void deleteAttributes(String uuid, String sqlAction) {
         sqlHelper.usePreparedStatement(sqlAction, ps -> {
             ps.setString(1, uuid);
@@ -212,6 +236,28 @@ public class SqlStorage implements Storage {
                 case QUALIFICATIONS -> r.setSectionQualification(string);
             }
         }
+    }
+
+    private void writerCompanySection(Connection conn, Resume r) throws SQLException {
+        String uuid = r.getUuid();
+        CompanySection companySectionEducation = r.getSection(SectionType.EDUCATION);
+        String jsonEducation;
+        if (companySectionEducation != null) {
+            jsonEducation = JsonParser.write(r.getSection(SectionType.EDUCATION), CompanySection.class);
+        } else jsonEducation = null;
+        CompanySection companySectionExperience = r.getSection(SectionType.EXPERIENCE);
+        String jsonExperience;
+        if (companySectionExperience != null) {
+            jsonExperience = JsonParser.write(r.getSection(SectionType.EXPERIENCE), CompanySection.class);
+        } else jsonExperience = null;
+        try (PreparedStatement ps = conn.prepareStatement("INSERT INTO company_section (resume_uuid, education, experience)" +
+                "                                              VALUES (?,?,?)")) {
+            ps.setString(1, uuid);
+            ps.setString(2, jsonEducation);
+            ps.setString(3, jsonExperience);
+            ps.execute();
+        }
+
     }
 
     private void writerListSection(Connection conn, Resume r) throws SQLException {
@@ -271,3 +317,27 @@ public class SqlStorage implements Storage {
     }
 
 }
+
+/* все секции единообразно
+private void addSection(ResultSet rs, Resume r) throws SQLException {
+        String content = rs.getString("content");
+        if (content != null) {
+            SectionType type = SectionType.valueOf(rs.getString("type"));
+            r.addSection(type, JsonParser.read(content, Section.class));
+        }
+    }
+
+   // он же writerSection
+    private void insertSections(Connection conn, Resume r) throws SQLException {
+        try (PreparedStatement ps = conn.prepareStatement("INSERT INTO section (resume_uuid, type, content) VALUES (?,?,?)")) {
+            for (Map.Entry<SectionType, Section> e : r.getSections().entrySet()) {
+                ps.setString(1, r.getUuid());
+                ps.setString(2, e.getKey().name());
+                Section section = e.getValue();
+                ps.setString(3, JsonParser.write(section, Section.class));
+                ps.addBatch();
+            }
+            ps.executeBatch();
+        }
+    }
+ */
