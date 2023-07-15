@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+
 public class ResumeServlet extends HttpServlet {
 
     private Storage storage; // = Config.get().getStorage();

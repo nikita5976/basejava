@@ -40,6 +40,9 @@ public class Resume implements Comparable<Resume>, Serializable {
     public String getFullName() {
         return fullName;
     }
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
 
     public Map<SectionType, AbstractSection> getSections() {
         return new HashMap<>(sections);

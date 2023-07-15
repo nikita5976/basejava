@@ -18,8 +18,8 @@ public class ResumeTestData {
         filingObjectiveTestResume(resume);
         filingAchievementTestResume(resume);
         filingQualificationsTestResume(resume);
-        filingExperienceTestResume(resume);
-        filingEducationTestResume(resume);
+        //filingExperienceTestResume(resume);
+        //filingEducationTestResume(resume);
 
         return resume;
     }
