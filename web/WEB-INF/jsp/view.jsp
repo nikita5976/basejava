@@ -15,7 +15,8 @@
     <c:forEach var="contactEntry" items="${resume.contacts}">
       <jsp:useBean id="contactEntry"
                    type="java.util.Map.Entry<webapp.model.ContactType, java.lang.String>"/>
-        <%=contactEntry.getKey().toHtml(contactEntry.getValue())%><br/>
+        <%=contactEntry.getKey().toHtml(contactEntry.getValue())%>
+      <br/>
     </c:forEach>
   <p>
 </section>
