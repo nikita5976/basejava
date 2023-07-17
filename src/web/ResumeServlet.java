@@ -30,7 +30,19 @@ public class ResumeServlet extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         String uuid = request.getParameter("uuid");
         String fullName = request.getParameter("fullName");
-        Resume r = storage.get(uuid);
+        fullName = fullName.trim();
+        if (fullName.equals("")) {
+            response.sendRedirect("resume");
+            return;
+        }
+        boolean first = false;
+        Resume r;
+        try {
+             r = storage.get(uuid);
+        } catch (webapp.exception.NotExistStorageException exception) {
+             first = true;
+             r = new Resume(uuid,fullName);
+        }
         r.setFullName(fullName);
         for (ContactType type : ContactType.values()) {
             String value = request.getParameter(type.name());
@@ -40,7 +52,7 @@ public class ResumeServlet extends HttpServlet {
                 r.getContacts().remove(type);
             }
         }
-        storage.update(r);
+        if (!first) {storage.update(r);} else {storage.save(r);}
         response.sendRedirect("resume");
     }
 
@@ -54,16 +66,14 @@ public class ResumeServlet extends HttpServlet {
         }
         Resume r;
         switch (action) {
-            case "delete":
+            case "delete" -> {
                 storage.delete(uuid);
                 response.sendRedirect("resume");
                 return;
-            case "view":
-            case "edit":
-                r = storage.get(uuid);
-                break;
-            default:
-                throw new IllegalArgumentException("Action " + action + " is illegal");
+            }
+            case "view", "edit" -> r = storage.get(uuid);
+            case "new" -> r = new Resume("  ");
+            default -> throw new IllegalArgumentException("Action " + action + " is illegal");
         }
         request.setAttribute("resume", r);
         request.getRequestDispatcher(
