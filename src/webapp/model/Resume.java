@@ -77,6 +77,10 @@ public class Resume implements Comparable<Resume>, Serializable {
         sections.put(SectionType.OBJECTIVE, sectionObjective);
     }
 
+    public void removeTextSection(SectionType type){
+        sections.remove(type);
+    }
+
     public void setSectionPersonal(String personalData) {
         TextSection sectionPersonal = new TextSection(personalData);
         sections.put(SectionType.PERSONAL, sectionPersonal);

@@ -3,6 +3,7 @@ package web;
 import webapp.Config;
 import webapp.model.ContactType;
 import webapp.model.Resume;
+import webapp.model.SectionType;
 import webapp.storage.SqlStorage;
 import webapp.storage.Storage;
 
@@ -51,6 +52,18 @@ public class ResumeServlet extends HttpServlet {
             } else {
                 r.getContacts().remove(type);
             }
+        }
+        String personal = request.getParameter("PERSONAL");
+        if (personal != null && personal.trim().length() != 0) {
+            r.setSectionPersonal(personal);
+        } else {
+            r.removeTextSection(SectionType.PERSONAL);
+        }
+        String objective = request.getParameter("OBJECTIVE");
+        if (objective != null && objective.trim().length() != 0) {
+            r.setSectionObjective(objective);
+        } else {
+            r.removeTextSection(SectionType.OBJECTIVE);
         }
         if (!first) {storage.update(r);} else {storage.save(r);}
         response.sendRedirect("resume");

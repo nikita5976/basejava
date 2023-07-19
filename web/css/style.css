@@ -39,8 +39,19 @@ h2, h3 {
     margin: 15px 0 5px;
 }
 
+h3 {
+    margin: 15px 0 3px;
+}
+
 li {
     margin: 15px 0;
+}
+
+textarea, .comments_form input, .feedback_form textarea, .feedback_form input {
+    width: 100%;
+    max-width: 600px;
+    padding: 7px 10px;
+    margin-bottom: 10px;
 }
 
 a[href^="skype:"] {
