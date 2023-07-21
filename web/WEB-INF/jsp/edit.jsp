@@ -7,6 +7,8 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <link rel="stylesheet" href="css/style.css">
     <jsp:useBean id="resume" type="webapp.model.Resume" scope="request"/>
+    <jsp:useBean id="achievement" type="java.util.List" scope="request"/>
+
     <title>Резюме ${resume.fullName}</title>
 </head>
 <body>
@@ -26,15 +28,25 @@
             </dl>
         </c:forEach>
         <h2>Секции:</h2>
-        <h3><%=SectionType.PERSONAL.getTitle()%></h3>
+        <h3><%=SectionType.PERSONAL.getTitle()%>
+        </h3>
         <input type="text" name="PERSONAL" size=130 value="${resume.getSection(SectionType.PERSONAL)}"><br/>
-        <h3><%=SectionType.OBJECTIVE.getTitle()%></h3>
+        <h3><%=SectionType.OBJECTIVE.getTitle()%>
+        </h3>
         <input type="text" name="OBJECTIVE" size=130 value="${resume.getSection(SectionType.OBJECTIVE)}"><br/>
-        <h3><%=SectionType.ACHIEVEMENT.getTitle()%></h3>
-        <textarea rows=5 cols=100 name="ACHIEVEMENT" > ${resume.getSection(SectionType.ACHIEVEMENT)}"</textarea><br/>
-        <input type="text" name="section" size=30 value="3"><br/>
-        <hr>
-        <button type="submit" >Сохранить</button>
+
+
+        <h3><%=SectionType.ACHIEVEMENT.getTitle()%>
+        </h3>
+        <c:forEach var="stringAchievement" items="<%=achievement%>">
+            <dl>
+                <dd><input type="text" name="arrayAchievement" size="130" value="${stringAchievement}"></dd>
+            </dl>
+        </c:forEach>
+        <input type="text" name="arrayAchievement" size="130" placeholder="Дополните Ваши достижения">
+        <br/>
+        <br/>
+        <button type="submit">Сохранить</button>
         <button type="reset" onclick="window.history.back()">Отменить</button>
     </form>
 </section>

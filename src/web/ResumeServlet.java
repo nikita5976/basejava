@@ -1,7 +1,9 @@
 package web;
 
 import webapp.Config;
+import webapp.exception.NotExistStorageException;
 import webapp.model.ContactType;
+import webapp.model.ListSection;
 import webapp.model.Resume;
 import webapp.model.SectionType;
 import webapp.storage.SqlStorage;
@@ -13,6 +15,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class ResumeServlet extends HttpServlet {
@@ -27,7 +31,7 @@ public class ResumeServlet extends HttpServlet {
 
     }
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws javax.servlet.ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
         String uuid = request.getParameter("uuid");
         String fullName = request.getParameter("fullName");
@@ -39,12 +43,14 @@ public class ResumeServlet extends HttpServlet {
         boolean first = false;
         Resume r;
         try {
-             r = storage.get(uuid);
-        } catch (webapp.exception.NotExistStorageException exception) {
-             first = true;
-             r = new Resume(uuid,fullName);
+            r = storage.get(uuid);
+        } catch (NotExistStorageException exception) {
+            first = true;
+            r = new Resume(uuid, fullName);
         }
+
         r.setFullName(fullName);
+
         for (ContactType type : ContactType.values()) {
             String value = request.getParameter(type.name());
             if (value != null && value.trim().length() != 0) {
@@ -53,23 +59,40 @@ public class ResumeServlet extends HttpServlet {
                 r.getContacts().remove(type);
             }
         }
+
         String personal = request.getParameter("PERSONAL");
         if (personal != null && personal.trim().length() != 0) {
             r.setSectionPersonal(personal);
         } else {
             r.removeTextSection(SectionType.PERSONAL);
         }
+
         String objective = request.getParameter("OBJECTIVE");
         if (objective != null && objective.trim().length() != 0) {
             r.setSectionObjective(objective);
         } else {
             r.removeTextSection(SectionType.OBJECTIVE);
         }
-        if (!first) {storage.update(r);} else {storage.save(r);}
+
+
+        String[] listAchievement = request.getParameterValues("arrayAchievement");
+        r.removeTextSection(SectionType.ACHIEVEMENT);
+        for (String stringAchievement : listAchievement) {
+            if (stringAchievement != null && stringAchievement.trim().length() != 0) {
+                r.setSectionAchievement(stringAchievement);
+            }
+        }
+
+
+        if (!first) {
+            storage.update(r);
+        } else {
+            storage.save(r);
+        }
         response.sendRedirect("resume");
     }
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws javax.servlet.ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String uuid = request.getParameter("uuid");
         String action = request.getParameter("action");
         if (action == null) {
@@ -78,13 +101,25 @@ public class ResumeServlet extends HttpServlet {
             return;
         }
         Resume r;
+
         switch (action) {
             case "delete" -> {
                 storage.delete(uuid);
                 response.sendRedirect("resume");
                 return;
             }
-            case "view", "edit" -> r = storage.get(uuid);
+            case "edit" -> {
+                r = storage.get(uuid);
+                List<String> achievement;
+                ListSection achievementSection = r.getSection(SectionType.ACHIEVEMENT);
+                if (achievementSection == null) {
+                    achievement = new ArrayList<>();
+                } else {
+                    achievement = achievementSection.getSectionData();
+                }
+                    request.setAttribute("achievement", achievement);
+            }
+            case "view" -> r = storage.get(uuid);
             case "new" -> r = new Resume("  ");
             default -> throw new IllegalArgumentException("Action " + action + " is illegal");
         }
