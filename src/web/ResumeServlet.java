@@ -34,8 +34,7 @@ public class ResumeServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
         String uuid = request.getParameter("uuid");
-        String fullName = request.getParameter("fullName");
-        fullName = fullName.trim();
+        String fullName = parsingHTML(request.getParameter("fullName"));
         if (fullName.equals("")) {
             response.sendRedirect("resume");
             return;
@@ -48,28 +47,26 @@ public class ResumeServlet extends HttpServlet {
             first = true;
             r = new Resume(uuid, fullName);
         }
-
         r.setFullName(fullName);
 
         for (ContactType type : ContactType.values()) {
-            String value = request.getParameter(type.name());
-            if (value != null && value.trim().length() != 0) {
+            String value = parsingHTML(request.getParameter(type.name()));
+            if (value != null && value.length() != 0) {
                 r.addContact(type, value);
             } else {
                 r.getContacts().remove(type);
             }
         }
 
-        String personal = request.getParameter("PERSONAL");
-        if (personal != null && personal.trim().length() != 0) {
-            r.setSectionPersonal(personal.trim());
-        } else {
-            r.removeTextSection(SectionType.PERSONAL);
+        String personal = parsingHTML(request.getParameter("PERSONAL"));
+        if (personal != null && personal.length() != 0) {
+            r.setSectionPersonal(personal);
+        } else {r.removeTextSection(SectionType.PERSONAL);
         }
 
-        String objective = request.getParameter("OBJECTIVE");
-        if (objective != null && objective.trim().length() != 0) {
-            r.setSectionObjective(objective.trim());
+        String objective = parsingHTML(request.getParameter("OBJECTIVE"));
+        if (objective != null && objective.length() != 0) {
+            r.setSectionObjective(objective);
         } else {
             r.removeTextSection(SectionType.OBJECTIVE);
         }
@@ -79,18 +76,17 @@ public class ResumeServlet extends HttpServlet {
         r.removeTextSection(SectionType.ACHIEVEMENT);
         for (String stringAchievement : listAchievement) {
             if (stringAchievement != null && stringAchievement.trim().length() != 0) {
-                r.setSectionAchievement(stringAchievement.trim());
+                r.setSectionAchievement(parsingHTML(stringAchievement));
             }
         }
 
-        String [] listQualification = request.getParameterValues("arrayQualification");
+        String[] listQualification = request.getParameterValues("arrayQualification");
         r.removeTextSection(SectionType.QUALIFICATIONS);
         for (String stringQualification : listQualification) {
-            if (stringQualification != null && stringQualification.trim().length() != 0){
-                r.setSectionQualification(stringQualification.trim());
+            if (stringQualification != null && stringQualification.trim().length() != 0) {
+                r.setSectionQualification(parsingHTML(stringQualification));
             }
         }
-
 
         if (!first) {
             storage.update(r);
@@ -149,5 +145,9 @@ public class ResumeServlet extends HttpServlet {
         request.getRequestDispatcher(
                 ("view".equals(action) ? "/WEB-INF/jsp/view.jsp" : "/WEB-INF/jsp/edit.jsp")
         ).forward(request, response);
+    }
+
+    protected String parsingHTML(String text) {
+        return text.replaceAll("(<.*?>)|(&.*?;)", " ").replaceAll("\\s{2,}", " ").trim();
     }
 }

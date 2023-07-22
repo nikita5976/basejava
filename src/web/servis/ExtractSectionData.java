@@ -1,4 +1,4 @@
-package webapp.util;
+package web.servis;
 
 import webapp.model.AbstractSection;
 import webapp.model.ListSection;

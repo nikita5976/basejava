@@ -24,7 +24,7 @@
             <jsp:useBean id="sectionEntry"
                          type="java.util.Map.Entry<webapp.model.SectionType, webapp.model.AbstractSection>"/>
             <jsp:useBean id="extractSection"
-                         class="webapp.util.ExtractSectionData"/>
+                         class="web.servis.ExtractSectionData"/>
             <%=extractSection.extract(sectionEntry)%>
         </c:forEach>
     </p>

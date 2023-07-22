@@ -41,7 +41,6 @@
         <h3><%=SectionType.ACHIEVEMENT.getTitle()%></h3>
         <c:forEach var="stringAchievement" items="<%=achievement%>">
             <dl>
-                <!--<dd><input type="text" name="arrayAchievement" size="130" value="$stringAchievement}"></dd>-->
                 <dd><textarea name="arrayAchievement" rows="4" cols="120"> ${stringAchievement}</textarea></dd>
             </dl>
         </c:forEach>
@@ -52,13 +51,14 @@
         <h3><%=SectionType.QUALIFICATIONS.getTitle()%></h3>
         <c:forEach var="stringQualification" items="<%=qualification%>">
             <dl>
-                <dd><input type="text" name="arrayQualification" size="130" value="${stringQualification}"></dd>
+                <dd><textarea  name="arrayQualification" rows="4" cols="120"> ${stringQualification} </textarea></dd>
             </dl>
         </c:forEach>
-
         <input type="text" name="arrayQualification" size="130" placeholder="Дополните сведения о Вашей квалификации">
         <br/>
         <br/>
+
+
         <button type="submit">Сохранить</button>
         <button type="reset" onclick="window.history.back()">Отменить</button>
     </form>
