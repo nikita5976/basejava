@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="css/style.css">
     <jsp:useBean id="resume" type="webapp.model.Resume" scope="request"/>
     <jsp:useBean id="achievement" type="java.util.List" scope="request"/>
+    <jsp:useBean id="qualification" type="java.util.List" scope="request"/>
 
     <title>Резюме ${resume.fullName}</title>
 </head>
@@ -28,22 +29,34 @@
             </dl>
         </c:forEach>
         <h2>Секции:</h2>
+
         <h3><%=SectionType.PERSONAL.getTitle()%>
         </h3>
         <input type="text" name="PERSONAL" size=130 value="${resume.getSection(SectionType.PERSONAL)}"><br/>
+
         <h3><%=SectionType.OBJECTIVE.getTitle()%>
         </h3>
         <input type="text" name="OBJECTIVE" size=130 value="${resume.getSection(SectionType.OBJECTIVE)}"><br/>
 
-
-        <h3><%=SectionType.ACHIEVEMENT.getTitle()%>
-        </h3>
+        <h3><%=SectionType.ACHIEVEMENT.getTitle()%></h3>
         <c:forEach var="stringAchievement" items="<%=achievement%>">
             <dl>
-                <dd><input type="text" name="arrayAchievement" size="130" value="${stringAchievement}"></dd>
+                <!--<dd><input type="text" name="arrayAchievement" size="130" value="$stringAchievement}"></dd>-->
+                <dd><textarea name="arrayAchievement" rows="4" cols="120"> ${stringAchievement}</textarea></dd>
             </dl>
         </c:forEach>
         <input type="text" name="arrayAchievement" size="130" placeholder="Дополните Ваши достижения">
+        <br/>
+        <br/>
+
+        <h3><%=SectionType.QUALIFICATIONS.getTitle()%></h3>
+        <c:forEach var="stringQualification" items="<%=qualification%>">
+            <dl>
+                <dd><input type="text" name="arrayQualification" size="130" value="${stringQualification}"></dd>
+            </dl>
+        </c:forEach>
+
+        <input type="text" name="arrayQualification" size="130" placeholder="Дополните сведения о Вашей квалификации">
         <br/>
         <br/>
         <button type="submit">Сохранить</button>

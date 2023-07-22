@@ -62,14 +62,14 @@ public class ResumeServlet extends HttpServlet {
 
         String personal = request.getParameter("PERSONAL");
         if (personal != null && personal.trim().length() != 0) {
-            r.setSectionPersonal(personal);
+            r.setSectionPersonal(personal.trim());
         } else {
             r.removeTextSection(SectionType.PERSONAL);
         }
 
         String objective = request.getParameter("OBJECTIVE");
         if (objective != null && objective.trim().length() != 0) {
-            r.setSectionObjective(objective);
+            r.setSectionObjective(objective.trim());
         } else {
             r.removeTextSection(SectionType.OBJECTIVE);
         }
@@ -79,7 +79,15 @@ public class ResumeServlet extends HttpServlet {
         r.removeTextSection(SectionType.ACHIEVEMENT);
         for (String stringAchievement : listAchievement) {
             if (stringAchievement != null && stringAchievement.trim().length() != 0) {
-                r.setSectionAchievement(stringAchievement);
+                r.setSectionAchievement(stringAchievement.trim());
+            }
+        }
+
+        String [] listQualification = request.getParameterValues("arrayQualification");
+        r.removeTextSection(SectionType.QUALIFICATIONS);
+        for (String stringQualification : listQualification) {
+            if (stringQualification != null && stringQualification.trim().length() != 0){
+                r.setSectionQualification(stringQualification.trim());
             }
         }
 
@@ -111,16 +119,30 @@ public class ResumeServlet extends HttpServlet {
             case "edit" -> {
                 r = storage.get(uuid);
                 List<String> achievement;
+                List<String> qualification;
                 ListSection achievementSection = r.getSection(SectionType.ACHIEVEMENT);
+                ListSection qualificationSection = r.getSection(SectionType.QUALIFICATIONS);
                 if (achievementSection == null) {
                     achievement = new ArrayList<>();
                 } else {
                     achievement = achievementSection.getSectionData();
                 }
-                    request.setAttribute("achievement", achievement);
+                request.setAttribute("achievement", achievement);
+                if (qualificationSection == null) {
+                    qualification = new ArrayList<>();
+                } else {
+                    qualification = qualificationSection.getSectionData();
+                }
+                request.setAttribute("qualification", qualification);
             }
             case "view" -> r = storage.get(uuid);
-            case "new" -> r = new Resume("  ");
+            case "new" -> {
+                r = new Resume("  ");
+                List<String> achievement = new ArrayList<>();
+                List<String> qualification = new ArrayList<>();
+                request.setAttribute("achievement", achievement);
+                request.setAttribute("qualification", qualification);
+            }
             default -> throw new IllegalArgumentException("Action " + action + " is illegal");
         }
         request.setAttribute("resume", r);
