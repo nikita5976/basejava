@@ -59,7 +59,7 @@ public class DataStreamSerializer implements StreamSerializer {
             String fullName = dis.readUTF();
             Resume resume = new Resume(uuid, fullName);
 
-            readWithException(dis, resume, res -> res.addContact(ContactType.valueOf(dis.readUTF()), dis.readUTF()));
+            readWithException(dis, resume, res -> res.setContact(ContactType.valueOf(dis.readUTF()), dis.readUTF()));
             readWithException(dis, resume, res -> {
                 String sectionType = dis.readUTF();
                 switch (sectionType) {

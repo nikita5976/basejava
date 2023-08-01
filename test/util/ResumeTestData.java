@@ -55,13 +55,13 @@ public class ResumeTestData {
 
     // заполнение
     private static void fillingContactTestResume(Resume testResume) {
-        testResume.addContact(ContactType.TELEPHONE, "+7(921) 855-0482");
-        testResume.addContact(ContactType.SKYPE, "skype:grigory.kislin");
-        testResume.addContact(ContactType.EMAIL, "gkislin@yandex.ru");
-        testResume.addContact(ContactType.LINKEDIN, "https://www.linkedin.com/in/gkislin");
-        testResume.addContact(ContactType.GITHUB, "https://github.com/gkislin");
-        testResume.addContact(ContactType.STACKOVRFLOW, "https://stackoverflow.com/users/548473");
-        testResume.addContact(ContactType.HOMEPAGE, "http://gkislin.ru/");
+        testResume.setContact(ContactType.TELEPHONE, "+7(921) 855-0482");
+        testResume.setContact(ContactType.SKYPE, "skype:grigory.kislin");
+        testResume.setContact(ContactType.EMAIL, "gkislin@yandex.ru");
+        testResume.setContact(ContactType.LINKEDIN, "https://www.linkedin.com/in/gkislin");
+        testResume.setContact(ContactType.GITHUB, "https://github.com/gkislin");
+        testResume.setContact(ContactType.STACKOVRFLOW, "https://stackoverflow.com/users/548473");
+        testResume.setContact(ContactType.HOMEPAGE, "http://gkislin.ru/");
     }
 
     private static void filingPersonalTestResume(Resume testResume) {

@@ -152,7 +152,7 @@ public class SqlStorage implements Storage {
             String contactType = rs.getString("type");
             if (contactType != null) {
                 ContactType type = ContactType.valueOf(contactType);
-                resume.addContact(type, value);
+                resume.setContact(type, value);
             }
         } while (rs.next());
     }
@@ -201,11 +201,11 @@ public class SqlStorage implements Storage {
             String jsonExperience = rsCompany.getString("experience");
             if (jsonEducation != null) {
                 CompanySection education = JsonParser.read(jsonEducation, CompanySection.class);
-                resume.addSection(SectionType.EDUCATION, education);
+                resume.setSection(SectionType.EDUCATION, education);
             }
             if (jsonExperience != null) {
                 CompanySection experience = JsonParser.read(jsonExperience, CompanySection.class);
-                resume.addSection(SectionType.EXPERIENCE, experience);
+                resume.setSection(SectionType.EXPERIENCE, experience);
             }
             return null;
         });

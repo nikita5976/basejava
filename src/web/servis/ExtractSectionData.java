@@ -1,8 +1,6 @@
 package web.servis;
 
-import webapp.model.AbstractSection;
-import webapp.model.ListSection;
-import webapp.model.SectionType;
+import webapp.model.*;
 
 import java.io.Serializable;
 import java.util.List;
@@ -23,10 +21,23 @@ public class ExtractSectionData implements Serializable {
                 }
                 text = text + "</ul>";
             }
-        }
-        //case EXPERIENCE -> null;
-        //case EDUCATION -> null;
+            case EXPERIENCE,EDUCATION -> {
+                text= "<h3>"+section.getKey().getTitle()+"</h3>"+"<br/>"+
+                        "<table>"+
+                          "<tr>"+
+                            "<th>Компания</th><th background: url(../img/email.png) no-repeat center left;>Website</th><th>должность</th><th>род занятий</th><th>период работы</th>"+
+                          "</tr>";
+                List<Company> companyList = ((CompanySection) section.getValue()).getSectionData();
+                for (Company company: companyList){
+                text = text+
+                          "<tr>"+
+                             "<td>...</td>"+
+                          "</tr>";
 
+                }
+                text = text+"</table>";
+            }
+        }
         return text;
     }
 }

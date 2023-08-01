@@ -21,6 +21,8 @@ public class Company implements Serializable {
     private  Link link;
     private final List<Period> period = new ArrayList<>();
 
+
+
     Company() {}
 
     Company(String name, String website) {

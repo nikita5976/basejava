@@ -8,6 +8,7 @@ import webapp.model.Resume;
 import webapp.model.SectionType;
 import webapp.storage.SqlStorage;
 import webapp.storage.Storage;
+import webapp.util.HtmlUtil;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -35,7 +36,7 @@ public class ResumeServlet extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         String uuid = request.getParameter("uuid");
         String fullName = parsingHTML(request.getParameter("fullName"));
-        if (fullName.equals("")) {
+        if (HtmlUtil.isEmpty(fullName)) {
             response.sendRedirect("resume");
             return;
         }
@@ -51,31 +52,32 @@ public class ResumeServlet extends HttpServlet {
 
         for (ContactType type : ContactType.values()) {
             String value = parsingHTML(request.getParameter(type.name()));
-            if (value != null && value.length() != 0) {
-                r.addContact(type, value);
-            } else {
+            if (HtmlUtil.isEmpty(value)) {
                 r.getContacts().remove(type);
+            } else {
+                r.setContact(type, value);
             }
         }
 
         String personal = parsingHTML(request.getParameter("PERSONAL"));
-        if (personal != null && personal.length() != 0) {
+        if (HtmlUtil.isEmpty(personal)) {
+            r.removeTextSection(SectionType.PERSONAL);
+        } else {
             r.setSectionPersonal(personal);
-        } else {r.removeTextSection(SectionType.PERSONAL);
         }
 
         String objective = parsingHTML(request.getParameter("OBJECTIVE"));
-        if (objective != null && objective.length() != 0) {
-            r.setSectionObjective(objective);
-        } else {
+        if (HtmlUtil.isEmpty(objective)) {
             r.removeTextSection(SectionType.OBJECTIVE);
+        } else {
+            r.setSectionObjective(objective);
         }
-
 
         String[] listAchievement = request.getParameterValues("arrayAchievement");
         r.removeTextSection(SectionType.ACHIEVEMENT);
         for (String stringAchievement : listAchievement) {
-            if (stringAchievement != null && stringAchievement.trim().length() != 0) {
+            if (HtmlUtil.isEmpty(stringAchievement)) {}
+            else {
                 r.setSectionAchievement(parsingHTML(stringAchievement));
             }
         }
@@ -83,7 +85,8 @@ public class ResumeServlet extends HttpServlet {
         String[] listQualification = request.getParameterValues("arrayQualification");
         r.removeTextSection(SectionType.QUALIFICATIONS);
         for (String stringQualification : listQualification) {
-            if (stringQualification != null && stringQualification.trim().length() != 0) {
+            if (HtmlUtil.isEmpty(stringQualification)) {}
+            else {
                 r.setSectionQualification(parsingHTML(stringQualification));
             }
         }
