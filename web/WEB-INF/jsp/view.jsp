@@ -28,6 +28,7 @@
             <%=extractSection.extract(sectionEntry)%>
         </c:forEach>
     </p>
+
 </section>
 <jsp:include page="fragments/footer.jsp"/>
 </body>
