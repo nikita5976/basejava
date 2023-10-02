@@ -3,12 +3,15 @@ package web.servis;
 import webapp.model.*;
 
 import java.io.Serializable;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
 public class ExtractSectionData implements Serializable {
 
     public String extract(Map.Entry<SectionType, AbstractSection> section) {
+        DateTimeFormatter formatDate = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
         String text = "";
         switch (section.getKey()) {
             case PERSONAL, OBJECTIVE ->
@@ -30,7 +33,9 @@ public class ExtractSectionData implements Serializable {
                     List<Company.Period> periodList = company.getPeriod();
                     for (Company.Period period : periodList) {
                         text = text + "<table>"+
-                                "<tr><td>" +period.getDateStart()+ "</td><td>" +period.getDateEnd()+ "</td><td><h4>" +period.getTitle()+ "</h4></td></tr>" +
+                                "<tr><td>" +period.getDateStart().format(formatDate)+
+                                " - </td><td> "+period.getDateEnd().format(formatDate)+
+                                "</td><td><h4>" +period.getTitle()+ "</h4></td></tr>" +
                                 "<tr><td> </td><td> </td><td>"+period.getDescription()+" </td></tr>" +
                                 "</table>";
                     }
