@@ -46,7 +46,11 @@ h3 {
     margin: 15px 0 3px;
 }
 h4 {
-    margin: 15px 0 2px;
+    margin: 15px 0 5px;
+}
+
+h5 {
+    margin: 15px 0 5px;
 }
 
 li {

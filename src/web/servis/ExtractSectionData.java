@@ -14,24 +14,27 @@ public class ExtractSectionData implements Serializable {
             case PERSONAL, OBJECTIVE ->
                     text = "<h3>" + section.getKey().getTitle() + "</h3>" + "<br/>" + section.getValue().toString() + "<br/>";
             case ACHIEVEMENT, QUALIFICATIONS -> {
-                text= "<h3>"+section.getKey().getTitle()+"</h3>"+"<ul>";
+                text = "<h3>" + section.getKey().getTitle() + "</h3>" + "<ul>";
                 List<String> sectionList = ((ListSection) section.getValue()).getSectionData();
                 for (String data : sectionList) {
-                    text =text +"<li>"+ data + "</li>";
+                    text = text + "<li>" + data + "</li>";
                 }
                 text = text + "</ul>";
             }
-            case EXPERIENCE,EDUCATION -> {
-                text= "<h3>"+section.getKey().getTitle()+"</h3>"+"<br/>";
+            case EXPERIENCE, EDUCATION -> {
+                text = "<h3>" + section.getKey().getTitle() + "</h3>" + "<br/>";
                 List<Company> companyList = ((CompanySection) section.getValue()).getSectionData();
-                for (Company company: companyList){
-                text = text+
-
-                             "<h4> <a href=\"" +company.getWebsite()+ "\">"+company.getName()+"</a>"+
-                          "<br/>";
-
+                for (Company company : companyList) {
+                    text = text +
+                            "<h3> <a href=\"" + company.getWebsite() + "\">" + company.getName() + "</a></h3><br/>";
+                    List<Company.Period> periodList = company.getPeriod();
+                    for (Company.Period period : periodList) {
+                        text = text + "<table>"+
+                                "<tr><td>" +period.getDateStart()+ "</td><td>" +period.getDateEnd()+ "</td><td><h4>" +period.getTitle()+ "</h4></td></tr>" +
+                                "<tr><td> </td><td> </td><td>"+period.getDescription()+" </td></tr>" +
+                                "</table>";
+                    }
                 }
-                text = text+"</table>";
             }
         }
         return text;
