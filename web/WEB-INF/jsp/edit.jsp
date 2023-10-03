@@ -1,5 +1,6 @@
 <%@ page import="webapp.model.ContactType" %>
 <%@ page import="webapp.model.SectionType" %>
+<%@ page import="webapp.model.ListSection" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
@@ -32,33 +33,37 @@
 
         <h3><%=SectionType.PERSONAL.getTitle()%>
         </h3>
-        <input type="text" name="PERSONAL" size=130 value="${resume.getSection(SectionType.PERSONAL)}"><br/>
 
-        <h3><%=SectionType.OBJECTIVE.getTitle()%>
-        </h3>
-        <input type="text" name="OBJECTIVE" size=130 value="${resume.getSection(SectionType.OBJECTIVE)}"><br/>
+        <textarea name="PERSONAL" cols=75 rows=5><%=resume.getSection(SectionType.PERSONAL)%></textarea>
 
+        <h3><%=SectionType.OBJECTIVE.getTitle()%></h3>
+        <textarea name="OBJECTIVE" cols=75 rows=5><%=resume.getSection(SectionType.OBJECTIVE)%></textarea>
+        <br/>
+        <c:if test="${resume.getSection(SectionType.ACHIEVEMENT)!=null}">
         <h3><%=SectionType.ACHIEVEMENT.getTitle()%></h3>
-        <c:forEach var="stringAchievement" items="<%=achievement%>">
-            <dl>
-                <dd><textarea name="arrayAchievement" rows="4" cols="120"> ${stringAchievement}</textarea></dd>
-            </dl>
-        </c:forEach>
-        <input type="text" name="arrayAchievement" size="130" placeholder="Дополните Ваши достижения">
+        <textarea name='arrayAchievement' cols=75
+                  rows=25 ><%=String.join("\n \n",
+                ((ListSection) resume.getSection(SectionType.ACHIEVEMENT)).getSectionData())%></textarea>
+        </c:if>
+        <c:if test="${resume.getSection(SectionType.ACHIEVEMENT)==null}">
+            <h3><%=SectionType.ACHIEVEMENT.getTitle()%></h3>
+            <textarea name='arrayAchievement' cols=75
+                      rows=10 placeholder="добавте достижения" >  </textarea>
+        </c:if>
         <br/>
         <br/>
-
+        <c:if test="${resume.getSection(SectionType.QUALIFICATIONS)!=null}">
         <h3><%=SectionType.QUALIFICATIONS.getTitle()%></h3>
-        <c:forEach var="stringQualification" items="<%=qualification%>">
-            <dl>
-                <dd><textarea  name="arrayQualification" rows="4" cols="120"> ${stringQualification} </textarea></dd>
-            </dl>
-        </c:forEach>
-        <input type="text" name="arrayQualification" size="130" placeholder="Дополните сведения о Вашей квалификации">
+        <textarea name='arrayQualification' cols=75
+                  rows=25 ><%=String.join("\n \n",
+                ((ListSection) resume.getSection(SectionType.QUALIFICATIONS)).getSectionData())%></textarea>
+        </c:if>
+        <c:if test="${resume.getSection(SectionType.QUALIFICATIONS)==null}">
+            <h3><%=SectionType.QUALIFICATIONS.getTitle()%></h3>
+           <textarea name='arrayQualification' cols=75
+                     rows=10 placeholder="добавте квалификацию" >  </textarea>
+        </c:if>
         <br/>
-        <br/>
-
-
         <button type="submit">Сохранить</button>
         <button type="reset" onclick="window.history.back()">Отменить</button>
     </form>

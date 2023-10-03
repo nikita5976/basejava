@@ -73,21 +73,31 @@ public class ResumeServlet extends HttpServlet {
             r.setSectionObjective(objective);
         }
 
-        String[] listAchievement = request.getParameterValues("arrayAchievement");
+        String[] Achievement = request.getParameterValues("arrayAchievement");
         r.removeTextSection(SectionType.ACHIEVEMENT);
-        for (String stringAchievement : listAchievement) {
-            if (HtmlUtil.isEmpty(stringAchievement)) {}
-            else {
-                r.setSectionAchievement(parsingHTML(stringAchievement));
+        String stringAchievement = Achievement[0];
+        if (HtmlUtil.isEmpty(stringAchievement)){
+        } else {
+            String[] listAchievement = stringAchievement.split("\n");
+            for (String achievement : listAchievement) {
+                if (HtmlUtil.isEmpty(achievement)) {
+                } else {
+                    r.setSectionAchievement(parsingHTML(achievement));
+                }
             }
         }
 
-        String[] listQualification = request.getParameterValues("arrayQualification");
+        String[] Qualification = request.getParameterValues("arrayQualification");
         r.removeTextSection(SectionType.QUALIFICATIONS);
-        for (String stringQualification : listQualification) {
-            if (HtmlUtil.isEmpty(stringQualification)) {}
-            else {
-                r.setSectionQualification(parsingHTML(stringQualification));
+        String stringQualification = Qualification[0];
+        if (HtmlUtil.isEmpty(stringQualification)){
+        } else {
+            String[] listQualification = stringQualification.split("\n");
+            for (String qualification : listQualification) {
+                if (HtmlUtil.isEmpty(qualification)) {
+                } else {
+                    r.setSectionQualification(parsingHTML(qualification));
+                }
             }
         }
 
