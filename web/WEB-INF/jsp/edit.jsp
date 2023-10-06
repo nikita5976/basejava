@@ -38,8 +38,14 @@
             <h3><%=SectionType.PERSONAL.getTitle()%></h3>
             <textarea name="PERSONAL" cols=75 rows=5 placeholder="добавте личные качества"></textarea>
         </c:if>
+         <c:if test="${resume.getSection(SectionType.OBJECTIVE)!=null}">
         <h3><%=SectionType.OBJECTIVE.getTitle()%></h3>
         <textarea name="OBJECTIVE" cols=75 rows=5><%=resume.getSection(SectionType.OBJECTIVE)%></textarea>
+         </c:if>
+        <c:if test="${resume.getSection(SectionType.OBJECTIVE)==null}">
+            <h3><%=SectionType.OBJECTIVE.getTitle()%></h3>
+            <textarea name="OBJECTIVE" cols=75 rows=5 placeholder="добавте текущую позицию"></textarea>
+        </c:if>
         <br/>
         <c:if test="${resume.getSection(SectionType.ACHIEVEMENT)!=null}">
         <h3><%=SectionType.ACHIEVEMENT.getTitle()%></h3>
