@@ -30,12 +30,14 @@
             </dl>
         </c:forEach>
         <h2>Секции:</h2>
-
-        <h3><%=SectionType.PERSONAL.getTitle()%>
-        </h3>
-
-        <textarea name="PERSONAL" cols=75 rows=5><%=resume.getSection(SectionType.PERSONAL)%></textarea>
-
+        <c:if test="${resume.getSection(SectionType.PERSONAL)!=null}">
+            <h3><%=SectionType.PERSONAL.getTitle()%></h3>
+            <textarea name="PERSONAL" cols=75 rows=5><%=resume.getSection(SectionType.PERSONAL)%></textarea>
+        </c:if>
+        <c:if test="${resume.getSection(SectionType.PERSONAL)==null}">
+            <h3><%=SectionType.PERSONAL.getTitle()%></h3>
+            <textarea name="PERSONAL" cols=75 rows=5 placeholder="добавте личные качества"></textarea>
+        </c:if>
         <h3><%=SectionType.OBJECTIVE.getTitle()%></h3>
         <textarea name="OBJECTIVE" cols=75 rows=5><%=resume.getSection(SectionType.OBJECTIVE)%></textarea>
         <br/>
@@ -47,8 +49,7 @@
         </c:if>
         <c:if test="${resume.getSection(SectionType.ACHIEVEMENT)==null}">
             <h3><%=SectionType.ACHIEVEMENT.getTitle()%></h3>
-            <textarea name='arrayAchievement' cols=75
-                      rows=10 placeholder="добавте достижения" >  </textarea>
+            <textarea name='arrayAchievement' cols=75 rows=10 placeholder="добавте достижения"></textarea>
         </c:if>
         <br/>
         <br/>
@@ -60,8 +61,7 @@
         </c:if>
         <c:if test="${resume.getSection(SectionType.QUALIFICATIONS)==null}">
             <h3><%=SectionType.QUALIFICATIONS.getTitle()%></h3>
-           <textarea name='arrayQualification' cols=75
-                     rows=10 placeholder="добавте квалификацию" >  </textarea>
+           <textarea name='arrayQualification' cols=75 rows=10 placeholder="добавте квалификацию"></textarea>
         </c:if>
         <br/>
         <button type="submit">Сохранить</button>
