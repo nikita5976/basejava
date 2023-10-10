@@ -9,6 +9,8 @@ public class DateUtil {
 
     public static final LocalDate NOW = LocalDate.of(3000, 1, 1);
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("MM/yyyy");
+    private static final DateTimeFormatter DATA_FORMATTER_M = DateTimeFormatter.ofPattern("MM");
+    private static final DateTimeFormatter DATA_FORMATTER_Y = DateTimeFormatter.ofPattern("yyyy");
 
     private DateUtil(){}
 
@@ -19,6 +21,14 @@ public class DateUtil {
     public static String format(LocalDate date) {
         if (date == null) return "";
         return date.equals(NOW) ? "Сейчас" : date.format(DATE_FORMATTER);
+    }
+
+    public static String formatM (LocalDate date){
+        return date.format(DATA_FORMATTER_M);
+    }
+
+    public static String formatY (LocalDate date){
+        return date.format(DATA_FORMATTER_Y);
     }
 
     public static LocalDate parse(String date) {

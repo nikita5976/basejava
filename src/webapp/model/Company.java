@@ -49,6 +49,8 @@ public class Company implements Serializable {
         return period;
     }
 
+    public Company getCompany () {return this;}
+
     @Override
     public String toString() {
         return "\n" + link + "\n" + period;

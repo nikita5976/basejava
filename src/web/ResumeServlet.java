@@ -2,10 +2,7 @@ package web;
 
 import webapp.Config;
 import webapp.exception.NotExistStorageException;
-import webapp.model.ContactType;
-import webapp.model.ListSection;
-import webapp.model.Resume;
-import webapp.model.SectionType;
+import webapp.model.*;
 import webapp.storage.SqlStorage;
 import webapp.storage.Storage;
 import webapp.util.HtmlUtil;
@@ -61,22 +58,22 @@ public class ResumeServlet extends HttpServlet {
 
         String personal = parsingHTML(request.getParameter("PERSONAL"));
         if (HtmlUtil.isEmpty(personal)) {
-            r.removeTextSection(SectionType.PERSONAL);
+            r.removeSection(SectionType.PERSONAL);
         } else {
             r.setSectionPersonal(personal);
         }
 
         String objective = parsingHTML(request.getParameter("OBJECTIVE"));
         if (HtmlUtil.isEmpty(objective)) {
-            r.removeTextSection(SectionType.OBJECTIVE);
+            r.removeSection(SectionType.OBJECTIVE);
         } else {
             r.setSectionObjective(objective);
         }
 
         String[] Achievement = request.getParameterValues("arrayAchievement");
-        r.removeTextSection(SectionType.ACHIEVEMENT);
+        r.removeSection(SectionType.ACHIEVEMENT);
         String stringAchievement = Achievement[0];
-        if (HtmlUtil.isEmpty(stringAchievement)){
+        if (HtmlUtil.isEmpty(stringAchievement)) {
         } else {
             String[] listAchievement = stringAchievement.split("\n");
             for (String achievement : listAchievement) {
@@ -88,9 +85,9 @@ public class ResumeServlet extends HttpServlet {
         }
 
         String[] Qualification = request.getParameterValues("arrayQualification");
-        r.removeTextSection(SectionType.QUALIFICATIONS);
+        r.removeSection(SectionType.QUALIFICATIONS);
         String stringQualification = Qualification[0];
-        if (HtmlUtil.isEmpty(stringQualification)){
+        if (HtmlUtil.isEmpty(stringQualification)) {
         } else {
             String[] listQualification = stringQualification.split("\n");
             for (String qualification : listQualification) {
@@ -101,12 +98,68 @@ public class ResumeServlet extends HttpServlet {
             }
         }
 
+        String[] newExperienceName = request.getParameterValues("newEXPERIENCEcompanyName");
+        String[] newExperienceWebsite = request.getParameterValues("newEXPERIENCEcompanyWebsite");
+        String[] newExperienceStartDateM = request.getParameterValues("newEXPERIENCEstartDateM");
+        String[] newExperienceStartDateY = request.getParameterValues("newEXPERIENCEstartDateY");
+        String[] newExperienceEndDateM = request.getParameterValues("newEXPERIENCEendDateM");
+        String[] newExperienceEndDateY = request.getParameterValues("newEXPERIENCEendDateY");
+        String[] newExperienceTitle = request.getParameterValues("newEXPERIENCEtitle");
+        String[] newExperienceDescription = request.getParameterValues("newEXPERIENCEdescription");
+        r.removeSection(SectionType.EXPERIENCE);
+        if (HtmlUtil.isEmpty(newExperienceName[0])) {
+        } else {
+            if (isNumeric(newExperienceStartDateM[0])&isNumeric(newExperienceStartDateY[0])
+                    &isNumeric(newExperienceEndDateM[0])&isNumeric(newExperienceEndDateY[0])) {
+                r.setSectionExperience(Integer.parseInt(parsingHTML(newExperienceStartDateM[0])),
+                        Integer.parseInt(parsingHTML(newExperienceStartDateY[0])),
+                        Integer.parseInt(parsingHTML(newExperienceEndDateM[0])),
+                        Integer.parseInt(parsingHTML(newExperienceEndDateY[0])),
+                        parsingHTML(newExperienceName[0]),
+                        parsingHTML(newExperienceWebsite[0]),
+                        parsingHTML(newExperienceTitle[0]),
+                        parsingHTML(newExperienceDescription[0]));
+            }
+        }
+        String experienceId = request.getParameter("experienceId");
+        if (experienceId != null) {
+            int iEx = Integer.parseInt(experienceId);
+            for (int i = 0; i <= iEx; i++) {
+                String[] experienceName = request.getParameterValues("EXPERIENCEcompany" + i + "Name");
+                String[] experienceWebsite = request.getParameterValues("EXPERIENCEcompany" + i + "Website");
+                String[] experienceStartDateM = request.getParameterValues("EXPERIENCE" + i + "startDateM");
+                String[] experienceStartDateY = request.getParameterValues("EXPERIENCE" + i + "startDateY");
+                String[] experienceEndDateM = request.getParameterValues("EXPERIENCE" + i + "endDateM");
+                String[] experienceEndDateY = request.getParameterValues("EXPERIENCE" + i + "endDateY");
+                String[] experienceTitle = request.getParameterValues("EXPERIENCE" + i + "title");
+                String[] experienceDescription = request.getParameterValues("EXPERIENCE" + i + "description");
+                for (int j = 0; j <= (experienceTitle.length-1); j++) {
+                    if (!HtmlUtil.isEmpty(experienceName[0])&isNumeric(experienceStartDateM[j])&isNumeric(experienceStartDateY[j])
+                            &isNumeric(experienceEndDateM[j])&isNumeric(experienceEndDateY[j])&!HtmlUtil.isEmpty(experienceTitle[j])) {
+                        r.setSectionExperience(Integer.parseInt(parsingHTML(experienceStartDateM[j])),
+                                Integer.parseInt(parsingHTML(experienceStartDateY[j])),
+                                Integer.parseInt(parsingHTML(experienceEndDateM[j])),
+                                Integer.parseInt(parsingHTML(experienceEndDateY[j])),
+                                parsingHTML(experienceName[0]),
+                                parsingHTML(experienceWebsite[0]),
+                                parsingHTML(experienceTitle[j]),
+                                parsingHTML(experienceDescription[j]));
+                    }
+                }
+            }
+        }
+
         if (!first) {
             storage.update(r);
         } else {
             storage.save(r);
         }
-        response.sendRedirect("resume");
+        String[] flag = request.getParameterValues("nextCompany");
+        if (flag[0].equals("edit")) {
+            response.sendRedirect("resume?uuid=" + uuid + "&action=edit");
+        } else {
+            response.sendRedirect("resume");
+        }
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -162,5 +215,13 @@ public class ResumeServlet extends HttpServlet {
 
     protected String parsingHTML(String text) {
         return text.replaceAll("(<.*?>)|(&.*?;)", " ").replaceAll("\\s{2,}", " ").trim();
+    }
+    private static boolean isNumeric(String s) throws NumberFormatException {
+        try {
+            Integer.parseInt(s);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
 }
