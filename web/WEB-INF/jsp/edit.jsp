@@ -229,77 +229,142 @@
             <br>
             <br/>
             <h3><%=SectionType.EDUCATION.getTitle()%>
-            </h3>
-            <dl>
-                <dt>Название учереждения:</dt>
-                <dd><input type="text" name='schoolName' size=100 placeholder="добавте название учебного заведения"
-                           value></dd>
-            </dl>
-            <dl>
-                <dt>Сайт учереждения:</dt>
-                <dd><input type="text" name='schoolWebsite' size=100 placeholder="добавте website"></dd>
-            </dl>
-            <br>
-            <button name="nextCompany" value="edit" type="submit">продолжить</button>
-            <c:if test="${resume.getSection(SectionType.EDUCATION)!=null}">
-            <c:forEach var="Company"
-                       items="<%=((CompanySection) resume.getSection(SectionType.EDUCATION)).getSectionData()%>"
-                       varStatus="counter">
-            <dl>
-                <dt>Название учереждения:</dt>
-                <dd><input type="text" name='schoolName' size=100 value="${Company.name}"></dd>
-            </dl>
-            <dl>
-                <dt>Сайт учереждения:</dt>
-                <dd><input type="text" name='schoolWebsite' size=100 value="${Company.website}"></dd>
-                </dd>
-            </dl>
-            <br>
-            <div style="margin-left: 30px">
+                </h3>
                 <dl>
-                    <dt>Начальная дата:</dt>
-                    <dd>
-                        <input type="text" name="EDUCATIONstartDate" size=10
-                               value placeholder="MM/yyyy">
-                    </dd>
+                    <dt>Название учереждения:</dt>
+                    <dd><input type="text" name='newEDUCATIONcompanyName' size=100 placeholder="добавте название учебного заведения"
+                               value></dd>
                 </dl>
                 <dl>
-                    <dt>Конечная дата:</dt>
-                    <dd>
-                        <input type="text" name="EDUCATIONendDate" size=10
-                               value placeholder="MM/yyyy">
+                    <dt>Сайт учереждения:</dt>
+                    <dd><input type="text" name='newEDUCATIONcompanyWebsite' size=100 placeholder="добавте website"></dd>
                 </dl>
-                <dl>
-                    <dt>Курс:</dt>
-                    <dd><input type="text" name='EDUCATIONtitle' size=75
-                               value placeholder="наименование курса">
-                </dl>
-                <br>
-                <button name="nextCompany" value="edit" type="submit">продолжить</button>
-                <c:forEach var="period2" items="${Company.period}">
-                    <jsp:useBean id="period2" type="webapp.model.Company.Period"/>
+
+                <div style="margin-left: 30px">
                     <dl>
                         <dt>Начальная дата:</dt>
                         <dd>
-                            <input type="text" name="EDUCATION${counter.index}startDate" size=10
-                                   value="<%=DateUtil.format(period2.getDateStart())%>" placeholder="MM/yyyy">
+                            <input type="text" name="newEDUCATIONstartDateM" size=10
+                                   value placeholder="MM">
+                        </dd>
+                        <dd>
+                            <input type="text" name="newEDUCATIONstartDateY" size=10
+                                   value placeholder="YYYY">
                         </dd>
                     </dl>
                     <dl>
                         <dt>Конечная дата:</dt>
                         <dd>
-                            <input type="text" name="EDUCATION${counter.index}endDate" size=10
-                                   value="<%=DateUtil.format(period2.getDateEnd())%>" placeholder="MM/yyyy">
+                            <input type="text" name="newEDUCATIONendDateM" size=10
+                                   value placeholder="MM">
+                        </dd>
+                        <input type="text" name="newEDUCATIONendDateY" size=10
+                               value placeholder="YYYY">
+                        </dd>
                     </dl>
                     <dl>
-                        <dt>Курс:</dt>
-                        <dd><input type="text" name='EDUCATION${counter.index}title' size=75
-                                   value="${period2.title}">
+                        <dt>Наименование курса:</dt>
+                        <dd><input type="text" name='newEDUCATIONtitle' size=75
+                                   value placeholder="специализация">
+                        </dd>
                     </dl>
-                </c:forEach>
-            </div>
-            </c:forEach>
-            </c:if>
+
+                    <br>
+                    <br>
+                    <button name="nextCompany" value="edit" type="submit">продолжить</button>
+                    <c:if test="${resume.getSection(SectionType.EDUCATION)!=null}">
+                    <c:forEach var="CompanyEd"
+                               items="<%=((CompanySection) resume.getSection(SectionType.EDUCATION)).getSectionData()%>"
+                               varStatus="counter">
+                    <dl>
+                        <dt>Название учереждения:</dt>
+                        <dd><input type="text" name='EDUCATIONcompany${counter.index}Name' size=100 value="${CompanyEd.name}">
+                        </dd>
+                    </dl>
+                    <dl>
+                        <dt>Сайт учереждения:</dt>
+                        <dd><input type="text" name='EDUCATIONcompany${counter.index}Website' size=100
+                                   value="${CompanyEd.website}"></dd>
+                        </dd>
+                    </dl>
+                    <br>
+                    <div style="margin-left: 30px">
+                        <dl>
+                            <dt>Начальная дата:</dt>
+                            <dd>
+                                <input type="text" name="EDUCATION${counter.index}startDateM" size=10
+                                       value placeholder="MM">
+                            </dd>
+                            <dd>
+                                <input type="text" name="EDUCATION${counter.index}startDateY" size=10
+                                       value placeholder="Y">
+                            </dd>
+                        </dl>
+                        <dl>
+                            <dt>Конечная дата:</dt>
+                            <dd>
+                                <input type="text" name="EDUCATION${counter.index}endDateM" size=10
+                                       value placeholder="MM">
+                            </dd>
+                            <dd>
+                                <input type="text" name="EDUCATION${counter.index}endDateY" size=10
+                                       value placeholder="YYYY">
+                            </dd>
+                        </dl>
+                        <dl>
+                            <dt>Наименование курса:</dt>
+                            <dd><input type="text" name='EDUCATION${counter.index}title' size=75
+                                       value placeholder="наименование курса">
+                            </dd>
+                        </dl>
+                        <dl>
+                            <dt>Описание:</dt>
+                            <dd><textarea name="EDUCATION${counter.index}description" rows=5
+                                          cols=75></textarea>
+                            </dd>
+                        </dl>
+                        <br>
+                        <button name="nextCompany" value="edit" type="submit">продолжить</button>
+                        <c:forEach var="periodEd" items="${CompanyEd.period}">
+                            <jsp:useBean id="periodEd" type="webapp.model.Company.Period"/>
+                            <dl>
+                                <dt>Начальная дата:</dt>
+                                <dd>
+                                    <input type="text" name="EDUCATION${counter.index}startDateM" size=10
+                                           value="<%=DateUtil.formatM(periodEd.getDateStart())%>">
+                                </dd>
+                                <dd>
+                                    <input type="text" name="EDUCATION${counter.index}startDateY" size=10
+                                           value="<%=DateUtil.formatY(periodEd.getDateStart())%>">
+                                </dd>
+                            </dl>
+                            <dl>
+                                <dt>Конечная дата:</dt>
+                                <dd>
+                                    <input type="text" name="EDUCATION${counter.index}endDateM" size=10
+                                           value="<%=DateUtil.formatM(periodEd.getDateEnd())%>">
+                                </dd>
+                                <dd>
+                                    <input type="text" name="EDUCATION${counter.index}endDateY" size=10
+                                           value="<%=DateUtil.formatY(periodEd.getDateEnd())%>">
+                                </dd>
+                            </dl>
+                            <dl>
+                                <dt>Наименование курса:</dt>
+                                <dd><input type="text" name='EDUCATION${counter.index}title' size=75
+                                           value="${periodEd.title}">
+                            </dl>
+                        </c:forEach>
+                    </div>
+                    <c:if test="${counter.last}">
+                    <input type="hidden" name="educationId" value="${counter.index}"/>
+                    </c:if>
+                    </c:forEach>
+                    </c:if>
+                    <br>
+                    <br>
+                    <br>
+                    <br/>
             <br>
             <button type="submit" name="nextCompany" value="notedit">Сохранить</button>
             <button type="reset" onclick="window.history.back()">Отменить</button>

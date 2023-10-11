@@ -109,8 +109,8 @@ public class ResumeServlet extends HttpServlet {
         r.removeSection(SectionType.EXPERIENCE);
         if (HtmlUtil.isEmpty(newExperienceName[0])) {
         } else {
-            if (isNumeric(newExperienceStartDateM[0])&isNumeric(newExperienceStartDateY[0])
-                    &isNumeric(newExperienceEndDateM[0])&isNumeric(newExperienceEndDateY[0])) {
+            if (isNumeric(newExperienceStartDateM[0]) & isNumeric(newExperienceStartDateY[0])
+                    & isNumeric(newExperienceEndDateM[0]) & isNumeric(newExperienceEndDateY[0])) {
                 r.setSectionExperience(Integer.parseInt(parsingHTML(newExperienceStartDateM[0])),
                         Integer.parseInt(parsingHTML(newExperienceStartDateY[0])),
                         Integer.parseInt(parsingHTML(newExperienceEndDateM[0])),
@@ -133,9 +133,9 @@ public class ResumeServlet extends HttpServlet {
                 String[] experienceEndDateY = request.getParameterValues("EXPERIENCE" + i + "endDateY");
                 String[] experienceTitle = request.getParameterValues("EXPERIENCE" + i + "title");
                 String[] experienceDescription = request.getParameterValues("EXPERIENCE" + i + "description");
-                for (int j = 0; j <= (experienceTitle.length-1); j++) {
-                    if (!HtmlUtil.isEmpty(experienceName[0])&isNumeric(experienceStartDateM[j])&isNumeric(experienceStartDateY[j])
-                            &isNumeric(experienceEndDateM[j])&isNumeric(experienceEndDateY[j])&!HtmlUtil.isEmpty(experienceTitle[j])) {
+                for (int j = 0; j <= (experienceTitle.length - 1); j++) {
+                    if (!HtmlUtil.isEmpty(experienceName[0]) & isNumeric(experienceStartDateM[j]) & isNumeric(experienceStartDateY[j])
+                            & isNumeric(experienceEndDateM[j]) & isNumeric(experienceEndDateY[j]) & !HtmlUtil.isEmpty(experienceTitle[j])) {
                         r.setSectionExperience(Integer.parseInt(parsingHTML(experienceStartDateM[j])),
                                 Integer.parseInt(parsingHTML(experienceStartDateY[j])),
                                 Integer.parseInt(parsingHTML(experienceEndDateM[j])),
@@ -148,6 +148,58 @@ public class ResumeServlet extends HttpServlet {
                 }
             }
         }
+
+        String[] newEducationName = request.getParameterValues("newEDUCATIONcompanyName");
+        String[] newEducationWebsite = request.getParameterValues("newEDUCATIONcompanyWebsite");
+        String[] newEducationStartDateM = request.getParameterValues("newEDUCATIONstartDateM");
+        String[] newEducationStartDateY = request.getParameterValues("newEDUCATIONstartDateY");
+        String[] newEducationEndDateM = request.getParameterValues("newEDUCATIONendDateM");
+        String[] newEducationEndDateY = request.getParameterValues("newEDUCATIONendDateY");
+        String[] newEducationTitle = request.getParameterValues("newEDUCATIONtitle");
+        String[] newEducationDescription = request.getParameterValues("newEDUCATIONdescription");
+        r.removeSection(SectionType.EDUCATION);
+        if (HtmlUtil.isEmpty(newEducationName[0])) {
+        } else {
+            if (isNumeric(newEducationStartDateM[0]) & isNumeric(newEducationStartDateY[0])
+                    & isNumeric(newEducationEndDateM[0]) & isNumeric(newEducationEndDateY[0])) {
+                r.setSectionExperience(Integer.parseInt(parsingHTML(newEducationStartDateM[0])),
+                        Integer.parseInt(parsingHTML(newEducationStartDateY[0])),
+                        Integer.parseInt(parsingHTML(newEducationEndDateM[0])),
+                        Integer.parseInt(parsingHTML(newEducationEndDateY[0])),
+                        parsingHTML(newEducationName[0]),
+                        parsingHTML(newEducationWebsite[0]),
+                        parsingHTML(newEducationTitle[0]),
+                        parsingHTML(newEducationDescription[0]));
+            }
+        }
+        String educationId = request.getParameter("educationId");
+        if (educationId != null) {
+            int iEd = Integer.parseInt(educationId);
+            for (int i = 0; i <= iEd; i++) {
+                String[] educationName = request.getParameterValues("EDUCATIONcompany" + i + "Name");
+                String[] educationWebsite = request.getParameterValues("EDUCATIONcompany" + i + "Website");
+                String[] educationStartDateM = request.getParameterValues("EDUCATION" + i + "startDateM");
+                String[] educationStartDateY = request.getParameterValues("EDUCATION" + i + "startDateY");
+                String[] educationEndDateM = request.getParameterValues("EDUCATION" + i + "endDateM");
+                String[] educationEndDateY = request.getParameterValues("EDUCATION" + i + "endDateY");
+                String[] educationTitle = request.getParameterValues("EDUCATION" + i + "title");
+                String[] educationDescription = request.getParameterValues("EDUCATION" + i + "description");
+                for (int j = 0; j <= (educationTitle.length - 1); j++) {
+                    if (!HtmlUtil.isEmpty(educationName[0]) & isNumeric(educationStartDateM[j]) & isNumeric(educationStartDateY[j])
+                            & isNumeric(educationEndDateM[j]) & isNumeric(educationEndDateY[j]) & !HtmlUtil.isEmpty(educationTitle[j])) {
+                        r.setSectionExperience(Integer.parseInt(parsingHTML(educationStartDateM[j])),
+                                Integer.parseInt(parsingHTML(educationStartDateY[j])),
+                                Integer.parseInt(parsingHTML(educationEndDateM[j])),
+                                Integer.parseInt(parsingHTML(educationEndDateY[j])),
+                                parsingHTML(educationName[0]),
+                                parsingHTML(educationWebsite[0]),
+                                parsingHTML(educationTitle[j]),
+                                parsingHTML(educationDescription[j]));
+                    }
+                }
+            }
+        }
+
 
         if (!first) {
             storage.update(r);
@@ -216,6 +268,7 @@ public class ResumeServlet extends HttpServlet {
     protected String parsingHTML(String text) {
         return text.replaceAll("(<.*?>)|(&.*?;)", " ").replaceAll("\\s{2,}", " ").trim();
     }
+
     private static boolean isNumeric(String s) throws NumberFormatException {
         try {
             Integer.parseInt(s);
